@@ -27,6 +27,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
     bcmath \
     gd \
     intl \
+    zip \
     opcache
 
 # Install Composer
@@ -44,8 +45,8 @@ RUN mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled && \
     ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default && \
     chmod +x docker/entrypoint.sh
 
-# Install Composer dependencies (production)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install Composer dependencies (production) without running boot scripts
+RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
 # Cloud Run dynamic port (default 8080)
 EXPOSE 8080
