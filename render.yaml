@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: posterit-office
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: "Posterit Office"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: LOG_CHANNEL
+        value: stderr
