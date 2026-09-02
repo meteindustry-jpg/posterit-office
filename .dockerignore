@@ -1,6 +1,7 @@
 /node_modules
 /vendor
 /storage/*.key
+*.zip
 .git
 .gitignore
 .env

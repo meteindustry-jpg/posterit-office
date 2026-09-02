@@ -1,54 +1,17 @@
-FROM php:8.3-fpm-alpine
+FROM serversideup/php:8.3-fpm-nginx
 
-# Install system dependencies and Nginx
-RUN apk add --no-cache \
-    nginx \
-    curl \
-    git \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libzip-dev \
-    zip \
-    unzip \
-    sqlite-dev \
-    icu-dev \
-    oniguruma-dev
+ENV AUTORUN_LARAVEL_MIGRATION=true
+ENV AUTORUN_LARAVEL_STORAGE_LINK=true
+ENV AUTORUN_LARAVEL_CONFIG_CACHE=true
+ENV AUTORUN_LARAVEL_ROUTE_CACHE=true
+ENV AUTORUN_LARAVEL_VIEW_CACHE=true
 
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install -j$(nproc) \
-    pdo \
-    pdo_sqlite \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    intl \
-    zip \
-    opcache
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set working directory
 WORKDIR /var/www/html
 
 # Copy application files
-COPY . .
+COPY --chown=webuser:webgroup . /var/www/html
 
-# Copy Nginx configuration and entrypoint
-RUN mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled && \
-    cp docker/nginx.conf /etc/nginx/sites-available/default && \
-    ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default && \
-    chmod +x docker/entrypoint.sh
-
-# Install Composer dependencies (production) without running boot scripts
+# Install dependencies without running boot scripts
 RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
-# Cloud Run dynamic port (default 8080)
 EXPOSE 8080
-
-ENTRYPOINT ["docker/entrypoint.sh"]
