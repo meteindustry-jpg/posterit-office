@@ -98,7 +98,8 @@ class TodoController extends Controller
             'category' => ['nullable', 'string', 'max:100'],
             'due_date' => ['nullable', 'date'],
             'due_time' => ['nullable'],
-            'reference_url' => ['nullable', 'url', 'max:500'],
+            'reference_url' => ['nullable', 'string', 'max:1000'],
+            'reference_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif,svg', 'max:10240'],
             'assigned_to_user_id' => ['nullable', 'exists:users,id'],
             'subtasks' => ['nullable', 'array'],
         ]);
@@ -114,6 +115,12 @@ class TodoController extends Controller
         $status = $validated['status'] ?? 'todo';
         $isCompleted = ($status === 'completed');
 
+        $referenceUrl = $validated['reference_url'] ?? null;
+        if ($request->hasFile('reference_file')) {
+            $path = $request->file('reference_file')->store('todos', 'public');
+            $referenceUrl = 'todos/' . basename($path);
+        }
+
         $todo = Todo::create([
             'user_id' => Auth::id(),
             'assigned_to_user_id' => $validated['assigned_to_user_id'] ?? null,
@@ -124,7 +131,7 @@ class TodoController extends Controller
             'category' => ($validated['category'] ?? null) ?: 'General',
             'due_date' => $validated['due_date'] ?? null,
             'due_time' => $validated['due_time'] ?? null,
-            'reference_url' => $validated['reference_url'] ?? null,
+            'reference_url' => $referenceUrl,
             'subtasks' => $subtasksData,
             'is_completed' => $isCompleted,
             'completed_at' => $isCompleted ? now() : null,
@@ -145,12 +152,19 @@ class TodoController extends Controller
             'category' => ['nullable', 'string', 'max:100'],
             'due_date' => ['nullable', 'date'],
             'due_time' => ['nullable'],
-            'reference_url' => ['nullable', 'url', 'max:500'],
+            'reference_url' => ['nullable', 'string', 'max:1000'],
+            'reference_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif,svg', 'max:10240'],
             'assigned_to_user_id' => ['nullable', 'exists:users,id'],
         ]);
 
         $status = $validated['status'] ?? $todo->status;
         $isCompleted = ($status === 'completed');
+
+        $referenceUrl = $validated['reference_url'] ?? $todo->reference_url;
+        if ($request->hasFile('reference_file')) {
+            $path = $request->file('reference_file')->store('todos', 'public');
+            $referenceUrl = 'todos/' . basename($path);
+        }
 
         $old = $todo->toArray();
         $todo->update([
@@ -161,7 +175,7 @@ class TodoController extends Controller
             'category' => ($validated['category'] ?? null) ?: 'General',
             'due_date' => $validated['due_date'] ?? null,
             'due_time' => $validated['due_time'] ?? null,
-            'reference_url' => $validated['reference_url'] ?? null,
+            'reference_url' => $referenceUrl,
             'assigned_to_user_id' => $validated['assigned_to_user_id'] ?? null,
             'is_completed' => $isCompleted,
             'completed_at' => $isCompleted ? ($todo->completed_at ?? now()) : null,

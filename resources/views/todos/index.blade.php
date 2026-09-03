@@ -274,10 +274,22 @@
                         @endif
 
                         @if($todo->reference_url)
-                        <a href="{{ $todo->reference_url }}" target="_blank" class="inline-flex items-center gap-1 text-[#0071e3] hover:underline font-medium">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                            <span>Link</span>
-                        </a>
+                            @php
+                                $isImg = $todo->isReferenceImage();
+                                $previewUrl = $todo->referenceImagePreviewUrl();
+                            @endphp
+                            @if($isImg && $previewUrl)
+                            <button type="button" @click="openImageLightbox('{{ $previewUrl }}', '{{ addslashes($todo->title) }}', '{{ $todo->reference_url }}')" 
+                                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-[#0071e3] hover:bg-blue-100 dark:hover:bg-blue-900/50 text-[11px] font-medium border border-blue-200/60 dark:border-blue-800/60 transition cursor-pointer">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <span>Image Preview</span>
+                            </button>
+                            @else
+                            <a href="{{ $todo->reference_url }}" target="_blank" class="inline-flex items-center gap-1 text-[#0071e3] hover:underline font-medium">
+                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                <span>Link</span>
+                            </a>
+                            @endif
                         @endif
 
                         @if($todo->assignedTo)
@@ -376,12 +388,49 @@
                 @endif
 
                 @if($todo->reference_url)
-                <div class="pt-0.5">
-                    <a href="{{ $todo->reference_url }}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-[#0071e3] hover:underline font-medium">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                        <span>Reference</span>
-                    </a>
-                </div>
+                    @php
+                        $isImg = $todo->isReferenceImage();
+                        $previewUrl = $todo->referenceImagePreviewUrl();
+                    @endphp
+
+                    @if($isImg && $previewUrl)
+                    <div class="mt-2 rounded-xl overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 group/img shadow-2xs">
+                        <!-- Clickable Image Thumbnail with Zoom Overlay -->
+                        <div class="relative h-28 w-full overflow-hidden bg-slate-100 dark:bg-slate-950 cursor-pointer"
+                             @click="openImageLightbox('{{ $previewUrl }}', '{{ addslashes($todo->title) }}', '{{ $todo->reference_url }}')">
+                            <img src="{{ $previewUrl }}" alt="Reference Image Preview" 
+                                 loading="lazy"
+                                 class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
+                                 onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='flex';">
+                            <div class="absolute inset-0 bg-black/0 group-hover/img:bg-black/35 transition-colors duration-200 flex items-center justify-center">
+                                <span class="opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 px-2.5 py-1 rounded-lg bg-black/80 text-white text-[10px] font-semibold flex items-center gap-1.5 backdrop-blur-xs shadow-md">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                                    <span>Preview</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Bar with Link and Zoom button -->
+                        <div class="px-2.5 py-1.5 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <a href="{{ $todo->reference_url }}" target="_blank" @click.stop class="inline-flex items-center gap-1 text-[11px] text-[#0071e3] hover:underline font-medium truncate max-w-[140px]" title="{{ $todo->reference_url }}">
+                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                <span class="truncate">Open Link</span>
+                            </a>
+                            <button type="button" @click.stop="openImageLightbox('{{ $previewUrl }}', '{{ addslashes($todo->title) }}', '{{ $todo->reference_url }}')" 
+                                    class="text-[10px] font-semibold text-slate-500 hover:text-[#0071e3] flex items-center gap-1 transition cursor-pointer">
+                                <span>Zoom</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    @else
+                    <div class="pt-0.5">
+                        <a href="{{ $todo->reference_url }}" target="_blank" class="inline-flex items-center gap-1 text-[11px] text-[#0071e3] hover:underline font-medium">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <span>Reference</span>
+                        </a>
+                    </div>
+                    @endif
                 @endif
 
                 @if($todo->totalSubtasksCount() > 0)
@@ -539,6 +588,33 @@
                     </p>
                     @endif
 
+                    @if($kTodo->reference_url)
+                        @php
+                            $kIsImg = $kTodo->isReferenceImage();
+                            $kPreviewUrl = $kTodo->referenceImagePreviewUrl();
+                        @endphp
+                        @if($kIsImg && $kPreviewUrl)
+                        <div class="relative h-20 w-full rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 cursor-pointer group/kimg shadow-2xs"
+                             @click.stop="openImageLightbox('{{ $kPreviewUrl }}', '{{ addslashes($kTodo->title) }}', '{{ $kTodo->reference_url }}')">
+                            <img src="{{ $kPreviewUrl }}" alt="Reference" loading="lazy" class="w-full h-full object-cover group-hover/kimg:scale-105 transition-transform duration-200"
+                                 onerror="this.parentElement.style.display='none';">
+                            <div class="absolute inset-0 bg-black/0 group-hover/kimg:bg-black/30 transition-colors flex items-center justify-center">
+                                <span class="opacity-0 group-hover/kimg:opacity-100 px-2 py-0.5 rounded bg-black/80 text-white text-[9px] font-semibold flex items-center gap-1 shadow-xs">
+                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                                    Preview
+                                </span>
+                            </div>
+                        </div>
+                        @else
+                        <div class="pt-0.5">
+                            <a href="{{ $kTodo->reference_url }}" target="_blank" @click.stop class="inline-flex items-center gap-1 text-[10px] text-[#0071e3] hover:underline font-medium">
+                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                <span>Reference</span>
+                            </a>
+                        </div>
+                        @endif
+                    @endif
+
                     <!-- Subtasks Checklist Count -->
                     @if($kTodo->totalSubtasksCount() > 0)
                     <div class="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium">
@@ -589,7 +665,7 @@
                 <button @click="addModalOpen = false" class="text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
             </div>
 
-            <form method="POST" action="{{ route('todos.store') }}" class="space-y-3.5 text-xs">
+            <form method="POST" action="{{ route('todos.store') }}" enctype="multipart/form-data" class="space-y-3.5 text-xs">
                 @csrf
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Title *</label>
@@ -655,10 +731,42 @@
                     @endif
                 </div>
 
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Figma / Drive Reference URL (Optional)</label>
-                    <input type="url" name="reference_url" placeholder="https://www.figma.com/file/..." 
-                           class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-hidden focus:border-[#0071e3]">
+                <div x-data="{ refType: 'url', urlInput: '', previewSrc: '' }" class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <label class="block font-semibold text-slate-700">Reference (Image / Drive / Figma)</label>
+                        <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg text-[10px] font-semibold">
+                            <button type="button" @click="refType = 'url'" :class="refType === 'url' ? 'bg-white shadow-2xs text-[#0071e3]' : 'text-slate-500'" class="px-2 py-0.5 rounded transition">Link / URL</button>
+                            <button type="button" @click="refType = 'file'" :class="refType === 'file' ? 'bg-white shadow-2xs text-[#0071e3]' : 'text-slate-500'" class="px-2 py-0.5 rounded transition">Upload File</button>
+                        </div>
+                    </div>
+
+                    <div x-show="refType === 'url'">
+                        <input type="text" name="reference_url" x-model="urlInput"
+                               placeholder="https://... (Direct Image, Drive, Figma, Pinterest link)" 
+                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-hidden focus:border-[#0071e3]">
+                        <p class="text-[10px] text-slate-400 mt-1">Accepts direct images (.png, .jpg, .webp), Google Drive, Pinterest, or Figma links.</p>
+                    </div>
+
+                    <div x-show="refType === 'file'" style="display: none;">
+                        <input type="file" name="reference_file" accept="image/*"
+                               @change="const file = $event.target.files[0]; if(file) { previewSrc = URL.createObjectURL(file); }"
+                               class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#0071e3] hover:file:bg-blue-100 cursor-pointer">
+                        <p class="text-[10px] text-slate-400 mt-1">Upload image reference or screenshot from your device (PNG/JPG).</p>
+                    </div>
+
+                    <!-- Live Image Preview in Create Modal -->
+                    <template x-if="previewSrc || (urlInput && urlInput.match(/\.(jpeg|jpg|gif|png|webp|svg)/i))">
+                        <div class="mt-2 rounded-xl border border-blue-200 bg-blue-50/50 p-2 flex items-center gap-3">
+                            <img :src="previewSrc || urlInput" alt="Preview" class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-200 shadow-2xs shrink-0">
+                            <div class="text-[11px] text-slate-700 truncate">
+                                <span class="font-semibold text-emerald-600 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Image preview ready
+                                </span>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Will display as an interactive preview on the Todo card</p>
+                            </div>
+                        </div>
+                    </template>
                 </div>
 
                 <div>
@@ -745,7 +853,7 @@
                 <button @click="editModalOpen = false" class="text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
             </div>
 
-            <form method="POST" :action="editData.url" class="space-y-3.5 text-xs">
+            <form method="POST" :action="editData.url" enctype="multipart/form-data" class="space-y-3.5 text-xs">
                 @csrf
                 @method('PUT')
                 <div>
@@ -788,10 +896,36 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Figma / Drive Reference URL</label>
-                    <input type="url" name="reference_url" x-model="editData.reference_url" 
-                           class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900">
+                <div class="space-y-1.5" x-data="{ uploadNew: false }">
+                    <div class="flex items-center justify-between">
+                        <label class="block font-semibold text-slate-700">Figma / Drive / Image Reference</label>
+                        <button type="button" @click="uploadNew = !uploadNew" class="text-[10px] text-[#0071e3] hover:underline font-semibold" x-text="uploadNew ? 'Enter URL instead' : 'Upload Image File'"></button>
+                    </div>
+
+                    <div x-show="!uploadNew">
+                        <input type="text" name="reference_url" x-model="editData.reference_url" 
+                               placeholder="https://..."
+                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900">
+                    </div>
+
+                    <div x-show="uploadNew" style="display: none;">
+                        <input type="file" name="reference_file" accept="image/*"
+                               class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#0071e3] hover:file:bg-blue-100 cursor-pointer">
+                    </div>
+
+                    <!-- Existing Preview if Available -->
+                    <template x-if="editData.reference_preview">
+                        <div class="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-2 flex items-center justify-between">
+                            <div class="flex items-center gap-2 truncate">
+                                <img :src="editData.reference_preview" alt="Preview" class="w-10 h-10 rounded-lg object-cover bg-white border border-slate-200 shrink-0">
+                                <span class="text-[11px] font-medium text-slate-600 truncate">Current image preview attached</span>
+                            </div>
+                            <button type="button" @click="openImageLightbox(editData.reference_preview, editData.title, editData.reference_url)" 
+                                    class="text-[11px] font-semibold text-[#0071e3] hover:underline shrink-0">
+                                View &rarr;
+                            </button>
+                        </div>
+                    </template>
                 </div>
 
                 @if(auth()->user()->isManager())
@@ -818,6 +952,49 @@
                 </div>
             </form>
         </div>
+    <!-- Global Reference Image Lightbox Modal -->
+    <div x-show="lightboxOpen" 
+         x-cloak 
+         @keydown.escape.window="lightboxOpen = false"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md"
+         style="display: none;"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95">
+         
+        <div class="relative max-w-5xl w-full max-h-[92vh] flex flex-col items-center"
+             @click.outside="lightboxOpen = false">
+             
+            <!-- Header Controls -->
+            <div class="w-full flex items-center justify-between pb-3 text-white px-2">
+                <div class="flex items-center gap-2.5 truncate pr-4">
+                    <span class="px-2 py-0.5 rounded-md bg-[#0071e3] text-white text-[11px] font-bold uppercase tracking-wider">Reference Image</span>
+                    <h3 class="text-sm font-semibold text-white/90 truncate" x-text="lightboxTitle"></h3>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <a :href="lightboxUrl" target="_blank" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium transition flex items-center gap-1.5 text-white cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        <span>Open Link</span>
+                    </a>
+                    <a :href="lightboxSrc" download class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium transition flex items-center gap-1.5 text-white cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>Download</span>
+                    </a>
+                    <button type="button" @click="lightboxOpen = false" class="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Image Stage -->
+            <div class="w-full max-h-[80vh] flex items-center justify-center overflow-hidden rounded-2xl bg-black/40 border border-white/10 shadow-2xl p-2">
+                <img :src="lightboxSrc" :alt="lightboxTitle" 
+                     class="max-h-[76vh] max-w-full object-contain rounded-xl shadow-2xl transition-transform duration-300">
+            </div>
+        </div>
     </div>
 
 </div>
@@ -834,10 +1011,20 @@
             convertTitle: '',
             draggedTask: null,
             dragOverColumn: null,
-            editData: { id: null, title: '', description: '', priority: 'medium', category: 'General', due_date: '', due_time: '', reference_url: '', assigned_to_user_id: '', url: '' },
+            lightboxOpen: false,
+            lightboxSrc: '',
+            lightboxTitle: '',
+            lightboxUrl: '',
+            editData: { id: null, title: '', description: '', priority: 'medium', category: 'General', due_date: '', due_time: '', reference_url: '', reference_preview: '', assigned_to_user_id: '', url: '' },
             setView(v) {
                 this.view = v;
                 localStorage.setItem('posterit_todo_view', v);
+            },
+            openImageLightbox(src, title, url) {
+                this.lightboxSrc = src;
+                this.lightboxTitle = title;
+                this.lightboxUrl = url || src;
+                this.lightboxOpen = true;
             },
             dragStart(e, task) {
                 this.draggedTask = task;
@@ -891,6 +1078,7 @@
                     due_date: t.due_date ? t.due_date.split('T')[0] : '',
                     due_time: t.due_time ? t.due_time.substring(0, 5) : '',
                     reference_url: t.reference_url || '',
+                    reference_preview: t.reference_preview || '',
                     assigned_to_user_id: t.assigned_to_user_id || '',
                     url: `{{ url('todos') }}/${t.id}`
                 };

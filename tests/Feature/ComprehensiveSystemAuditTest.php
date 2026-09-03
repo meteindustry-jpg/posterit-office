@@ -311,4 +311,65 @@ class ComprehensiveSystemAuditTest extends TestCase
         // 4. Authenticated session check
         $this->assertAuthenticatedAs($user);
     }
+
+    public function test_todo_reference_image_detection_and_preview_methods(): void
+    {
+        $user = User::first();
+        $this->assertNotNull($user);
+
+        // 1. Direct Image URL
+        $todoImage = Todo::create([
+            'user_id' => $user->id,
+            'title' => 'Design Banner with Image Reference',
+            'priority' => 'medium',
+            'status' => 'todo',
+            'category' => 'Graphics',
+            'reference_url' => 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675.jpg',
+        ]);
+        $this->assertTrue($todoImage->isReferenceImage());
+        $this->assertEquals('https://images.unsplash.com/photo-1579783902614-a3fb3927b675.jpg', $todoImage->referenceImagePreviewUrl());
+        $this->assertTrue($todoImage->is_reference_image);
+        $this->assertNotNull($todoImage->reference_preview);
+
+        // 2. Google Drive File Link
+        $todoDrive = Todo::create([
+            'user_id' => $user->id,
+            'title' => 'Design with Google Drive Image',
+            'priority' => 'high',
+            'status' => 'todo',
+            'category' => 'Branding',
+            'reference_url' => 'https://drive.google.com/file/d/1a2b3c4d5e6f7g8h9/view?usp=sharing',
+        ]);
+        $this->assertTrue($todoDrive->isReferenceImage());
+        $this->assertEquals('https://drive.google.com/thumbnail?id=1a2b3c4d5e6f7g8h9&sz=w1000', $todoDrive->referenceImagePreviewUrl());
+
+        // 3. Local Stored Image File
+        $todoLocal = Todo::create([
+            'user_id' => $user->id,
+            'title' => 'Design with Uploaded Screenshot',
+            'priority' => 'low',
+            'status' => 'todo',
+            'category' => 'Social Media',
+            'reference_url' => 'todos/sample_design.png',
+        ]);
+        $this->assertTrue($todoLocal->isReferenceImage());
+        $this->assertStringContainsString('todos/sample_design.png', $todoLocal->referenceImagePreviewUrl());
+
+        // 4. Non-Image Reference Link (e.g. Figma file)
+        $todoFigma = Todo::create([
+            'user_id' => $user->id,
+            'title' => 'Figma UI Flow',
+            'priority' => 'medium',
+            'status' => 'todo',
+            'category' => 'UI/UX',
+            'reference_url' => 'https://www.figma.com/design/abcdef123456/Mobile-App-Flow',
+        ]);
+        $this->assertFalse($todoFigma->isReferenceImage());
+
+        // 5. Todo Index route renders view successfully
+        $res = $this->actingAs($user)->get(route('todos.index'));
+        $res->assertOk();
+        $res->assertSee('Design Banner with Image Reference');
+        $res->assertSee('Design with Google Drive Image');
+    }
 }
