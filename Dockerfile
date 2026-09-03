@@ -1,23 +1,44 @@
-FROM serversideup/php:8.3-fpm-nginx
+FROM php:8.3-cli-alpine
 
-# Install Composer
+# Install system libraries
+RUN apk add --no-cache \
+    curl \
+    git \
+    zip \
+    unzip \
+    sqlite-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libzip-dev
+
+# Install PHP extensions for Laravel + SQLite + GD
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install -j$(nproc) pdo pdo_sqlite gd zip pcntl bcmath
+
+# Install Composer 2
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-ENV AUTORUN_LARAVEL_MIGRATION=true
-ENV AUTORUN_LARAVEL_STORAGE_LINK=true
-ENV AUTORUN_LARAVEL_CONFIG_CACHE=true
-ENV AUTORUN_LARAVEL_ROUTE_CACHE=true
-ENV AUTORUN_LARAVEL_VIEW_CACHE=true
-
-WORKDIR /var/www/html
+WORKDIR /app
 
 # Copy application files
-COPY --chown=webuser:webgroup . /var/www/html
+COPY . /app
 
-# Run composer as webuser
-USER webuser
+# Install production dependencies
 RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
-USER root
+# Initialize storage and database
+RUN mkdir -p storage/framework/sessions \
+             storage/framework/views \
+             storage/framework/cache \
+             storage/app/public/settings \
+             storage/app/public/employees \
+             storage/logs \
+             database && \
+    touch database/database.sqlite
 
-EXPOSE 8080
+ENV PORT=10000
+
+EXPOSE 10000
+
+CMD sh -c "php artisan storage:link || true && php artisan migrate --force && php artisan db:seed --force || true && php artisan optimize:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"
