@@ -37,8 +37,8 @@ RUN mkdir -p storage/framework/sessions \
              database && \
     touch database/database.sqlite && \
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database && \
-    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+    chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "sed -i \"s/80/${PORT:-8080}/g\" /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf && php artisan storage:link || true && php artisan migrate --force && php artisan db:seed --force || true && php artisan optimize:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache && apache2-foreground"]
+CMD ["sh", "-c", "sed -i \"s/80/${PORT:-8080}/g\" /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf && mkdir -p database storage/logs && touch database/database.sqlite && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database && php artisan storage:link || true && php artisan migrate --force && php artisan db:seed --force || true && php artisan optimize:clear && php artisan view:cache && apache2-foreground"]
