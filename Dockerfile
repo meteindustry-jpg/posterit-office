@@ -1,30 +1,42 @@
-FROM php:8.3-cli-alpine
+FROM alpine:3.20
 
-# Install system libraries
+# Install PHP 8.3 and all required extensions directly via apk (fast, binary packages)
 RUN apk add --no-cache \
-    curl \
+    php83 \
+    php83-cli \
+    php83-common \
+    php83-curl \
+    php83-mbstring \
+    php83-openssl \
+    php83-pdo \
+    php83-pdo_sqlite \
+    php83-sqlite3 \
+    php83-gd \
+    php83-zip \
+    php83-bcmath \
+    php83-xml \
+    php83-dom \
+    php83-xmlwriter \
+    php83-tokenizer \
+    php83-session \
+    php83-fileinfo \
+    php83-phar \
+    php83-iconv \
+    php83-intl \
+    composer \
     git \
-    zip \
-    unzip \
-    sqlite-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libzip-dev
+    curl \
+    sqlite
 
-# Install PHP extensions for Laravel + SQLite + GD
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install -j$(nproc) pdo pdo_sqlite gd zip pcntl bcmath
-
-# Install Composer 2
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Symlink php83 to php
+RUN ln -sf /usr/bin/php83 /usr/bin/php
 
 WORKDIR /app
 
 # Copy application files
 COPY . /app
 
-# Install production dependencies
+# Install Composer dependencies
 RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
 # Initialize storage and database
