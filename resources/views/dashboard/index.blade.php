@@ -239,6 +239,11 @@
                                 @if($todo->due_date)
                                     <span>• Due {{ $todo->due_date->format('d M') }}</span>
                                 @endif
+                                <span>•</span>
+                                <span class="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300">
+                                    <img src="{{ $todo->assignee_photo_url }}" class="w-3.5 h-3.5 rounded-full object-cover shrink-0">
+                                    <span class="truncate max-w-[90px]">{{ $todo->assignee_name }}</span>
+                                </span>
                             </div>
                         </div>
                     </div>

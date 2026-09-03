@@ -20,13 +20,13 @@ class TodoController extends Controller
         $priority = $request->get('priority');
         $search = $request->get('search');
 
-        $query = Todo::with(['user', 'assignedTo', 'workEntry']);
+        $query = Todo::with(['user.employee', 'assignedTo.employee', 'workEntry']);
 
         // Non-admins see tasks created by them OR assigned to them
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             $query->where(function ($q) use ($user) {
                 $q->where('user_id', $user->id)
-                  ->orWhere('assigned_to_user_id', $user->id);
+                    ->orWhere('assigned_to_user_id', $user->id);
             });
         }
 
@@ -51,8 +51,8 @@ class TodoController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('category', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%");
             });
         }
 
@@ -67,7 +67,7 @@ class TodoController extends Controller
 
         // Counts for tab badges
         $baseQuery = Todo::query();
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             $baseQuery->where(function ($q) use ($user) {
                 $q->where('user_id', $user->id)->orWhere('assigned_to_user_id', $user->id);
             });
@@ -105,7 +105,7 @@ class TodoController extends Controller
         ]);
 
         $subtasksData = [];
-        if (!empty($request->input('subtasks_text'))) {
+        if (! empty($request->input('subtasks_text'))) {
             $lines = array_filter(array_map('trim', explode("\n", $request->input('subtasks_text'))));
             foreach ($lines as $line) {
                 $subtasksData[] = ['title' => $line, 'completed' => false];
@@ -118,7 +118,7 @@ class TodoController extends Controller
         $referenceUrl = $validated['reference_url'] ?? null;
         if ($request->hasFile('reference_file')) {
             $path = $request->file('reference_file')->store('todos', 'public');
-            $referenceUrl = 'todos/' . basename($path);
+            $referenceUrl = 'todos/'.basename($path);
         }
 
         $todo = Todo::create([
@@ -163,7 +163,7 @@ class TodoController extends Controller
         $referenceUrl = $validated['reference_url'] ?? $todo->reference_url;
         if ($request->hasFile('reference_file')) {
             $path = $request->file('reference_file')->store('todos', 'public');
-            $referenceUrl = 'todos/' . basename($path);
+            $referenceUrl = 'todos/'.basename($path);
         }
 
         $old = $todo->toArray();
@@ -210,9 +210,9 @@ class TodoController extends Controller
     public function toggle(Todo $todo)
     {
         $old = $todo->toArray();
-        $isCompleted = !$todo->is_completed;
+        $isCompleted = ! $todo->is_completed;
         $newStatus = $isCompleted ? 'completed' : 'todo';
-        
+
         $todo->update([
             'is_completed' => $isCompleted,
             'status' => $newStatus,
@@ -235,7 +235,7 @@ class TodoController extends Controller
         $subtasks = $todo->subtasks ?? [];
 
         if (isset($subtasks[$index])) {
-            $subtasks[$index]['completed'] = !($subtasks[$index]['completed'] ?? false);
+            $subtasks[$index]['completed'] = ! ($subtasks[$index]['completed'] ?? false);
             $todo->update(['subtasks' => $subtasks]);
         }
 
@@ -254,11 +254,11 @@ class TodoController extends Controller
         // Find employee associated with assigned user or current user
         $targetUserId = $todo->assigned_to_user_id ?: Auth::id();
         $targetUser = User::find($targetUserId);
-        $employee = Employee::where('user_id', $targetUserId)->first() 
+        $employee = Employee::where('user_id', $targetUserId)->first()
                  ?? Employee::where('email', $targetUser->email)->first()
                  ?? Employee::first();
 
-        if (!$employee) {
+        if (! $employee) {
             return back()->with('error', 'No active employee profile linked to this user to log daily work.');
         }
 
@@ -268,7 +268,7 @@ class TodoController extends Controller
             'date' => $validated['date'],
             'quantity' => $validated['quantity'],
             'remarks' => $validated['remarks'] ?: $todo->title,
-            'logged_by_user_id' => Auth::id(),
+            'created_by_user_id' => Auth::id(),
         ]);
 
         $todo->update([

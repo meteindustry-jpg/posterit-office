@@ -55,35 +55,72 @@ class Todo extends Model
     protected $appends = [
         'reference_preview',
         'is_reference_image',
+        'assignee_name',
+        'assignee_photo_url',
     ];
+
+    public function getAssigneeNameAttribute(): string
+    {
+        if ($this->assignedTo) {
+            return $this->assignedTo->name;
+        }
+
+        if ($this->user) {
+            return $this->user->name;
+        }
+
+        return 'Unassigned';
+    }
+
+    public function getAssigneePhotoUrlAttribute(): string
+    {
+        $u = $this->assignedTo ?? $this->user;
+
+        if ($u) {
+            if ($u->employee && $u->employee->photo && file_exists(public_path('storage/'.$u->employee->photo))) {
+                return asset('storage/'.$u->employee->photo);
+            }
+
+            if ($u->avatar && file_exists(public_path('storage/'.$u->avatar))) {
+                return asset('storage/'.$u->avatar);
+            }
+
+            return 'https://ui-avatars.com/api/?name='.urlencode($u->name).'&background=0071e3&color=fff&bold=true';
+        }
+
+        return 'https://ui-avatars.com/api/?name=Team&background=64748b&color=fff';
+    }
 
     public function isOverdue(): bool
     {
-        if ($this->is_completed || !$this->due_date) {
+        if ($this->is_completed || ! $this->due_date) {
             return false;
         }
-        return $this->due_date->isPast() && !$this->due_date->isToday();
+
+        return $this->due_date->isPast() && ! $this->due_date->isToday();
     }
 
     public function completedSubtasksCount(): int
     {
-        if (empty($this->subtasks) || !is_array($this->subtasks)) {
+        if (empty($this->subtasks) || ! is_array($this->subtasks)) {
             return 0;
         }
-        return count(array_filter($this->subtasks, fn($st) => !empty($st['completed'])));
+
+        return count(array_filter($this->subtasks, fn ($st) => ! empty($st['completed'])));
     }
 
     public function totalSubtasksCount(): int
     {
-        if (empty($this->subtasks) || !is_array($this->subtasks)) {
+        if (empty($this->subtasks) || ! is_array($this->subtasks)) {
             return 0;
         }
+
         return count($this->subtasks);
     }
 
     public function isReferenceImage(): bool
     {
-        if (!$this->reference_url) {
+        if (! $this->reference_url) {
             return false;
         }
 
@@ -116,7 +153,7 @@ class Todo extends Model
 
     public function referenceImagePreviewUrl(): ?string
     {
-        if (!$this->reference_url) {
+        if (! $this->reference_url) {
             return null;
         }
 
@@ -124,7 +161,7 @@ class Todo extends Model
 
         // Local stored file
         if (str_starts_with($url, 'todos/')) {
-            return asset('storage/' . $url);
+            return asset('storage/'.$url);
         }
         if (str_starts_with($url, '/storage/')) {
             return asset(ltrim($url, '/'));
@@ -137,7 +174,7 @@ class Todo extends Model
 
         // Dropbox link conversion to direct raw image
         if (str_contains($url, 'dropbox.com')) {
-            return str_replace(['?dl=0', '&dl=0'], '', $url) . (str_contains($url, '?') ? '&raw=1' : '?raw=1');
+            return str_replace(['?dl=0', '&dl=0'], '', $url).(str_contains($url, '?') ? '&raw=1' : '?raw=1');
         }
 
         return $url;

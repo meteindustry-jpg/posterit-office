@@ -292,17 +292,15 @@
                             @endif
                         @endif
 
-                        @if($todo->assignedTo)
-                        <div class="flex items-center gap-1 text-slate-600">
-                            <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-[9px]">
-                                {{ substr($todo->assignedTo->name, 0, 1) }}
+                        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700" 
+                             title="{{ $todo->assignedTo ? 'Assigned to: ' . $todo->assignedTo->name : 'Created by: ' . $todo->user->name }}">
+                            <img src="{{ $todo->assignee_photo_url }}" 
+                                 alt="{{ $todo->assignee_name }}" 
+                                 class="w-4 h-4 rounded-full object-cover shrink-0 ring-1 ring-white/60">
+                            <span class="font-semibold text-[11px] text-slate-700 dark:text-slate-300">
+                                {{ $todo->assignee_name }}
                             </span>
-                            <span>{{ $todo->assignedTo->name }}</span>
                         </div>
-                        @endif
-
-                        <span class="text-slate-300">•</span>
-                        <span>{{ $todo->user->name }}</span>
                     </div>
                 </div>
             </div>
@@ -512,15 +510,28 @@
             </div>
 
             <!-- Card Footer -->
-            <div class="mt-3.5 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-                @if($todo->due_date)
-                <div class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-semibold' : ($todo->due_date->isToday() ? 'text-amber-700 font-medium' : 'text-slate-500') }}">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    <span>{{ $todo->due_date->isToday() ? 'Today' : $todo->due_date->format('d M') }}</span>
+            <div class="mt-3.5 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 gap-2">
+                <div class="flex items-center gap-2">
+                    @if($todo->due_date)
+                    <div class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-semibold' : ($todo->due_date->isToday() ? 'text-amber-700 font-medium' : 'text-slate-500') }}">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>{{ $todo->due_date->isToday() ? 'Today' : $todo->due_date->format('d M') }}</span>
+                    </div>
+                    @else
+                    <span class="text-slate-400">No date</span>
+                    @endif
+
+                    <!-- Employee Profile & Name Pill -->
+                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 max-w-[140px]" 
+                         title="{{ $todo->assignedTo ? 'Assigned to: ' . $todo->assignedTo->name : 'Created by: ' . $todo->user->name }}">
+                        <img src="{{ $todo->assignee_photo_url }}" 
+                             alt="{{ $todo->assignee_name }}" 
+                             class="w-4 h-4 rounded-full object-cover shrink-0 ring-1 ring-white/60">
+                        <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300 truncate">
+                            {{ $todo->assignee_name }}
+                        </span>
+                    </div>
                 </div>
-                @else
-                <span class="text-slate-400">No date</span>
-                @endif
 
                 <div class="flex items-center gap-1.5">
                     @if(!$todo->work_entry_id && auth()->user()->isManager())
@@ -528,12 +539,6 @@
                             class="px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded text-[10px] font-semibold transition cursor-pointer">
                         ⚡ Log
                     </button>
-                    @endif
-
-                    @if($todo->assignedTo)
-                    <div class="w-4.5 h-4.5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-[9px]" title="{{ $todo->assignedTo->name }}">
-                        {{ substr($todo->assignedTo->name, 0, 1) }}
-                    </div>
                     @endif
                 </div>
             </div>
@@ -549,7 +554,33 @@
     </div>
 
     <!-- 3. PRO DRAG & DROP KANBAN BOARD -->
-    <div x-show="view === 'kanban'" class="grid grid-cols-1 md:grid-cols-4 gap-4" style="display: none;">
+    <div x-show="view === 'kanban'" x-data="{ mobileCol: 'todo' }" class="space-y-3" style="display: none;">
+        
+        <!-- Mobile Column Segmented Tabs (Phones & Handhelds) -->
+        <div class="md:hidden flex items-center p-1 bg-slate-100 rounded-2xl overflow-x-auto touch-scroll gap-1 border border-slate-200/80">
+            <button type="button" @click="mobileCol = 'todo'" 
+                    class="flex-1 min-w-[70px] py-2 px-2 rounded-xl text-xs font-bold transition text-center cursor-pointer"
+                    :class="mobileCol === 'todo' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'">
+                To Do
+            </button>
+            <button type="button" @click="mobileCol = 'in_progress'" 
+                    class="flex-1 min-w-[85px] py-2 px-2 rounded-xl text-xs font-bold transition text-center cursor-pointer"
+                    :class="mobileCol === 'in_progress' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600'">
+                In Progress
+            </button>
+            <button type="button" @click="mobileCol = 'in_review'" 
+                    class="flex-1 min-w-[75px] py-2 px-2 rounded-xl text-xs font-bold transition text-center cursor-pointer"
+                    :class="mobileCol === 'in_review' ? 'bg-white text-purple-700 shadow-xs' : 'text-slate-600'">
+                In Review
+            </button>
+            <button type="button" @click="mobileCol = 'completed'" 
+                    class="flex-1 min-w-[65px] py-2 px-2 rounded-xl text-xs font-bold transition text-center cursor-pointer"
+                    :class="mobileCol === 'completed' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600'">
+                Done
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         @php
             $columns = [
                 'todo' => [
@@ -584,11 +615,14 @@
         @endphp
 
         @foreach($columns as $cKey => $col)
-        <div class="flex flex-col rounded-2xl {{ $col['bg'] }} border {{ $col['border'] }} p-3 min-h-[540px]"
+        <div class="flex-col rounded-2xl {{ $col['bg'] }} border {{ $col['border'] }} p-3 min-h-[540px]"
+             :class="[
+                 mobileCol === '{{ $cKey }}' ? 'flex' : 'hidden md:flex',
+                 dragOverColumn === '{{ $cKey }}' ? 'ring-2 ring-[#0071e3] bg-blue-50/50' : ''
+             ]"
              @dragover.prevent="dragOverColumn = '{{ $cKey }}'"
              @dragleave="if(dragOverColumn === '{{ $cKey }}') dragOverColumn = null"
-             @drop.prevent="dropTask('{{ $cKey }}')"
-             :class="dragOverColumn === '{{ $cKey }}' ? 'ring-2 ring-[#0071e3] bg-blue-50/50' : ''">
+             @drop.prevent="dropTask('{{ $cKey }}')">
             
             <!-- Column Header -->
             <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-black/[0.05] px-1">
@@ -759,7 +793,7 @@
                     @endif
 
                     <!-- Card Footer: Due Date & Assignee -->
-                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                    <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-400 gap-1.5">
                         @if($kTodo->due_date)
                             <span class="flex items-center gap-1 {{ $kTodo->isOverdue() ? 'text-rose-600 font-bold' : ($kTodo->due_date->isToday() ? 'text-amber-700 font-semibold' : 'text-slate-500') }}">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -769,9 +803,16 @@
                             <span>No date</span>
                         @endif
 
-                        @if($kTodo->assignedTo)
-                            <span class="font-medium text-slate-700 truncate max-w-[90px]">{{ $kTodo->assignedTo->name }}</span>
-                        @endif
+                        <!-- Employee Profile & Name Pill -->
+                        <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 max-w-[125px]"
+                             title="{{ $kTodo->assignedTo ? 'Assigned to: ' . $kTodo->assignedTo->name : 'Created by: ' . $kTodo->user->name }}">
+                            <img src="{{ $kTodo->assignee_photo_url }}" 
+                                 alt="{{ $kTodo->assignee_name }}" 
+                                 class="w-3.5 h-3.5 rounded-full object-cover shrink-0 ring-1 ring-white/60">
+                            <span class="font-semibold text-slate-700 dark:text-slate-300 truncate text-[10px]">
+                                {{ $kTodo->assignee_name }}
+                            </span>
+                        </div>
                     </div>
 
                 </div>
@@ -784,6 +825,7 @@
 
         </div>
         @endforeach
+    </div>
     </div>
 
     @if($todos->hasPages())

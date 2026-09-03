@@ -2,19 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Models\CompanySetting;
+use App\Models\DailyAttendance;
 use App\Models\Department;
 use App\Models\Employee;
-use App\Models\Holiday;
 use App\Models\LeaveRequest;
 use App\Models\LeaveType;
-use App\Models\PayrollRun;
-use App\Models\Payslip;
 use App\Models\Todo;
 use App\Models\User;
-use App\Models\WorkCategory;
-use App\Models\DailyWorkEntry;
-use App\Models\DailyAttendance;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class ComprehensiveSystemAuditTest extends TestCase
@@ -26,24 +24,24 @@ class ComprehensiveSystemAuditTest extends TestCase
         parent::setUp();
         $this->seed();
 
-        $dept = \App\Models\Department::first();
+        $dept = Department::first();
         if ($dept) {
-            \App\Models\User::firstOrCreate(
+            User::firstOrCreate(
                 ['email' => 'manager@posterit.com'],
-                ['name' => 'Test Manager', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'manager', 'is_active' => true]
+                ['name' => 'Test Manager', 'password' => Hash::make('password'), 'role' => 'manager', 'is_active' => true]
             );
 
-            \App\Models\User::firstOrCreate(
+            User::firstOrCreate(
                 ['email' => 'admin@posterit.com'],
-                ['name' => 'Test Admin', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'admin', 'is_active' => true]
+                ['name' => 'Test Admin', 'password' => Hash::make('password'), 'role' => 'admin', 'is_active' => true]
             );
 
-            $empUser = \App\Models\User::firstOrCreate(
+            $empUser = User::firstOrCreate(
                 ['email' => 'rahul@posterit.com'],
-                ['name' => 'Rahul Sharma', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'employee', 'is_active' => true]
+                ['name' => 'Rahul Sharma', 'password' => Hash::make('password'), 'role' => 'employee', 'is_active' => true]
             );
 
-            $emp = \App\Models\Employee::firstOrCreate(
+            $emp = Employee::firstOrCreate(
                 ['email' => 'rahul@posterit.com'],
                 [
                     'employee_code' => 'EMP-001',
@@ -81,7 +79,7 @@ class ComprehensiveSystemAuditTest extends TestCase
         // Admin checks
         $this->actingAs($admin)->get('/attendance')->assertStatus(200);
         $this->actingAs($admin)->get('/attendance/monthly-grid')->assertStatus(200);
-        $this->actingAs($admin)->get('/attendance/export-monthly?month=' . now()->month . '&year=' . now()->year)->assertStatus(200);
+        $this->actingAs($admin)->get('/attendance/export-monthly?month='.now()->month.'&year='.now()->year)->assertStatus(200);
 
         // Employee clock in / out
         $this->actingAs($employee)->post('/attendance/clock-in')->assertRedirect();
@@ -184,8 +182,8 @@ class ComprehensiveSystemAuditTest extends TestCase
             'attendance_reminder_enabled' => 1,
         ]);
         $res->assertRedirect();
-        $this->assertEquals('Posterit Creative Studio Ltd', \App\Models\CompanySetting::get('company_name'));
-        $this->assertEquals(20, (int) \App\Models\CompanySetting::get('late_grace_minutes'));
+        $this->assertEquals('Posterit Creative Studio Ltd', CompanySetting::get('company_name'));
+        $this->assertEquals(20, (int) CompanySetting::get('late_grace_minutes'));
     }
 
     public function test_profile_and_global_search_endpoints(): void
@@ -201,11 +199,11 @@ class ComprehensiveSystemAuditTest extends TestCase
         $employeeUser = User::where('role', 'employee')->first();
         $otherEmp = Employee::where('id', '!=', $employeeUser->employee?->id)->first();
 
-        $res = $this->actingAs($employeeUser)->get('/api/search?q=' . urlencode(substr($otherEmp->name, 0, 4)));
+        $res = $this->actingAs($employeeUser)->get('/api/search?q='.urlencode(substr($otherEmp->name, 0, 4)));
         $res->assertStatus(200);
 
         $json = $res->json();
-        if (!empty($json['employees'])) {
+        if (! empty($json['employees'])) {
             $firstResultUrl = $json['employees'][0]['url'];
             // Non-admin search result URL should NOT be employees.show (which gives 403)
             $this->assertStringNotContainsString('/employees/', $firstResultUrl);
@@ -285,11 +283,11 @@ class ComprehensiveSystemAuditTest extends TestCase
 
     public function test_dynamic_company_logo_and_brand_in_sidebar_and_login(): void
     {
-        $oldName = \App\Models\CompanySetting::get('company_name');
-        $oldTagline = \App\Models\CompanySetting::get('company_tagline');
+        $oldName = CompanySetting::get('company_name');
+        $oldTagline = CompanySetting::get('company_tagline');
 
-        \App\Models\CompanySetting::set('company_name', 'Acme Studios');
-        \App\Models\CompanySetting::set('company_tagline', 'Creative Agency');
+        CompanySetting::set('company_name', 'Acme Studios');
+        CompanySetting::set('company_tagline', 'Creative Agency');
 
         $admin = User::where('role', 'admin')->first();
         $response = $this->actingAs($admin)->get('/dashboard');
@@ -302,8 +300,8 @@ class ComprehensiveSystemAuditTest extends TestCase
         $loginResponse->assertStatus(200);
         $loginResponse->assertSee('Acme Studios');
 
-        \App\Models\CompanySetting::set('company_name', $oldName);
-        \App\Models\CompanySetting::set('company_tagline', $oldTagline);
+        CompanySetting::set('company_name', $oldName);
+        CompanySetting::set('company_tagline', $oldTagline);
     }
 
     public function test_employee_self_registration_flow(): void
@@ -316,7 +314,7 @@ class ComprehensiveSystemAuditTest extends TestCase
         $res->assertSee('Employee Registration');
 
         // 2. Submit valid registration
-        $dept = \App\Models\Department::first();
+        $dept = Department::first();
         $regData = [
             'name' => 'Sara Ali',
             'email' => 'sara.ali@example.com',
@@ -334,7 +332,7 @@ class ComprehensiveSystemAuditTest extends TestCase
         $user = User::where('email', 'sara.ali@example.com')->first();
         $this->assertNotNull($user);
         $this->assertEquals('employee', $user->role);
-        $this->assertFalse((bool)$user->is_active);
+        $this->assertFalse((bool) $user->is_active);
 
         $employee = Employee::where('email', 'sara.ali@example.com')->first();
         $this->assertNotNull($employee);
@@ -357,10 +355,10 @@ class ComprehensiveSystemAuditTest extends TestCase
         $approveRes = $this->actingAs($superAdmin)->patch(route('users.approve', $user));
         $approveRes->assertRedirect();
 
-        $this->assertTrue((bool)$user->fresh()->is_active);
+        $this->assertTrue((bool) $user->fresh()->is_active);
         $this->assertEquals('active', $employee->fresh()->employment_status);
 
-        \Illuminate\Support\Facades\Auth::logout();
+        Auth::logout();
 
         // 6. User can now log in after approval
         $loginRes2 = $this->post('/login', [
@@ -441,9 +439,9 @@ class ComprehensiveSystemAuditTest extends TestCase
         ]);
         $resName->assertRedirect(route('dashboard'));
         $this->assertAuthenticated();
-        $this->assertEquals('super_admin', \Illuminate\Support\Facades\Auth::user()->role);
+        $this->assertEquals('super_admin', Auth::user()->role);
 
-        \Illuminate\Support\Facades\Auth::logout();
+        Auth::logout();
 
         // 2. Can log in with Name 'Samir Mete' (case insensitive)
         $resName2 = $this->post(route('login'), [
@@ -453,7 +451,7 @@ class ComprehensiveSystemAuditTest extends TestCase
         $resName2->assertRedirect(route('dashboard'));
         $this->assertAuthenticated();
 
-        \Illuminate\Support\Facades\Auth::logout();
+        Auth::logout();
 
         // 3. Can log in with Email 'samir@posterit.com'
         $resEmail = $this->post(route('login'), [
@@ -462,5 +460,32 @@ class ComprehensiveSystemAuditTest extends TestCase
         ]);
         $resEmail->assertRedirect(route('dashboard'));
         $this->assertAuthenticated();
+    }
+
+    public function test_todo_displays_employee_name_and_profile_image(): void
+    {
+        $superAdmin = User::where('role', 'super_admin')->first();
+        $employeeUser = User::where('role', 'employee')->first();
+
+        $todo = Todo::create([
+            'user_id' => $superAdmin->id,
+            'assigned_to_user_id' => $employeeUser->id,
+            'title' => 'Durga Arch Art',
+            'description' => 'Jaldi',
+            'priority' => 'high',
+            'status' => 'todo',
+            'category' => 'Design',
+            'due_date' => now()->format('Y-m-d'),
+        ]);
+
+        $this->assertEquals($employeeUser->name, $todo->assignee_name);
+        $this->assertNotEmpty($todo->assignee_photo_url);
+
+        // Check in UI view
+        $response = $this->actingAs($superAdmin)->get(route('todos.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Durga Arch Art');
+        $response->assertSee($employeeUser->name);
+        $response->assertSee($todo->assignee_photo_url);
     }
 }
