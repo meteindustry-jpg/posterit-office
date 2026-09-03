@@ -26,7 +26,8 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Company Settings
         $settings = [
-            'company_name' => 'Posterit Digital Studio',
+            'company_name' => 'Posterit Office',
+            'company_tagline' => 'High-Performance Creative Graphic & Media Production Studio',
             'company_email' => 'contact@posterit.com',
             'company_phone' => '+91 98765 43210',
             'company_address' => '402, Creative Hub, Tech Park Road, Mumbai, Maharashtra 400001',

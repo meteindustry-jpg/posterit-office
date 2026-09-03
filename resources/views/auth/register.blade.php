@@ -39,6 +39,7 @@
     <div class="w-full max-w-xl mx-auto px-4 text-center z-10 mb-8">
         @if($siteLogo && file_exists(public_path('storage/' . $siteLogo)))
             <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ $siteName }}" 
+                 width="64" height="64" style="max-width:64px;max-height:64px;"
                  class="w-16 h-16 rounded-3xl object-contain mb-4 mx-auto">
         @else
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-gradient-to-b from-[#0071e3] to-[#005bb5] shadow-[0_8px_32px_rgba(0,113,227,0.3)] mb-4 text-white font-extrabold text-2xl">
