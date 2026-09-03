@@ -75,22 +75,32 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
+        $request->validate([
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        $loginInput = trim($request->input('email'));
+        $password = $request->input('password');
 
-            if (! Auth::user()->is_active) {
-                Auth::logout();
+        // Look up by exact email or name (case-insensitive)
+        $user = User::where('email', $loginInput)
+            ->orWhereRaw('LOWER(email) = ?', [strtolower($loginInput)])
+            ->orWhereRaw('LOWER(name) = ?', [strtolower($loginInput)])
+            ->orWhereRaw('LOWER(name) LIKE ?', ['%' . strtolower($loginInput) . '%'])
+            ->first();
+
+        if ($user && Hash::check($password, $user->password)) {
+            if (! $user->is_active) {
                 throw ValidationException::withMessages([
                     'email' => 'Your account has been deactivated. Please contact your administrator.',
                 ]);
             }
 
-            AuditService::log('login', 'Authentication', 'User logged into system.');
+            Auth::login($user, $request->boolean('remember'));
+            $request->session()->regenerate();
+
+            AuditService::log('login', 'Authentication', "User {$user->name} logged into system.");
 
             return redirect()->intended(route('dashboard'));
         }

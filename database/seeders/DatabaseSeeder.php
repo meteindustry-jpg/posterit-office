@@ -113,29 +113,55 @@ class DatabaseSeeder extends Seeder
         }
 
         // 6. Users & Employees
-        $superAdmin = User::create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@posterit.com',
-            'password' => Hash::make('password'),
-            'role' => 'super_admin',
-            'is_active' => true,
-        ]);
+        $samirMete = User::firstOrCreate(
+            ['email' => 'samir@posterit.com'],
+            [
+                'name' => 'Samir Mete',
+                'password' => Hash::make('password'),
+                'role' => 'super_admin',
+                'is_active' => true,
+            ]
+        );
 
-        $admin = User::create([
-            'name' => 'Admin Posterit',
-            'email' => 'admin@posterit.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'is_active' => true,
-        ]);
+        $samMete = User::firstOrCreate(
+            ['email' => 'sam@posterit.com'],
+            [
+                'name' => 'Sam Mete',
+                'password' => Hash::make('password'),
+                'role' => 'super_admin',
+                'is_active' => true,
+            ]
+        );
 
-        $manager = User::create([
-            'name' => 'Vikas Deshmukh',
-            'email' => 'manager@posterit.com',
-            'password' => Hash::make('password'),
-            'role' => 'manager',
-            'is_active' => true,
-        ]);
+        $superAdmin = User::firstOrCreate(
+            ['email' => 'superadmin@posterit.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('password'),
+                'role' => 'super_admin',
+                'is_active' => true,
+            ]
+        );
+
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@posterit.com'],
+            [
+                'name' => 'Admin Posterit',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'is_active' => true,
+            ]
+        );
+
+        $manager = User::firstOrCreate(
+            ['email' => 'manager@posterit.com'],
+            [
+                'name' => 'Vikas Deshmukh',
+                'password' => Hash::make('password'),
+                'role' => 'manager',
+                'is_active' => true,
+            ]
+        );
 
         $employeesData = [
             [

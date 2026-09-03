@@ -372,4 +372,36 @@ class ComprehensiveSystemAuditTest extends TestCase
         $res->assertSee('Design Banner with Image Reference');
         $res->assertSee('Design with Google Drive Image');
     }
+
+    public function test_sam_mete_login_with_name_or_email(): void
+    {
+        // 1. Can log in with Name 'Sam Mete'
+        $resName = $this->post(route('login'), [
+            'email' => 'Sam Mete',
+            'password' => 'password',
+        ]);
+        $resName->assertRedirect(route('dashboard'));
+        $this->assertAuthenticated();
+        $this->assertEquals('super_admin', \Illuminate\Support\Facades\Auth::user()->role);
+
+        \Illuminate\Support\Facades\Auth::logout();
+
+        // 2. Can log in with Name 'Samir Mete' (case insensitive)
+        $resName2 = $this->post(route('login'), [
+            'email' => 'samir mete',
+            'password' => 'password',
+        ]);
+        $resName2->assertRedirect(route('dashboard'));
+        $this->assertAuthenticated();
+
+        \Illuminate\Support\Facades\Auth::logout();
+
+        // 3. Can log in with Email 'samir@posterit.com'
+        $resEmail = $this->post(route('login'), [
+            'email' => 'samir@posterit.com',
+            'password' => 'password',
+        ]);
+        $resEmail->assertRedirect(route('dashboard'));
+        $this->assertAuthenticated();
+    }
 }
