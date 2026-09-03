@@ -395,18 +395,44 @@
 
                     @if($isImg && $previewUrl)
                     <div class="mt-2 rounded-xl overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 group/img shadow-2xs">
-                        <!-- Clickable Image Thumbnail with Zoom Overlay -->
-                        <div class="relative h-28 w-full overflow-hidden bg-slate-100 dark:bg-slate-950 cursor-pointer"
+                        <!-- Interactive Mouse-Follow Zoom Lens -->
+                        <div class="relative h-36 w-full overflow-hidden bg-slate-950 cursor-crosshair group/zoom select-none"
+                             x-data="{ 
+                                 isHovered: false, 
+                                 zoomRatio: 2.4,
+                                 handleMouseMove(e) {
+                                     const r = this.$el.getBoundingClientRect();
+                                     const x = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
+                                     const y = Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100));
+                                     this.$refs.zoomImg.style.transformOrigin = `${x}% ${y}%`;
+                                     this.$refs.zoomImg.style.transform = `scale(${this.zoomRatio})`;
+                                 },
+                                 handleMouseLeave() {
+                                     this.isHovered = false;
+                                     this.$refs.zoomImg.style.transformOrigin = 'center center';
+                                     this.$refs.zoomImg.style.transform = 'scale(1)';
+                                 }
+                             }"
+                             @mouseenter="isHovered = true"
+                             @mouseleave="handleMouseLeave()"
+                             @mousemove="handleMouseMove($event)"
                              @click="openImageLightbox('{{ $previewUrl }}', '{{ addslashes($todo->title) }}', '{{ $todo->reference_url }}')">
-                            <img src="{{ $previewUrl }}" alt="Reference Image Preview" 
+                             
+                            <img x-ref="zoomImg"
+                                 src="{{ $previewUrl }}" 
+                                 alt="Reference Image Preview" 
                                  loading="lazy"
-                                 class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
+                                 class="w-full h-full object-cover transition-transform duration-75 ease-out will-change-transform pointer-events-none"
                                  onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='flex';">
-                            <div class="absolute inset-0 bg-black/0 group-hover/img:bg-black/35 transition-colors duration-200 flex items-center justify-center">
-                                <span class="opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 px-2.5 py-1 rounded-lg bg-black/80 text-white text-[10px] font-semibold flex items-center gap-1.5 backdrop-blur-xs shadow-md">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
-                                    <span>Preview</span>
-                                </span>
+
+                            <!-- Interactive Magnifier Floating Pill -->
+                            <div x-show="isHovered" 
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-xs text-white text-[10px] font-bold flex items-center gap-1.5 shadow-md pointer-events-none z-10">
+                                <svg class="w-3 h-3 text-blue-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                                <span>2.4x Zoom • Click for Full</span>
                             </div>
                         </div>
 
@@ -434,13 +460,52 @@
                 @endif
 
                 @if($todo->totalSubtasksCount() > 0)
-                <div class="pt-2 border-t border-slate-100">
-                    <div class="flex items-center justify-between text-[10px] text-slate-500 font-medium mb-1">
-                        <span>Subtasks</span>
-                        <span>{{ $todo->completedSubtasksCount() }}/{{ $todo->totalSubtasksCount() }}</span>
+                <!-- Interactive Expandable Subtasks Checklist -->
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800" x-data="{ stExpanded: false }">
+                    <button type="button" @click="stExpanded = !stExpanded" 
+                            class="w-full flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium mb-1.5 transition cursor-pointer group/st">
+                        <span class="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200">
+                            <svg class="w-3.5 h-3.5 text-slate-400 group-hover/st:text-[#0071e3] transition-transform duration-200" 
+                                 :class="stExpanded ? 'rotate-180' : ''"
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <span>Subtasks (Click to View)</span>
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-slate-700 dark:text-slate-300 text-[10px]">{{ $todo->completedSubtasksCount() }}/{{ $todo->totalSubtasksCount() }}</span>
+                            <span class="text-[10px] font-semibold text-[#0071e3]" x-text="stExpanded ? 'Hide ▲' : 'Show ▼'"></span>
+                        </div>
+                    </button>
+
+                    <!-- Clickable Progress Bar -->
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden mb-2 cursor-pointer"
+                         @click="stExpanded = !stExpanded"
+                         title="Click to view/toggle subtasks">
+                        <div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" 
+                             style="width: {{ round(($todo->completedSubtasksCount() / $todo->totalSubtasksCount()) * 100) }}%"></div>
                     </div>
-                    <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                        <div class="bg-emerald-500 h-1.5 rounded-full" style="width: {{ round(($todo->completedSubtasksCount() / $todo->totalSubtasksCount()) * 100) }}%"></div>
+
+                    <!-- Expandable Checklist with Clickable Checkboxes -->
+                    <div x-show="stExpanded" 
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 -translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         class="space-y-1 pt-1 pb-1">
+                        @foreach($todo->subtasks as $sIndex => $subtask)
+                        <form method="POST" action="{{ route('todos.toggleSubtask', $todo) }}" class="flex items-center gap-2 group/item text-[11px] p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 transition">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="index" value="{{ $sIndex }}">
+                            <button type="submit" 
+                                    class="w-4 h-4 shrink-0 rounded-md border flex items-center justify-center transition cursor-pointer {{ !empty($subtask['completed']) ? 'bg-emerald-600 border-emerald-600 text-white shadow-2xs' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-[#0071e3]' }}">
+                                @if(!empty($subtask['completed']))
+                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                @endif
+                            </button>
+                            <span class="leading-tight select-none {{ !empty($subtask['completed']) ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200' }}">
+                                {{ $subtask['title'] }}
+                            </span>
+                        </form>
+                        @endforeach
                     </div>
                 </div>
                 @endif
@@ -594,15 +659,43 @@
                             $kPreviewUrl = $kTodo->referenceImagePreviewUrl();
                         @endphp
                         @if($kIsImg && $kPreviewUrl)
-                        <div class="relative h-20 w-full rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 cursor-pointer group/kimg shadow-2xs"
+                        <div class="relative h-24 w-full rounded-lg overflow-hidden bg-slate-950 cursor-crosshair group/kimg shadow-2xs select-none"
+                             x-data="{ 
+                                 kHovered: false, 
+                                 zoomRatio: 2.3,
+                                 handleMouseMove(e) {
+                                     const r = this.$el.getBoundingClientRect();
+                                     const x = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
+                                     const y = Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100));
+                                     this.$refs.kZoomImg.style.transformOrigin = `${x}% ${y}%`;
+                                     this.$refs.kZoomImg.style.transform = `scale(${this.zoomRatio})`;
+                                 },
+                                 handleMouseLeave() {
+                                     this.kHovered = false;
+                                     this.$refs.kZoomImg.style.transformOrigin = 'center center';
+                                     this.$refs.kZoomImg.style.transform = 'scale(1)';
+                                 }
+                             }"
+                             @mouseenter="kHovered = true"
+                             @mouseleave="handleMouseLeave()"
+                             @mousemove="handleMouseMove($event)"
                              @click.stop="openImageLightbox('{{ $kPreviewUrl }}', '{{ addslashes($kTodo->title) }}', '{{ $kTodo->reference_url }}')">
-                            <img src="{{ $kPreviewUrl }}" alt="Reference" loading="lazy" class="w-full h-full object-cover group-hover/kimg:scale-105 transition-transform duration-200"
+                             
+                            <img x-ref="kZoomImg"
+                                 src="{{ $kPreviewUrl }}" 
+                                 alt="Reference" 
+                                 loading="lazy" 
+                                 class="w-full h-full object-cover transition-transform duration-75 ease-out will-change-transform pointer-events-none"
                                  onerror="this.parentElement.style.display='none';">
-                            <div class="absolute inset-0 bg-black/0 group-hover/kimg:bg-black/30 transition-colors flex items-center justify-center">
-                                <span class="opacity-0 group-hover/kimg:opacity-100 px-2 py-0.5 rounded bg-black/80 text-white text-[9px] font-semibold flex items-center gap-1 shadow-xs">
-                                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
-                                    Preview
-                                </span>
+
+                            <!-- Hover indicator -->
+                            <div x-show="kHovered" 
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                 class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded bg-black/85 text-white text-[9px] font-bold flex items-center gap-1 shadow-md pointer-events-none z-10">
+                                <svg class="w-2.5 h-2.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                                <span>2.3x Zoom</span>
                             </div>
                         </div>
                         @else
@@ -615,11 +708,53 @@
                         @endif
                     @endif
 
-                    <!-- Subtasks Checklist Count -->
+                    <!-- Subtasks Interactive Checklist in Kanban Card -->
                     @if($kTodo->totalSubtasksCount() > 0)
-                    <div class="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium">
-                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                        <span>{{ $kTodo->completedSubtasksCount() }}/{{ $kTodo->totalSubtasksCount() }} Subtasks</span>
+                    <div class="pt-1.5 border-t border-slate-100 dark:border-slate-800" x-data="{ kExpanded: false }">
+                        <button type="button" @click.stop="kExpanded = !kExpanded" 
+                                class="w-full flex items-center justify-between text-[10px] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer group/kst">
+                            <span class="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
+                                <svg class="w-2.5 h-2.5 text-slate-400 transition-transform duration-200" 
+                                     :class="kExpanded ? 'rotate-180' : ''"
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                <span>Subtasks (Click to View)</span>
+                            </span>
+                            <div class="flex items-center gap-1">
+                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ $kTodo->completedSubtasksCount() }}/{{ $kTodo->totalSubtasksCount() }}</span>
+                                <span class="text-[9px] font-semibold text-[#0071e3]" x-text="kExpanded ? 'Hide ▲' : 'Show ▼'"></span>
+                            </div>
+                        </button>
+
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1 overflow-hidden mt-1 cursor-pointer"
+                             @click.stop="kExpanded = !kExpanded"
+                             title="Click to toggle subtasks checklist">
+                            <div class="bg-emerald-500 h-1 rounded-full transition-all duration-300" 
+                                 style="width: {{ round(($kTodo->completedSubtasksCount() / $kTodo->totalSubtasksCount()) * 100) }}%"></div>
+                        </div>
+
+                        <!-- Kanban Subtask Checklist -->
+                        <div x-show="kExpanded" 
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="space-y-1 pt-1.5">
+                            @foreach($kTodo->subtasks as $sIndex => $subtask)
+                            <form method="POST" action="{{ route('todos.toggleSubtask', $kTodo) }}" class="flex items-center gap-1.5 text-[10px] p-0.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded transition">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="index" value="{{ $sIndex }}">
+                                <button type="submit" @click.stop
+                                        class="w-3.5 h-3.5 shrink-0 rounded border flex items-center justify-center transition cursor-pointer {{ !empty($subtask['completed']) ? 'bg-emerald-600 border-emerald-600 text-white shadow-2xs' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-[#0071e3]' }}">
+                                    @if(!empty($subtask['completed']))
+                                        <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    @endif
+                                </button>
+                                <span class="leading-tight select-none truncate {{ !empty($subtask['completed']) ? 'line-through text-slate-400' : 'text-slate-700 dark:text-slate-300' }}">
+                                    {{ $subtask['title'] }}
+                                </span>
+                            </form>
+                            @endforeach
+                        </div>
                     </div>
                     @endif
 
