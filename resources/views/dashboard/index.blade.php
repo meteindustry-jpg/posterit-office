@@ -31,6 +31,29 @@
         </div>
     </div>
 
+    @if(!empty($pendingRegistrationCount) && $pendingRegistrationCount > 0)
+    <div class="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 flex items-center justify-between shadow-2xs">
+        <div class="flex items-center gap-3">
+            <span class="flex h-3 w-3 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+            </span>
+            <div>
+                <h4 class="text-xs font-bold text-amber-900 dark:text-amber-200">
+                    {{ $pendingRegistrationCount }} New Employee Registration{{ $pendingRegistrationCount > 1 ? 's' : '' }} Awaiting Super Admin Approval
+                </h4>
+                <p class="text-[11px] text-amber-700 dark:text-amber-300">
+                    Registered team members cannot sign in or access studio workspace until you approve them.
+                </p>
+            </div>
+        </div>
+        <a href="{{ route('users.index') }}" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 shrink-0">
+            <span>Review & Approve</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+    </div>
+    @endif
+
     <!-- Vibrant Dribbble / Apple Arcade Style KPI Metric Cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         

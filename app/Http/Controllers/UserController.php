@@ -12,9 +12,15 @@ class UserController extends Controller
 {
     public function index()
     {
+        $pendingUsers = User::where('is_active', false)
+            ->whereNotNull('employee_id')
+            ->with('employee.department')
+            ->orderByDesc('created_at')
+            ->get();
+
         $users = User::with('employee.department')->orderBy('id')->paginate(15);
         $employees = Employee::where('employment_status', 'active')->orderBy('name')->get();
-        return view('users.index', compact('users', 'employees'));
+        return view('users.index', compact('users', 'employees', 'pendingUsers'));
     }
 
     public function store(Request $request)
@@ -81,5 +87,34 @@ class UserController extends Controller
         AuditService::log('delete', 'User Management', "Deleted user {$name}", $old);
 
         return back()->with('success', "User '{$name}' deleted.");
+    }
+
+    public function approve(User $user)
+    {
+        $user->update(['is_active' => true]);
+
+        if ($user->employee) {
+            $user->employee->update(['employment_status' => 'active']);
+        }
+
+        AuditService::log('approve', 'User Management', "Super Admin approved registration for {$user->name} ({$user->email})");
+
+        return back()->with('success', "Account for '{$user->name}' has been approved and activated.");
+    }
+
+    public function reject(User $user)
+    {
+        $name = $user->name;
+        $employee = $user->employee;
+
+        if ($employee) {
+            $employee->delete();
+        }
+
+        $user->delete();
+
+        AuditService::log('reject', 'User Management', "Super Admin rejected registration for {$name}");
+
+        return back()->with('success', "Registration request for '{$name}' has been rejected and removed.");
     }
 }

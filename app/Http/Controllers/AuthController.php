@@ -51,7 +51,7 @@ class AuthController extends Controller
             'designation' => $validated['designation'],
             'department_id' => $validated['department_id'],
             'joining_date' => now()->format('Y-m-d'),
-            'employment_status' => 'active',
+            'employment_status' => 'inactive', // Inactive until Super Admin approves
             'leave_quota' => 18,
         ]);
 
@@ -61,16 +61,14 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
             'role' => 'employee',
             'employee_id' => $employee->id,
-            'is_active' => true,
+            'is_active' => false, // Inactive until Super Admin approves
         ]);
 
         $employee->update(['user_id' => $user->id]);
 
-        Auth::login($user);
+        AuditService::log('register', 'Authentication', "New employee registration pending approval: {$employee->name} ({$employeeCode})");
 
-        AuditService::log('register', 'Authentication', "New employee self-registered: {$employee->name} ({$employeeCode})");
-
-        return redirect()->route('dashboard')->with('success', "Welcome to the team, {$employee->name}! Your account has been registered successfully.");
+        return redirect()->route('login')->with('success', "Registration submitted successfully! Your account ({$employee->name}) is pending approval from the Super Admin. You will be able to sign in once approved.");
     }
 
     public function login(Request $request)
@@ -93,7 +91,7 @@ class AuthController extends Controller
         if ($user && Hash::check($password, $user->password)) {
             if (! $user->is_active) {
                 throw ValidationException::withMessages([
-                    'email' => 'Your account has been deactivated. Please contact your administrator.',
+                    'email' => 'Your account has been registered and is pending approval from the Super Admin. Please contact management to activate your access.',
                 ]);
             }
 

@@ -130,6 +130,10 @@ class DashboardController extends Controller
         ->take(4)
         ->get();
 
+        $pendingRegistrationCount = $user->isSuperAdmin()
+            ? \App\Models\User::where('is_active', false)->whereNotNull('employee_id')->count()
+            : 0;
+
         return view('dashboard.index', compact(
             'totalEmployees',
             'presentToday',
@@ -150,7 +154,8 @@ class DashboardController extends Controller
             'upcomingHolidays',
             'pendingLeaves',
             'recentWorkEntries',
-            'myPendingTodos'
+            'myPendingTodos',
+            'pendingRegistrationCount'
         ));
     }
 

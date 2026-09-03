@@ -4,84 +4,71 @@ namespace Database\Seeders;
 
 use App\Models\AuditLog;
 use App\Models\CompanySetting;
-use App\Models\DailyAttendance;
-use App\Models\DailyWorkEntry;
 use App\Models\Department;
-use App\Models\Employee;
 use App\Models\Holiday;
-use App\Models\LeaveRequest;
 use App\Models\LeaveType;
 use App\Models\User;
 use App\Models\WorkCategory;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // 1. Company Settings
+        // 1. Company Information (Real Production Defaults)
         $settings = [
             'company_name' => 'Posterit Office',
-            'company_tagline' => 'High-Performance Creative Graphic & Media Production Studio',
-            'company_email' => 'contact@posterit.com',
+            'company_tagline' => 'Creative Work & Studio Management',
+            'company_email' => 'samir@posterit.com',
             'company_phone' => '+91 98765 43210',
-            'company_address' => '402, Creative Hub, Tech Park Road, Mumbai, Maharashtra 400001',
-            'working_days' => json_encode(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']),
-            'office_timing_start' => '09:30',
-            'office_timing_end' => '18:30',
-            'default_leave_count' => '18',
+            'company_address' => 'Posterit Studio, Mumbai, Maharashtra, India',
+            'work_hours_per_day' => '8',
+            'monthly_working_days' => '26',
+            'fiscal_year_start' => '04-01',
+            'timezone' => 'Asia/Kolkata',
+            'currency' => 'INR',
             'currency_symbol' => '₹',
-            'theme_mode' => 'light',
         ];
 
-        foreach ($settings as $k => $v) {
-            CompanySetting::set($k, $v);
+        foreach ($settings as $key => $val) {
+            CompanySetting::set($key, $val);
         }
 
-        // 2. Departments
+        // 2. Standard Industry Departments
         $departments = [
-            ['name' => 'Graphics & Design', 'description' => 'Creative poster, banner, and UI visual assets'],
-            ['name' => 'Video Production', 'description' => 'Video editing, reels, motion graphics, and rendering'],
+            ['name' => 'Graphics & Design', 'description' => 'Social media creatives, banners, thumbnails, branding'],
+            ['name' => 'Video Production', 'description' => 'Reels, video editing, motion graphics, YouTube videos'],
             ['name' => 'Digital Marketing', 'description' => 'SEO, social media campaigns, content strategy'],
-            ['name' => 'Web Development', 'description' => 'Website maintenance, landing pages, and frontend updates'],
-            ['name' => 'Quality Assurance', 'description' => 'Design audit and quality check of client deliverables'],
+            ['name' => 'Web Development', 'description' => 'Front-end, UI/UX, website maintenance, landing pages'],
+            ['name' => 'Accounts & Operations', 'description' => 'Billing, client invoicing, payroll, studio management'],
         ];
 
-        $deptModels = [];
         foreach ($departments as $d) {
-            $deptModels[$d['name']] = Department::create($d);
+            Department::firstOrCreate(['name' => $d['name']], $d);
         }
 
-        // 3. Work Categories
+        // 3. Standard Work Categories
         $categories = [
-            ['name' => 'PSD Design', 'color' => '#3B82F6', 'description' => 'Photoshop graphic designs and templates'],
-            ['name' => 'Social Media Design', 'color' => '#EC4899', 'description' => 'Instagram, Facebook, LinkedIn post artwork'],
-            ['name' => 'Banner Design', 'color' => '#8B5CF6', 'description' => 'Website & marketing display banners'],
-            ['name' => 'Thumbnail', 'color' => '#F59E0B', 'description' => 'YouTube & video promotional thumbnails'],
-            ['name' => 'Logo', 'color' => '#10B981', 'description' => 'Brand logos & vector marks'],
-            ['name' => 'Flyer', 'color' => '#6366F1', 'description' => 'Event and business promotional flyers'],
-            ['name' => 'Brochure', 'color' => '#14B8A6', 'description' => 'Multi-page bifold/trifold brochures'],
-            ['name' => 'Vector', 'color' => '#06B6D4', 'description' => 'Vector trace, icons, and illustrations'],
+            ['name' => 'Social Media Design', 'color' => '#0071E3', 'description' => 'Instagram, Facebook, LinkedIn single creatives'],
+            ['name' => 'Carousel Design', 'color' => '#5856D6', 'description' => 'Multi-slide educational or promotional carousels'],
+            ['name' => 'Thumbnail', 'color' => '#FF9500', 'description' => 'High-CTR YouTube and video thumbnails'],
+            ['name' => 'Banner Design', 'color' => '#34C759', 'description' => 'Web banners, display ads, hero banners'],
+            ['name' => 'Print / Poster', 'color' => '#AF52DE', 'description' => 'Print media, hoardings, standees, flyers'],
+            ['name' => 'Branding / Identity', 'color' => '#FF2D55', 'description' => 'Logos, brand guidelines, stationery sets'],
             ['name' => 'Illustration', 'color' => '#F43F5E', 'description' => 'Custom creative digital artwork'],
             ['name' => 'Photo Editing', 'color' => '#84CC16', 'description' => 'Color grading, retouching, background removal'],
-            ['name' => 'Image Upload', 'color' => '#64748B', 'description' => 'Cataloging and server uploads'],
-            ['name' => 'SEO', 'color' => '#D97706', 'description' => 'Keyword research, on-page optimization, backlink tasks'],
-            ['name' => 'Website Update', 'color' => '#0284C7', 'description' => 'Content and asset updates on web pages'],
             ['name' => 'Video Editing', 'color' => '#EF4444', 'description' => 'Video cutting, color grading, audio sync'],
             ['name' => 'Motion Graphics', 'color' => '#A855F7', 'description' => 'After Effects animations, intro/outro stings'],
+            ['name' => 'SEO & Optimization', 'color' => '#D97706', 'description' => 'Keyword research, on-page optimization, backlink tasks'],
+            ['name' => 'Website Update', 'color' => '#0284C7', 'description' => 'Content and asset updates on web pages'],
         ];
 
-        $catModels = [];
         foreach ($categories as $c) {
-            $catModels[] = WorkCategory::create($c);
+            WorkCategory::firstOrCreate(['name' => $c['name']], $c);
         }
 
-        // 4. Leave Types
+        // 4. Standard Leave Types
         $leaveTypes = [
             ['name' => 'Casual Leave', 'default_days_per_year' => 6, 'is_paid' => true],
             ['name' => 'Sick Leave', 'default_days_per_year' => 6, 'is_paid' => true],
@@ -89,30 +76,27 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Unpaid Leave', 'default_days_per_year' => 10, 'is_paid' => false],
         ];
 
-        $leaveTypeModels = [];
         foreach ($leaveTypes as $lt) {
-            $leaveTypeModels[] = LeaveType::create($lt);
+            LeaveType::firstOrCreate(['name' => $lt['name']], $lt);
         }
 
-        // 5. Holidays (Current Year)
+        // 5. Official Holidays
         $currentYear = now()->year;
         $holidays = [
             ['name' => 'New Year Day', 'date' => "{$currentYear}-01-01", 'type' => 'national', 'description' => 'Global holiday'],
             ['name' => 'Republic Day', 'date' => "{$currentYear}-01-26", 'type' => 'national', 'description' => 'National holiday'],
-            ['name' => 'Holi Festival', 'date' => "{$currentYear}-03-25", 'type' => 'religious', 'description' => 'Festival of colors'],
-            ['name' => 'Labor Day / Maharashtra Day', 'date' => "{$currentYear}-05-01", 'type' => 'national', 'description' => 'Workers day'],
-            ['name' => 'Independence Day', 'date' => "{$currentYear}-08-15", 'type' => 'national', 'description' => 'National independence celebration'],
-            ['name' => 'Ganesh Chaturthi', 'date' => "{$currentYear}-09-07", 'type' => 'religious', 'description' => 'State festival'],
-            ['name' => 'Gandhi Jayanti', 'date' => "{$currentYear}-10-02", 'type' => 'national', 'description' => 'Mahatma Gandhi birthday'],
-            ['name' => 'Diwali Laxmi Pujan', 'date' => "{$currentYear}-11-01", 'type' => 'religious', 'description' => 'Festival of lights'],
+            ['name' => 'Labor Day', 'date' => "{$currentYear}-05-01", 'type' => 'national', 'description' => 'International Workers Day'],
+            ['name' => 'Independence Day', 'date' => "{$currentYear}-08-15", 'type' => 'national', 'description' => 'National Independence celebration'],
+            ['name' => 'Gandhi Jayanti', 'date' => "{$currentYear}-10-02", 'type' => 'national', 'description' => 'Mahatma Gandhi Birthday'],
+            ['name' => 'Diwali', 'date' => "{$currentYear}-11-01", 'type' => 'religious', 'description' => 'Festival of Lights'],
             ['name' => 'Christmas', 'date' => "{$currentYear}-12-25", 'type' => 'national', 'description' => 'Christmas Day'],
         ];
 
         foreach ($holidays as $h) {
-            Holiday::create($h);
+            Holiday::firstOrCreate(['name' => $h['name'], 'date' => $h['date']], $h);
         }
 
-        // 6. Users & Employees
+        // 6. Super Admin Account (Samir Mete)
         $samirMete = User::firstOrCreate(
             ['email' => 'samir@posterit.com'],
             [
@@ -123,7 +107,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $samMete = User::firstOrCreate(
+        User::firstOrCreate(
             ['email' => 'sam@posterit.com'],
             [
                 'name' => 'Sam Mete',
@@ -133,292 +117,81 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $superAdmin = User::firstOrCreate(
-            ['email' => 'superadmin@posterit.com'],
-            [
-                'name' => 'Super Admin',
-                'password' => Hash::make('password'),
-                'role' => 'super_admin',
-                'is_active' => true,
-            ]
-        );
+        // 7. Testing Environment Fixtures (ONLY seeded during PHPUnit test suite)
+        if (app()->environment('testing')) {
+            $dept = Department::first();
+            $manager = User::firstOrCreate(
+                ['email' => 'manager@posterit.com'],
+                ['name' => 'Vikas Deshmukh', 'password' => Hash::make('password'), 'role' => 'manager', 'is_active' => true]
+            );
 
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@posterit.com'],
-            [
-                'name' => 'Admin Posterit',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-                'is_active' => true,
-            ]
-        );
+            $admin = User::firstOrCreate(
+                ['email' => 'admin@posterit.com'],
+                ['name' => 'Admin Posterit', 'password' => Hash::make('password'), 'role' => 'admin', 'is_active' => true]
+            );
 
-        $manager = User::firstOrCreate(
-            ['email' => 'manager@posterit.com'],
-            [
-                'name' => 'Vikas Deshmukh',
-                'password' => Hash::make('password'),
-                'role' => 'manager',
-                'is_active' => true,
-            ]
-        );
+            $employeesData = [
+                ['code' => 'EMP-001', 'name' => 'Rahul Sharma', 'email' => 'rahul@posterit.com', 'mobile' => '+91 98234 11223', 'designation' => 'Senior Graphic Designer'],
+                ['code' => 'EMP-002', 'name' => 'Priya Patel', 'email' => 'priya@posterit.com', 'mobile' => '+91 98234 22334', 'designation' => 'Motion Graphic Artist'],
+            ];
 
-        $employeesData = [
-            [
-                'code' => 'EMP-001',
-                'name' => 'Rahul Sharma',
-                'email' => 'rahul@posterit.com',
-                'mobile' => '+91 98234 11223',
-                'designation' => 'Senior Graphic Designer',
-                'dept' => 'Graphics & Design',
-                'salary' => 45000.00,
-                'joining' => '2023-03-15',
-                'quota' => 18,
-            ],
-            [
-                'code' => 'EMP-002',
-                'name' => 'Priya Patel',
-                'email' => 'priya@posterit.com',
-                'mobile' => '+91 98234 22334',
-                'designation' => 'Motion Graphic Artist',
-                'dept' => 'Video Production',
-                'salary' => 48000.00,
-                'joining' => '2023-06-01',
-                'quota' => 18,
-            ],
-            [
-                'code' => 'EMP-003',
-                'name' => 'Amit Verma',
-                'email' => 'amit@posterit.com',
-                'mobile' => '+91 98234 33445',
-                'designation' => 'Social Media Designer',
-                'dept' => 'Graphics & Design',
-                'salary' => 35000.00,
-                'joining' => '2024-01-10',
-                'quota' => 18,
-            ],
-            [
-                'code' => 'EMP-004',
-                'name' => 'Sneha Kulkarni',
-                'email' => 'sneha@posterit.com',
-                'mobile' => '+91 98234 44556',
-                'designation' => 'SEO & Content Specialist',
-                'dept' => 'Digital Marketing',
-                'salary' => 38000.00,
-                'joining' => '2023-11-20',
-                'quota' => 18,
-            ],
-            [
-                'code' => 'EMP-005',
-                'name' => 'Vikram Singh',
-                'email' => 'vikram@posterit.com',
-                'mobile' => '+91 98234 55667',
-                'designation' => 'Video Editor & Colorist',
-                'dept' => 'Video Production',
-                'salary' => 42000.00,
-                'joining' => '2024-02-01',
-                'quota' => 18,
-            ],
-            [
-                'code' => 'EMP-006',
-                'name' => 'Neha Joshi',
-                'email' => 'neha@posterit.com',
-                'mobile' => '+91 98234 66778',
-                'designation' => 'UI/Web Graphic Designer',
-                'dept' => 'Web Development',
-                'salary' => 40000.00,
-                'joining' => '2024-04-15',
-                'quota' => 18,
-            ],
-        ];
+            foreach ($employeesData as $ed) {
+                $u = User::firstOrCreate(
+                    ['email' => $ed['email']],
+                    ['name' => $ed['name'], 'password' => Hash::make('password'), 'role' => 'employee', 'is_active' => true]
+                );
 
-        $employeeModels = [];
-
-        foreach ($employeesData as $empData) {
-            $user = User::create([
-                'name' => $empData['name'],
-                'email' => $empData['email'],
-                'password' => Hash::make('password'),
-                'role' => 'employee',
-                'is_active' => true,
-            ]);
-
-            $emp = Employee::create([
-                'employee_code' => $empData['code'],
-                'user_id' => $user->id,
-                'name' => $empData['name'],
-                'mobile_number' => $empData['mobile'],
-                'email' => $empData['email'],
-                'designation' => $empData['designation'],
-                'department_id' => $deptModels[$empData['dept']]->id,
-                'joining_date' => $empData['joining'],
-                'employment_status' => 'active',
-                'salary' => $empData['salary'],
-                'notes' => 'Dedicated and skilled professional in ' . $empData['dept'],
-                'leave_quota' => $empData['quota'],
-            ]);
-
-            $user->update(['employee_id' => $emp->id]);
-            $employeeModels[] = $emp;
-        }
-
-        // 7. Seed Past 25 Days Attendance & Work Entries
-        $today = now();
-        $statuses = ['present', 'present', 'present', 'present', 'wfh', 'present', 'half_day'];
-
-        for ($i = 25; $i >= 0; $i--) {
-            $date = $today->copy()->subDays($i);
-
-            // Skip Sundays
-            if ($date->isSunday()) {
-                continue;
+                $e = \App\Models\Employee::firstOrCreate(
+                    ['email' => $ed['email']],
+                    [
+                        'employee_code' => $ed['code'],
+                        'user_id' => $u->id,
+                        'name' => $ed['name'],
+                        'mobile_number' => $ed['mobile'],
+                        'designation' => $ed['designation'],
+                        'department_id' => $dept ? $dept->id : 1,
+                        'joining_date' => '2024-01-01',
+                        'employment_status' => 'active',
+                        'salary' => 40000,
+                        'leave_quota' => 18,
+                    ]
+                );
+                $u->update(['employee_id' => $e->id]);
             }
 
-            $dateStr = $date->format('Y-m-d');
-
-            foreach ($employeeModels as $idx => $emp) {
-                // Random attendance status
-                $randStatus = $statuses[($idx + $i) % count($statuses)];
-                if ($i === 3 && $idx === 1) {
-                    $randStatus = 'leave';
-                }
-
-                DailyAttendance::create([
-                    'employee_id' => $emp->id,
-                    'date' => $dateStr,
-                    'status' => $randStatus,
-                    'check_in' => $randStatus === 'absent' || $randStatus === 'leave' ? null : '09:28:00',
-                    'check_out' => $randStatus === 'absent' || $randStatus === 'leave' ? null : '18:35:00',
-                    'remarks' => $randStatus === 'wfh' ? 'Approved remote work' : null,
-                    'recorded_by_user_id' => $manager->id,
+            $firstEmp = \App\Models\Employee::first();
+            $leaveType = \App\Models\LeaveType::first();
+            if ($firstEmp && $leaveType) {
+                \App\Models\LeaveRequest::create([
+                    'employee_id' => $firstEmp->id,
+                    'leave_type_id' => $leaveType->id,
+                    'start_date' => now()->addDays(5)->format('Y-m-d'),
+                    'end_date' => now()->addDays(6)->format('Y-m-d'),
+                    'total_days' => 2,
+                    'reason' => 'Test leave request',
+                    'status' => 'pending',
                 ]);
-
-                // Create work entries if present or wfh or half_day
-                if (in_array($randStatus, ['present', 'wfh', 'half_day'])) {
-                    // Pick 1-3 categories per employee
-                    $empCats = match ($emp->department->name) {
-                        'Graphics & Design' => [$catModels[0], $catModels[1], $catModels[2], $catModels[3]],
-                        'Video Production' => [$catModels[13], $catModels[14], $catModels[3]],
-                        'Digital Marketing' => [$catModels[11], $catModels[1], $catModels[12]],
-                        'Web Development' => [$catModels[12], $catModels[0], $catModels[2]],
-                        default => [$catModels[0]],
-                    };
-
-                    $chosenCat = $empCats[($i + $idx) % count($empCats)];
-                    $quantity = match ($chosenCat->name) {
-                        'Social Media Design', 'Thumbnail', 'Banner Design' => rand(4, 9),
-                        'PSD Design', 'Photo Editing' => rand(2, 5),
-                        'Video Editing', 'Motion Graphics' => rand(1, 3),
-                        'SEO', 'Website Update' => rand(3, 6),
-                        default => rand(2, 4),
-                    };
-
-                    DailyWorkEntry::create([
-                        'date' => $dateStr,
-                        'employee_id' => $emp->id,
-                        'work_category_id' => $chosenCat->id,
-                        'quantity' => $quantity,
-                        'remarks' => 'Completed task batch #' . rand(100, 999),
-                        'created_by_user_id' => $manager->id,
-                    ]);
-
-                    // Add a second entry sometimes
-                    if (($i + $idx) % 2 === 0) {
-                        $secondCat = $empCats[(($i + $idx) + 1) % count($empCats)];
-                        DailyWorkEntry::create([
-                            'date' => $dateStr,
-                            'employee_id' => $emp->id,
-                            'work_category_id' => $secondCat->id,
-                            'quantity' => rand(1, 4),
-                            'remarks' => 'Supplementary client delivery',
-                            'created_by_user_id' => $manager->id,
-                        ]);
-                    }
-                }
             }
+
+            \App\Models\Todo::create([
+                'user_id' => $manager->id,
+                'title' => 'Test Initial Task',
+                'description' => 'Test task description',
+                'priority' => 'medium',
+                'status' => 'todo',
+                'category' => 'General',
+                'is_completed' => false,
+            ]);
         }
 
-        // 8. Leave Requests
-        LeaveRequest::create([
-            'employee_id' => $employeeModels[1]->id,
-            'leave_type_id' => $leaveTypeModels[0]->id,
-            'start_date' => $today->copy()->subDays(3)->format('Y-m-d'),
-            'end_date' => $today->copy()->subDays(3)->format('Y-m-d'),
-            'total_days' => 1,
-            'reason' => 'Family function in hometown',
-            'status' => 'approved',
-            'action_by_user_id' => $manager->id,
-            'action_remarks' => 'Approved, project handover done.',
-        ]);
-
-        LeaveRequest::create([
-            'employee_id' => $employeeModels[2]->id,
-            'leave_type_id' => $leaveTypeModels[1]->id,
-            'start_date' => $today->copy()->addDays(2)->format('Y-m-d'),
-            'end_date' => $today->copy()->addDays(3)->format('Y-m-d'),
-            'total_days' => 2,
-            'reason' => 'Medical checkup and recovery',
-            'status' => 'pending',
-        ]);
-
-        // 9. Sample Studio Todo Tasks
-        \App\Models\Todo::create([
-            'user_id' => $manager->id,
-            'assigned_to_user_id' => $superAdmin->id,
-            'title' => 'Export 10 YouTube Thumbnails for Campaign',
-            'description' => 'Final color grading and PSD export for client review by 6 PM.',
-            'priority' => 'high',
-            'category' => 'Design',
-            'due_date' => $today->format('Y-m-d'),
-            'due_time' => '18:00:00',
-            'is_completed' => false,
-        ]);
-
-        \App\Models\Todo::create([
-            'user_id' => $manager->id,
-            'assigned_to_user_id' => $superAdmin->id,
-            'title' => 'Client Revision: Instagram Carousel #4',
-            'description' => 'Update brand color scheme to pastel purple as requested.',
-            'priority' => 'medium',
-            'category' => 'Revision',
-            'due_date' => $today->format('Y-m-d'),
-            'due_time' => '16:30:00',
-            'is_completed' => false,
-        ]);
-
-        \App\Models\Todo::create([
-            'user_id' => $superAdmin->id,
-            'assigned_to_user_id' => null,
-            'title' => 'Review Monthly Output & Performance Scorecards',
-            'description' => 'Audit team deliverables before sending monthly reports.',
-            'priority' => 'low',
-            'category' => 'Review',
-            'due_date' => $today->copy()->addDays(2)->format('Y-m-d'),
-            'due_time' => '11:00:00',
-            'is_completed' => false,
-        ]);
-
-        \App\Models\Todo::create([
-            'user_id' => $manager->id,
-            'assigned_to_user_id' => $superAdmin->id,
-            'title' => 'Weekly Team Sync & Work Allocation',
-            'description' => 'Discuss upcoming client sprint deadlines.',
-            'priority' => 'medium',
-            'category' => 'Meeting',
-            'due_date' => $today->copy()->subDays(1)->format('Y-m-d'),
-            'due_time' => '10:00:00',
-            'is_completed' => true,
-            'completed_at' => now()->subDay(),
-        ]);
-
-        // 10. Initial Audit Logs
+        // 8. Initial Production Audit Log
         AuditLog::create([
-            'user_id' => $superAdmin->id,
-            'action' => 'setup',
+            'user_id' => $samirMete->id,
+            'action' => 'launch',
             'module' => 'System',
-            'description' => 'System initialized with demo settings, employees, and work categories for Posterit.',
+            'description' => 'System initialized for live production. Ready for real studio usage.',
             'ip_address' => '127.0.0.1',
-            'user_agent' => 'System Initializer',
+            'user_agent' => 'Production System Initializer',
         ]);
     }
 }

@@ -25,6 +25,41 @@ class ComprehensiveSystemAuditTest extends TestCase
     {
         parent::setUp();
         $this->seed();
+
+        $dept = \App\Models\Department::first();
+        if ($dept) {
+            \App\Models\User::firstOrCreate(
+                ['email' => 'manager@posterit.com'],
+                ['name' => 'Test Manager', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'manager', 'is_active' => true]
+            );
+
+            \App\Models\User::firstOrCreate(
+                ['email' => 'admin@posterit.com'],
+                ['name' => 'Test Admin', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'admin', 'is_active' => true]
+            );
+
+            $empUser = \App\Models\User::firstOrCreate(
+                ['email' => 'rahul@posterit.com'],
+                ['name' => 'Rahul Sharma', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'employee', 'is_active' => true]
+            );
+
+            $emp = \App\Models\Employee::firstOrCreate(
+                ['email' => 'rahul@posterit.com'],
+                [
+                    'employee_code' => 'EMP-001',
+                    'user_id' => $empUser->id,
+                    'name' => 'Rahul Sharma',
+                    'mobile_number' => '+91 98234 11223',
+                    'designation' => 'Senior Graphic Designer',
+                    'department_id' => $dept->id,
+                    'joining_date' => '2023-03-15',
+                    'employment_status' => 'active',
+                    'salary' => 45000.00,
+                    'leave_quota' => 18,
+                ]
+            );
+            $empUser->update(['employee_id' => $emp->id]);
+        }
     }
 
     public function test_dashboards_render_for_all_roles(): void
@@ -293,22 +328,46 @@ class ComprehensiveSystemAuditTest extends TestCase
         ];
 
         $postRes = $this->post('/register', $regData);
-        $postRes->assertRedirect(route('dashboard'));
+        $postRes->assertRedirect(route('login'));
 
-        // 3. Verify user & employee in DB
+        // 3. Verify user & employee are created in DB with pending/inactive status
         $user = User::where('email', 'sara.ali@example.com')->first();
         $this->assertNotNull($user);
         $this->assertEquals('employee', $user->role);
-        $this->assertTrue((bool)$user->is_active);
+        $this->assertFalse((bool)$user->is_active);
 
         $employee = Employee::where('email', 'sara.ali@example.com')->first();
         $this->assertNotNull($employee);
+        $this->assertEquals('inactive', $employee->employment_status);
         $this->assertEquals('Motion Designer', $employee->designation);
         $this->assertEquals($user->id, $employee->user_id);
         $this->assertEquals($employee->id, $user->employee_id);
         $this->assertStringStartsWith('EMP-', $employee->employee_code);
 
-        // 4. Authenticated session check
+        // 4. Cannot log in while pending
+        $loginRes = $this->post('/login', [
+            'email' => 'sara.ali@example.com',
+            'password' => 'secret123',
+        ]);
+        $loginRes->assertSessionHasErrors('email');
+        $this->assertGuest();
+
+        // 5. Super Admin approves registration
+        $superAdmin = User::where('role', 'super_admin')->first();
+        $approveRes = $this->actingAs($superAdmin)->patch(route('users.approve', $user));
+        $approveRes->assertRedirect();
+
+        $this->assertTrue((bool)$user->fresh()->is_active);
+        $this->assertEquals('active', $employee->fresh()->employment_status);
+
+        \Illuminate\Support\Facades\Auth::logout();
+
+        // 6. User can now log in after approval
+        $loginRes2 = $this->post('/login', [
+            'email' => 'sara.ali@example.com',
+            'password' => 'secret123',
+        ]);
+        $loginRes2->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($user);
     }
 

@@ -39,6 +39,64 @@
         </div>
     </div>
 
+    <!-- Pending Registrations Section (Awaiting Super Admin Approval) -->
+    @if(isset($pendingUsers) && $pendingUsers->count() > 0)
+    <div class="rounded-3xl bg-amber-500/10 border border-amber-500/30 p-5 shadow-xs space-y-3">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </span>
+                <h3 class="font-bold text-sm text-amber-900 dark:text-amber-200">
+                    Pending Employee Registrations ({{ $pendingUsers->count() }} Awaiting Approval)
+                </h3>
+            </div>
+            <span class="text-[11px] text-amber-700 dark:text-amber-300 font-medium">Approval Required for System Access</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            @foreach($pendingUsers as $pu)
+            <div class="p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-amber-200 dark:border-amber-800/60 shadow-2xs space-y-2.5">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="font-bold text-xs text-slate-900 dark:text-white">{{ $pu->name }}</div>
+                        <div class="text-[11px] text-slate-500">{{ $pu->email }}</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Pending</span>
+                </div>
+
+                @if($pu->employee)
+                <div class="text-[10px] text-slate-600 dark:text-slate-400 space-y-0.5">
+                    <div><span class="font-semibold">Department:</span> {{ $pu->employee->department->name ?? 'General' }}</div>
+                    <div><span class="font-semibold">Designation:</span> {{ $pu->employee->designation }}</div>
+                    <div><span class="font-semibold">Registered:</span> {{ $pu->created_at->diffForHumans() }}</div>
+                </div>
+                @endif
+
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+                    <form method="POST" action="{{ route('users.reject', $pu) }}" onsubmit="return confirm('Reject and delete this registration request?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="px-3 py-1 text-[11px] font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition cursor-pointer">
+                            Reject
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('users.approve', $pu) }}">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="px-3 py-1 text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-2xs transition cursor-pointer flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Approve</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <!-- Users Table -->
     <div class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
         <div class="overflow-x-auto">

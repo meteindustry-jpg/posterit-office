@@ -1,11 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{
-    darkMode: localStorage.getItem('theme') === 'dark',
-    fillCreds(email, pass) {
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = pass;
-    }
-}" :class="{ 'dark': darkMode }" class="h-full">
+<html lang="en" x-data="{ darkMode: localStorage.getItem('theme') === 'dark' }" :class="{ 'dark': darkMode }" class="h-full">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,6 +46,13 @@
     <div class="mt-8 w-full max-w-md mx-auto px-4 z-10">
         <div class="glass-panel py-8 px-6 sm:px-10 rounded-3xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_20px_60px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
             
+            @if(session('success'))
+            <div class="mb-6 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                <div>{{ session('success') }}</div>
+            </div>
+            @endif
+
             @if($errors->any())
             <div class="mb-6 p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-300 text-xs">
                 @foreach($errors->all() as $error)
@@ -64,23 +65,22 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px] mb-1.5">Email, Username, or Full Name</label>
-                    <input id="email" name="email" type="text" autocomplete="username" required value="{{ old('email', 'samir@posterit.com') }}" placeholder="samir@posterit.com or Sam Mete"
+                    <label for="email" class="block font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px] mb-1.5">Email or Username</label>
+                    <input id="email" name="email" type="text" autocomplete="username" required value="{{ old('email') }}" placeholder="Enter your work email or username"
                            class="w-full px-4 py-3 bg-black/[0.03] dark:bg-white/[0.06] border border-black/[0.08] dark:border-white/[0.1] rounded-2xl text-[#1d1d1f] dark:text-white placeholder-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0071e3] transition">
                 </div>
 
                 <div>
                     <label for="password" class="block font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px] mb-1.5">Password</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" required value="password"
+                    <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••"
                            class="w-full px-4 py-3 bg-black/[0.03] dark:bg-white/[0.06] border border-black/[0.08] dark:border-white/[0.1] rounded-2xl text-[#1d1d1f] dark:text-white placeholder-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0071e3] transition">
                 </div>
 
                 <div class="flex items-center justify-between text-xs pt-1">
                     <label class="flex items-center text-slate-500 dark:text-slate-400 cursor-pointer">
                         <input type="checkbox" name="remember" class="rounded border-slate-300 text-[#0071e3] focus:ring-[#0071e3]">
-                        <span class="ml-2 text-[11px]">Remember me</span>
+                        <span class="ml-2 text-[11px]">Remember me on this device</span>
                     </label>
-                    <span class="text-slate-400 text-[11px]">Default Password: <code class="text-[#0071e3]">password</code></span>
                 </div>
 
                 <div class="pt-2">
@@ -90,39 +90,12 @@
                 </div>
 
                 <div class="pt-3 text-center text-xs text-slate-500 dark:text-slate-400">
-                    New employee? 
+                    New team member? 
                     <a href="{{ route('register') }}" class="font-bold text-[#0071e3] hover:underline">
-                        Register Employee Account &rarr;
+                        Register Account &rarr;
                     </a>
                 </div>
             </form>
-
-            <!-- Apple Quick Switcher -->
-            <div class="mt-8 pt-6 border-t border-black/[0.06] dark:border-white/[0.08]">
-                <div class="text-center text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3">1-Click Quick Demo Accounts</div>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <button type="button" @click="fillCreds('Sam Mete', 'password')" class="p-2.5 rounded-2xl bg-blue-50/60 dark:bg-blue-950/40 hover:bg-blue-100/60 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800 text-left transition hover:border-[#0071e3] cursor-pointer col-span-2">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-[#0071e3] text-xs flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span>
-                                Samir Mete (Super Admin)
-                            </span>
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-600 text-white font-bold">1-Click Sign In</span>
-                        </div>
-                        <div class="text-[10px] text-slate-500 mt-0.5">Login as: <code class="font-mono text-[#0071e3]">Sam Mete</code> or <code class="font-mono text-[#0071e3]">samir@posterit.com</code></div>
-                    </button>
-
-                    <button type="button" @click="fillCreds('manager@posterit.com', 'password')" class="p-2.5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] hover:bg-black/[0.05] dark:hover:bg-white/[0.08] border border-black/[0.06] dark:border-white/[0.06] text-left transition hover:border-[#0071e3]/40 cursor-pointer">
-                        <div class="font-bold text-[#1d1d1f] dark:text-white text-[11px]">Manager</div>
-                        <div class="text-[10px] text-[#30d158] truncate">manager@posterit.com</div>
-                    </button>
-
-                    <button type="button" @click="fillCreds('rahul@posterit.com', 'password')" class="p-2.5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] hover:bg-black/[0.05] dark:hover:bg-white/[0.08] border border-black/[0.06] dark:border-white/[0.06] text-left transition hover:border-[#0071e3]/40 cursor-pointer">
-                        <div class="font-bold text-[#1d1d1f] dark:text-white text-[11px]">Employee</div>
-                        <div class="text-[10px] text-[#bf5af2] truncate">rahul@posterit.com</div>
-                    </button>
-                </div>
-            </div>
 
         </div>
     </div>

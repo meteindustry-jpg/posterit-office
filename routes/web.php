@@ -26,10 +26,10 @@ use Illuminate\Support\Facades\Route;
 // Guest Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 });
 
 // Authenticated Routes
@@ -137,6 +137,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:super_admin')->group(function () {
         // Users & Roles
         Route::resource('users', UserController::class)->except(['create', 'show', 'edit']);
+        Route::patch('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+        Route::delete('/users/{user}/reject', [UserController::class, 'reject'])->name('users.reject');
 
         // Audit Logs
         Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');

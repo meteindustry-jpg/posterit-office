@@ -22,6 +22,41 @@ class WorkManagementSystemTest extends TestCase
     {
         parent::setUp();
         $this->seed();
+
+        $dept = \App\Models\Department::first();
+        if ($dept) {
+            $manager = \App\Models\User::firstOrCreate(
+                ['email' => 'manager@posterit.com'],
+                ['name' => 'Test Manager', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'manager', 'is_active' => true]
+            );
+
+            $admin = \App\Models\User::firstOrCreate(
+                ['email' => 'admin@posterit.com'],
+                ['name' => 'Test Admin', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'admin', 'is_active' => true]
+            );
+
+            $empUser = \App\Models\User::firstOrCreate(
+                ['email' => 'rahul@posterit.com'],
+                ['name' => 'Rahul Sharma', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'employee', 'is_active' => true]
+            );
+
+            $emp = \App\Models\Employee::firstOrCreate(
+                ['email' => 'rahul@posterit.com'],
+                [
+                    'employee_code' => 'EMP-001',
+                    'user_id' => $empUser->id,
+                    'name' => 'Rahul Sharma',
+                    'mobile_number' => '+91 98234 11223',
+                    'designation' => 'Senior Graphic Designer',
+                    'department_id' => $dept->id,
+                    'joining_date' => '2023-03-15',
+                    'employment_status' => 'active',
+                    'salary' => 45000.00,
+                    'leave_quota' => 18,
+                ]
+            );
+            $empUser->update(['employee_id' => $emp->id]);
+        }
     }
 
     public function test_guest_is_redirected_to_login(): void
