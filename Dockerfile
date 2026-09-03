@@ -1,45 +1,33 @@
-FROM alpine:3.20
+FROM php:8.3-apache
 
-# Install PHP 8.3 and all required extensions directly via apk (fast, binary packages)
-RUN apk add --no-cache \
-    php83 \
-    php83-cli \
-    php83-common \
-    php83-curl \
-    php83-mbstring \
-    php83-openssl \
-    php83-pdo \
-    php83-pdo_sqlite \
-    php83-sqlite3 \
-    php83-gd \
-    php83-zip \
-    php83-bcmath \
-    php83-xml \
-    php83-dom \
-    php83-xmlwriter \
-    php83-tokenizer \
-    php83-session \
-    php83-fileinfo \
-    php83-phar \
-    php83-iconv \
-    php83-intl \
-    composer \
+# Install required system packages
+RUN apt-get update && apt-get install -y \
     git \
-    curl \
-    sqlite
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libsqlite3-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_sqlite gd zip \
+    && a2enmod rewrite \
+    && sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
+    && sed -i 's|AllowOverride None|AllowOverride All|g' /etc/apache2/apache2.conf \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Symlink php83 to php
-RUN ln -sf /usr/bin/php83 /usr/bin/php
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /app
+WORKDIR /var/www/html
 
 # Copy application files
-COPY . /app
+COPY . /var/www/html
 
-# Install Composer dependencies
+# Install dependencies without running scripts
 RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
-# Initialize storage and database
+# Set up permissions and storage
 RUN mkdir -p storage/framework/sessions \
              storage/framework/views \
              storage/framework/cache \
@@ -47,10 +35,10 @@ RUN mkdir -p storage/framework/sessions \
              storage/app/public/employees \
              storage/logs \
              database && \
-    touch database/database.sqlite
+    touch database/database.sqlite && \
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
-ENV PORT=10000
+EXPOSE 8080
 
-EXPOSE 10000
-
-CMD sh -c "php artisan storage:link || true && php artisan migrate --force && php artisan db:seed --force || true && php artisan optimize:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"
+CMD ["sh", "-c", "sed -i \"s/80/${PORT:-8080}/g\" /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf && php artisan storage:link || true && php artisan migrate --force && php artisan db:seed --force || true && php artisan optimize:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache && apache2-foreground"]
