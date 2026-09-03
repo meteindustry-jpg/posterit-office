@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # Install required system packages
 RUN apt-get update && apt-get install -y \
@@ -24,8 +24,8 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . /var/www/html
 
-# Install dependencies without running scripts
-RUN composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
+# Install dependencies ignoring minor php version constraint
+RUN composer install --no-dev --no-scripts --ignore-platform-req=php+ --optimize-autoloader --no-interaction
 
 # Set up permissions and storage
 RUN mkdir -p storage/framework/sessions \
