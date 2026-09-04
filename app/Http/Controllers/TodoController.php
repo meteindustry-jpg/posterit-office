@@ -156,6 +156,9 @@ class TodoController extends Controller
             'reference_url' => ['nullable', 'string', 'max:1000'],
             'reference_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif,svg', 'max:10240'],
             'assigned_to_user_id' => ['nullable', 'exists:users,id'],
+            'subtasks' => ['nullable', 'array'],
+            'subtasks_json' => ['nullable', 'string'],
+            'subtasks_text' => ['nullable', 'string'],
         ]);
 
         $status = $validated['status'] ?? $todo->status;
@@ -170,6 +173,40 @@ class TodoController extends Controller
             $referenceUrl = 'todos/'.basename($path);
         }
 
+        $subtasksData = $todo->subtasks ?? [];
+        if ($request->filled('subtasks_json')) {
+            $decoded = json_decode($request->input('subtasks_json'), true);
+            if (is_array($decoded)) {
+                $subtasksData = [];
+                foreach ($decoded as $item) {
+                    $itemTitle = is_array($item) ? trim($item['title'] ?? '') : trim((string) $item);
+                    if ($itemTitle !== '') {
+                        $subtasksData[] = [
+                            'title' => $itemTitle,
+                            'completed' => is_array($item) ? (bool) ($item['completed'] ?? false) : false,
+                        ];
+                    }
+                }
+            }
+        } elseif ($request->has('subtasks') && is_array($request->input('subtasks'))) {
+            $subtasksData = [];
+            foreach ($request->input('subtasks') as $item) {
+                $itemTitle = is_array($item) ? trim($item['title'] ?? '') : trim((string) $item);
+                if ($itemTitle !== '') {
+                    $subtasksData[] = [
+                        'title' => $itemTitle,
+                        'completed' => is_array($item) ? (bool) ($item['completed'] ?? false) : false,
+                    ];
+                }
+            }
+        } elseif ($request->has('subtasks_text')) {
+            $lines = array_filter(array_map('trim', explode("\n", (string) $request->input('subtasks_text'))));
+            $subtasksData = [];
+            foreach ($lines as $line) {
+                $subtasksData[] = ['title' => $line, 'completed' => false];
+            }
+        }
+
         $old = $todo->toArray();
         $todo->update([
             'title' => $validated['title'],
@@ -181,6 +218,7 @@ class TodoController extends Controller
             'due_time' => $validated['due_time'] ?? null,
             'reference_url' => $referenceUrl,
             'assigned_to_user_id' => $validated['assigned_to_user_id'] ?? null,
+            'subtasks' => $subtasksData,
             'is_completed' => $isCompleted,
             'completed_at' => $isCompleted ? ($todo->completed_at ?? now()) : null,
         ]);

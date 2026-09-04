@@ -297,6 +297,34 @@ class WorkManagementSystemTest extends TestCase
         ]);
     }
 
+    public function test_user_can_edit_task_subtasks(): void
+    {
+        $manager = User::where('role', 'manager')->first();
+        $todo = Todo::first();
+
+        $updatedSubtasks = [
+            ['title' => 'Design layout', 'completed' => true],
+            ['title' => 'Add typography', 'completed' => false],
+            ['title' => 'Export assets', 'completed' => false],
+        ];
+
+        $response = $this->actingAs($manager)->put("/todos/{$todo->id}", [
+            'title' => 'Updated Task with Subtasks',
+            'priority' => 'high',
+            'category' => 'Design',
+            'subtasks_json' => json_encode($updatedSubtasks),
+        ]);
+        $response->assertRedirect();
+
+        $todo->refresh();
+        $this->assertEquals('Updated Task with Subtasks', $todo->title);
+        $this->assertCount(3, $todo->subtasks);
+        $this->assertEquals('Design layout', $todo->subtasks[0]['title']);
+        $this->assertTrue($todo->subtasks[0]['completed']);
+        $this->assertEquals('Export assets', $todo->subtasks[2]['title']);
+        $this->assertFalse($todo->subtasks[2]['completed']);
+    }
+
     public function test_manager_can_view_monthly_attendance_grid(): void
     {
         $manager = User::where('role', 'manager')->first();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanySetting;
 use App\Models\DailyAttendance;
 use App\Models\DailyWorkEntry;
 use App\Models\Department;

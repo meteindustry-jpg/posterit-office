@@ -1212,6 +1212,52 @@
                 </div>
                 @endif
 
+                <!-- Subtasks Checklist Management -->
+                <div class="space-y-2 p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                    <div class="flex items-center justify-between">
+                        <label class="font-semibold text-slate-700 text-xs flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-[#0071e3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <span>Subtasks Checklist</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-700 font-mono font-bold" x-text="editData.subtasks.length"></span>
+                        </label>
+                    </div>
+
+                    <!-- Hidden JSON string passed to backend form -->
+                    <input type="hidden" name="subtasks_json" :value="JSON.stringify(editData.subtasks)">
+
+                    <!-- List of Subtasks -->
+                    <div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                        <template x-for="(st, sIdx) in editData.subtasks" :key="sIdx">
+                            <div class="flex items-center gap-2 p-1.5 bg-white border border-slate-200 rounded-xl shadow-2xs">
+                                <input type="checkbox" x-model="st.completed" class="rounded border-slate-300 text-[#0071e3] focus:ring-0 cursor-pointer">
+                                <input type="text" x-model="st.title" placeholder="Subtask title..." 
+                                       class="flex-1 bg-transparent border-0 text-xs text-slate-800 p-0 focus:ring-0 focus:outline-none"
+                                       :class="st.completed ? 'line-through text-slate-400' : ''">
+                                <button type="button" @click="editData.subtasks.splice(sIdx, 1)" 
+                                        class="text-slate-400 hover:text-rose-500 p-0.5 rounded transition cursor-pointer" title="Remove subtask">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        </template>
+                        <div x-show="editData.subtasks.length === 0" class="text-[11px] text-slate-400 italic py-1 text-center">
+                            No subtasks added. Type below to add checklist items.
+                        </div>
+                    </div>
+
+                    <!-- Add new subtask input -->
+                    <div class="flex items-center gap-2 pt-1" x-data="{ newSubtaskTitle: '' }">
+                        <input type="text" x-model="newSubtaskTitle" 
+                               @keydown.enter.prevent="if (newSubtaskTitle.trim()) { editData.subtasks.push({ title: newSubtaskTitle.trim(), completed: false }); newSubtaskTitle = ''; }"
+                               placeholder="Add a new subtask (press Enter)..." 
+                               class="flex-1 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:border-[#0071e3]">
+                        <button type="button" 
+                                @click="if (newSubtaskTitle.trim()) { editData.subtasks.push({ title: newSubtaskTitle.trim(), completed: false }); newSubtaskTitle = ''; }"
+                                class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition cursor-pointer flex items-center gap-1 shrink-0">
+                            <span>+ Add</span>
+                        </button>
+                    </div>
+                </div>
+
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Description</label>
                     <textarea name="description" x-model="editData.description" rows="2" 
@@ -1288,7 +1334,7 @@
             lightboxSrc: '',
             lightboxTitle: '',
             lightboxUrl: '',
-            editData: { id: null, title: '', description: '', priority: 'medium', category: 'General', due_date: '', due_time: '', reference_url: '', reference_preview: '', assigned_to_user_id: '', url: '' },
+            editData: { id: null, title: '', description: '', priority: 'medium', category: 'General', due_date: '', due_time: '', reference_url: '', reference_preview: '', assigned_to_user_id: '', subtasks: [], url: '' },
             setView(v) {
                 this.view = v;
                 localStorage.setItem('posterit_todo_view', v);
@@ -1342,6 +1388,21 @@
                 form.submit();
             },
             openEdit(t) {
+                let parsedSubtasks = [];
+                if (Array.isArray(t.subtasks)) {
+                    parsedSubtasks = t.subtasks.map(s => {
+                        if (typeof s === 'string') return { title: s, completed: false };
+                        return { title: s.title || '', completed: !!s.completed };
+                    });
+                } else if (typeof t.subtasks === 'string' && t.subtasks.trim()) {
+                    try {
+                        const arr = JSON.parse(t.subtasks);
+                        if (Array.isArray(arr)) {
+                            parsedSubtasks = arr.map(s => typeof s === 'string' ? { title: s, completed: false } : { title: s.title || '', completed: !!s.completed });
+                        }
+                    } catch(e) {}
+                }
+
                 this.editData = {
                     id: t.id,
                     title: t.title,
@@ -1353,6 +1414,7 @@
                     reference_url: t.reference_url || '',
                     reference_preview: t.reference_preview || '',
                     assigned_to_user_id: t.assigned_to_user_id || '',
+                    subtasks: parsedSubtasks,
                     url: `{{ url('todos') }}/${t.id}`
                 };
                 this.editModalOpen = true;
