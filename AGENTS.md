@@ -164,4 +164,17 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Rerun a test after each change to it.
 - Run `vendor/bin/phpunit` to call the test runner directly. It accepts the same file path and `--filter=testName` arguments.
 
+=== live-production rules ===
+
+# MANDATORY: Live Production Server Deployment
+- The user requires: **"Every time work on live production server not local environment."**
+- For every code or database modification:
+  1. Verify locally that tests pass and `npm run build` runs cleanly.
+  2. Immediately deploy the changes directly to the live production server at `office.posterit.in`:
+     - Host: `213.218.240.121`
+     - SSH user: `bhaissh`
+     - Path: `/home/bhai/htdocs/srv1070026.hstgr.cloud`
+  3. Execute `php artisan migrate --force` and `php artisan optimize:clear` on the live server.
+  4. Always verify live production state before concluding.
+
 </laravel-boost-guidelines>
