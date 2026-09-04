@@ -174,4 +174,43 @@ class AttendanceTimezoneTest extends TestCase
         $record->refresh();
         $this->assertNull($record->check_out, 'Blank checkout in batch should not force 18:30 on active shift');
     }
+
+    public function test_admin_can_self_clock_in_and_clock_out(): void
+    {
+        $superAdmin = User::where('role', 'super_admin')->first();
+        $tz = 'Asia/Kolkata';
+
+        $frozenClockIn = Carbon::create(2026, 9, 4, 9, 10, 0, $tz);
+        Carbon::setTestNow($frozenClockIn);
+
+        // Admin clock in
+        $response = $this->actingAs($superAdmin)->post('/attendance/clock-in', [
+            'client_time' => '09:10',
+        ]);
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $emp = Employee::where('user_id', $superAdmin->id)->orWhere('email', $superAdmin->email)->first();
+        $this->assertNotNull($emp);
+
+        $att = DailyAttendance::where('employee_id', $emp->id)->whereDate('date', '2026-09-04')->first();
+        $this->assertNotNull($att);
+        $this->assertEquals('09:10', substr($att->check_in, 0, 5));
+        $this->assertNull($att->check_out);
+
+        // Admin clock out
+        $frozenClockOut = Carbon::create(2026, 9, 4, 18, 45, 0, $tz);
+        Carbon::setTestNow($frozenClockOut);
+
+        $response = $this->actingAs($superAdmin)->post('/attendance/clock-out', [
+            'client_time' => '18:45',
+        ]);
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $att->refresh();
+        $this->assertEquals('18:45', substr($att->check_out, 0, 5));
+
+        Carbon::setTestNow();
+    }
 }

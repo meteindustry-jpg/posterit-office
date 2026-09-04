@@ -31,6 +31,140 @@
         </div>
     </div>
 
+    <!-- Executive Admin Self Attendance Console -->
+    <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all"
+         x-data="{
+             timeZone: '{{ \App\Models\CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) }}',
+             timeStr: '',
+             dateStr: '',
+             checkInTs: {{ $adminCheckInTimestamp ?? 'null' }},
+             isShiftActive: {{ ($adminTodayAttendance && $adminTodayAttendance->check_in && !$adminTodayAttendance->check_out) ? 'true' : 'false' }},
+             elapsedStr: '{{ $adminWorkedHours }}h {{ $adminWorkedMinutes }}m',
+             updateClock() {
+                 const now = new Date();
+                 this.timeStr = now.toLocaleTimeString([], { timeZone: this.timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                 this.dateStr = now.toLocaleDateString([], { timeZone: this.timeZone, weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                 
+                 if (this.isShiftActive && this.checkInTs) {
+                     const diffSec = Math.max(0, Math.floor((now.getTime() - this.checkInTs) / 1000));
+                     const h = Math.floor(diffSec / 3600);
+                     const m = Math.floor((diffSec % 3600) / 60);
+                     const s = diffSec % 60;
+                     this.elapsedStr = `${h}h ${m}m ${s < 10 ? '0' : ''}${s}s`;
+                 }
+             }
+         }"
+         x-init="updateClock(); setInterval(() => updateClock(), 1000)">
+        
+        @if($adminTodayAttendance && $adminTodayAttendance->check_out)
+            <!-- STATE 1: Shift Completed Today -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Executive Duty Completed</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                ✓ Shift Logged
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium mt-0.5">
+                            Clocked in at <span class="font-mono font-bold text-slate-700">{{ $adminCheckInFormatted }}</span> • Clocked out at <span class="font-mono font-bold text-slate-700">{{ $adminCheckOutFormatted }}</span> • Total Time: <span class="font-mono font-bold text-emerald-700">{{ $adminWorkedHours }}h {{ $adminWorkedMinutes }}m</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <form method="POST" action="{{ route('attendance.clockIn') }}" @submit="$refs.adminReClockInTime.value = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })">
+                        @csrf
+                        <input type="hidden" name="client_time" x-ref="adminReClockInTime" value="">
+                        <button type="submit" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span>Clock In Again</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        @elseif($adminTodayAttendance && $adminTodayAttendance->check_in)
+            <!-- STATE 2: Shift in Progress -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 relative">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute top-2 right-2 ring-2 ring-white animate-pulse"></span>
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Executive Duty in Progress</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                ● Working in Office
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium mt-0.5">
+                            Clocked in at <span class="font-mono font-bold text-slate-700">{{ $adminCheckInFormatted ?? $adminTodayAttendance->check_in }}</span> • Office timing: {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingStart ?? '09:30'))->format('h:i A') }} – {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingEnd ?? '18:30'))->format('h:i A') }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="px-3.5 py-2 bg-emerald-50/70 border border-emerald-200/80 rounded-xl flex items-center gap-2">
+                        <span class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">Duration:</span>
+                        <span class="font-mono text-sm font-bold text-emerald-800" x-text="elapsedStr">{{ $adminWorkedHours }}h {{ $adminWorkedMinutes }}m</span>
+                    </div>
+
+                    <form method="POST" action="{{ route('attendance.clockOut') }}" @submit="$refs.adminClockOutTime.value = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })">
+                        @csrf
+                        <input type="hidden" name="client_time" x-ref="adminClockOutTime" value="">
+                        <button type="submit" class="px-5 py-2.5 bg-[#FF3B30] hover:bg-[#E0342B] text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            <span>Clock-Out</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        @else
+            <!-- STATE 3: Not Clocked In (Morning / Arrival) -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#0071E3] flex items-center justify-center shrink-0 border border-blue-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Executive Attendance Console</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                                Not Clocked In
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium mt-0.5">
+                            Record your executive office arrival for today. Tap below to clock in with live local time.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 text-right hidden sm:block">
+                        <span class="font-mono text-xs font-bold text-slate-700" x-text="timeStr"></span>
+                        <span class="text-[10px] text-slate-400 block" x-text="dateStr"></span>
+                    </div>
+
+                    <form method="POST" action="{{ route('attendance.clockIn') }}" @submit="$refs.adminClockInTime.value = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })">
+                        @csrf
+                        <input type="hidden" name="client_time" x-ref="adminClockInTime" value="">
+                        <button type="submit" class="px-5 py-2.5 bg-[#0071E3] hover:bg-[#0062C4] text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span>Mark Attendance (Clock In)</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endif
+    </div>
+
     @if(!empty($pendingRegistrationCount) && $pendingRegistrationCount > 0)
     <div class="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 flex items-center justify-between shadow-2xs">
         <div class="flex items-center gap-3">
