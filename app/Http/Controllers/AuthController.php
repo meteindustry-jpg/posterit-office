@@ -18,6 +18,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
+
         return view('auth.login');
     }
 
@@ -27,6 +28,7 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
         $departments = Department::orderBy('name')->get();
+
         return view('auth.register', compact('departments'));
     }
 
@@ -85,7 +87,7 @@ class AuthController extends Controller
         $user = User::where('email', $loginInput)
             ->orWhereRaw('LOWER(email) = ?', [strtolower($loginInput)])
             ->orWhereRaw('LOWER(name) = ?', [strtolower($loginInput)])
-            ->orWhereRaw('LOWER(name) LIKE ?', ['%' . strtolower($loginInput) . '%'])
+            ->orWhereRaw('LOWER(name) LIKE ?', ['%'.strtolower($loginInput).'%'])
             ->first();
 
         if ($user && Hash::check($password, $user->password)) {
@@ -125,6 +127,7 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         $user->load('employee.department');
+
         return view('profile.show', compact('user'));
     }
 
@@ -134,7 +137,7 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'avatar' => ['nullable', 'image', 'max:2048'],
             'mobile_number' => ['nullable', 'string', 'max:30'],
             'emergency_contact_name' => ['nullable', 'string', 'max:255'],

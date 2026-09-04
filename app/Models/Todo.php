@@ -61,12 +61,11 @@ class Todo extends Model
 
     public function getAssigneeNameAttribute(): string
     {
-        if ($this->assignedTo) {
-            return $this->assignedTo->name;
-        }
+        $u = $this->assignedTo ?? $this->user;
+        if ($u) {
+            $emp = $u->employee ?? Employee::where('user_id', $u->id)->first();
 
-        if ($this->user) {
-            return $this->user->name;
+            return $emp?->name ?? $u->name;
         }
 
         return 'Unassigned';
@@ -77,15 +76,18 @@ class Todo extends Model
         $u = $this->assignedTo ?? $this->user;
 
         if ($u) {
-            if ($u->employee && $u->employee->photo && file_exists(public_path('storage/'.$u->employee->photo))) {
-                return asset('storage/'.$u->employee->photo);
+            $emp = $u->employee ?? Employee::where('user_id', $u->id)->first();
+            if ($emp && ! empty($emp->photo_url)) {
+                return $emp->photo_url;
             }
 
-            if ($u->avatar && file_exists(public_path('storage/'.$u->avatar))) {
+            if (! empty($u->avatar) && file_exists(public_path('storage/'.$u->avatar))) {
                 return asset('storage/'.$u->avatar);
             }
 
-            return 'https://ui-avatars.com/api/?name='.urlencode($u->name).'&background=0071e3&color=fff&bold=true';
+            $displayName = $emp?->name ?? $u->name;
+
+            return 'https://ui-avatars.com/api/?name='.urlencode($displayName).'&background=0071e3&color=fff&bold=true';
         }
 
         return 'https://ui-avatars.com/api/?name=Team&background=64748b&color=fff';

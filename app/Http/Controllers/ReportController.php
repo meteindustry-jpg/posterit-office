@@ -8,7 +8,6 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\WorkCategory;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -85,6 +84,7 @@ class ReportController extends Controller
 
         if ($format === 'pdf') {
             $pdf = Pdf::loadView('reports.pdf', compact('reportType', 'startDate', 'endDate', 'data'));
+
             return $pdf->download("posterit-report-{$reportType}-{$startDate}-to-{$endDate}.pdf");
         }
 
@@ -98,6 +98,7 @@ class ReportController extends Controller
     protected function resolvePeriodDates(string $period): array
     {
         $now = now();
+
         return match ($period) {
             'daily' => ['start' => $now->format('Y-m-d'), 'end' => $now->format('Y-m-d')],
             'weekly' => ['start' => $now->copy()->startOfWeek()->format('Y-m-d'), 'end' => $now->copy()->endOfWeek()->format('Y-m-d')],
@@ -226,9 +227,9 @@ class ReportController extends Controller
 
         return response()->streamDownload(function () use ($reportType, $data) {
             $handle = fopen('php://output', 'w');
-            
+
             // Output UTF-8 BOM for Excel support
-            fputs($handle, "\xEF\xBB\xBF");
+            fwrite($handle, "\xEF\xBB\xBF");
 
             if ($reportType === 'daily_work') {
                 fputcsv($handle, ['ID', 'Date', 'Employee Code', 'Employee Name', 'Department', 'Category', 'Quantity', 'Remarks']);
@@ -271,7 +272,7 @@ class ReportController extends Controller
                         $s['wfh_days'],
                         $s['leave_days'],
                         $s['absent_days'],
-                        $s['attendance_rate'] . '%',
+                        $s['attendance_rate'].'%',
                     ]);
                 }
             } elseif ($reportType === 'category_summary') {

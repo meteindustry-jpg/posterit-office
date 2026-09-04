@@ -292,11 +292,11 @@
                             @endif
                         @endif
 
-                        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700" 
+                        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800" 
                              title="{{ $todo->assignedTo ? 'Assigned to: ' . $todo->assignedTo->name : 'Created by: ' . $todo->user->name }}">
                             <img src="{{ $todo->assignee_photo_url }}" 
                                  alt="{{ $todo->assignee_name }}" 
-                                 class="w-4 h-4 rounded-full object-cover shrink-0 ring-1 ring-white/60">
+                                 class="w-4 h-4 rounded-full object-cover shrink-0">
                             <span class="font-semibold text-[11px] text-slate-700 dark:text-slate-300">
                                 {{ $todo->assignee_name }}
                             </span>
@@ -509,36 +509,44 @@
                 @endif
             </div>
 
-            <!-- Card Footer -->
-            <div class="mt-3.5 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 gap-2">
-                <div class="flex items-center gap-2">
-                    @if($todo->due_date)
-                    <div class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-semibold' : ($todo->due_date->isToday() ? 'text-amber-700 font-medium' : 'text-slate-500') }}">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span>{{ $todo->due_date->isToday() ? 'Today' : $todo->due_date->format('d M') }}</span>
-                    </div>
-                    @else
-                    <span class="text-slate-400">No date</span>
-                    @endif
-
-                    <!-- Employee Profile & Name Pill -->
-                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 max-w-[140px]" 
-                         title="{{ $todo->assignedTo ? 'Assigned to: ' . $todo->assignedTo->name : 'Created by: ' . $todo->user->name }}">
+            <!-- Card Footer: Due Date & Assignee Employee -->
+            <div class="mt-3.5 pt-2.5 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                <!-- Employee Profile Info Row -->
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
                         <img src="{{ $todo->assignee_photo_url }}" 
                              alt="{{ $todo->assignee_name }}" 
-                             class="w-4 h-4 rounded-full object-cover shrink-0 ring-1 ring-white/60">
-                        <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300 truncate">
-                            {{ $todo->assignee_name }}
-                        </span>
+                             class="w-6 h-6 rounded-full object-cover shrink-0">
+                        <div class="min-w-0 flex items-center gap-1.5">
+                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                                {{ $todo->assignee_name }}
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded font-medium {{ $todo->assignedTo ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' }}">
+                                {{ $todo->assignedTo ? 'Assigned' : 'Created' }}
+                            </span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex items-center gap-1.5">
                     @if(!$todo->work_entry_id && auth()->user()->isManager())
                     <button type="button" @click="openConvertModal(@js($todo))" 
-                            class="px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded text-[10px] font-semibold transition cursor-pointer">
+                            class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded-lg text-[10px] font-bold transition cursor-pointer shrink-0">
                         ⚡ Log
                     </button>
+                    @endif
+                </div>
+
+                <!-- Due Date & Meta -->
+                <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">
+                    @if($todo->due_date)
+                    <div class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-bold' : ($todo->due_date->isToday() ? 'text-amber-700 dark:text-amber-400 font-semibold' : 'text-slate-500') }}">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>{{ $todo->due_date->isToday() ? 'Today' : $todo->due_date->format('d M') }}</span>
+                        @if($todo->due_time)
+                            <span class="text-[10px] opacity-75">({{ date('H:i', strtotime($todo->due_time)) }})</span>
+                        @endif
+                    </div>
+                    @else
+                    <span class="text-slate-400 text-[10px]">No due date</span>
                     @endif
                 </div>
             </div>
@@ -793,24 +801,38 @@
                     @endif
 
                     <!-- Card Footer: Due Date & Assignee -->
-                    <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-400 gap-1.5">
-                        @if($kTodo->due_date)
-                            <span class="flex items-center gap-1 {{ $kTodo->isOverdue() ? 'text-rose-600 font-bold' : ($kTodo->due_date->isToday() ? 'text-amber-700 font-semibold' : 'text-slate-500') }}">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                <span>{{ $kTodo->due_date->isToday() ? 'Today' : $kTodo->due_date->format('d M') }}</span>
-                            </span>
-                        @else
-                            <span>No date</span>
-                        @endif
+                    <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5">
+                        <div class="flex items-center justify-between gap-1.5">
+                            <!-- Employee Profile & Name Pill -->
+                            <div class="flex items-center gap-1.5 min-w-0"
+                                 title="{{ $kTodo->assignedTo ? 'Assigned to: ' . $kTodo->assignedTo->name : 'Created by: ' . $kTodo->user->name }}">
+                                <img src="{{ $kTodo->assignee_photo_url }}" 
+                                     alt="{{ $kTodo->assignee_name }}" 
+                                     class="w-5 h-5 rounded-full object-cover shrink-0">
+                                <span class="font-bold text-slate-800 dark:text-slate-200 truncate text-[11px]">
+                                    {{ $kTodo->assignee_name }}
+                                </span>
+                            </div>
 
-                        <!-- Employee Profile & Name Pill -->
-                        <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 max-w-[125px]"
-                             title="{{ $kTodo->assignedTo ? 'Assigned to: ' . $kTodo->assignedTo->name : 'Created by: ' . $kTodo->user->name }}">
-                            <img src="{{ $kTodo->assignee_photo_url }}" 
-                                 alt="{{ $kTodo->assignee_name }}" 
-                                 class="w-3.5 h-3.5 rounded-full object-cover shrink-0 ring-1 ring-white/60">
-                            <span class="font-semibold text-slate-700 dark:text-slate-300 truncate text-[10px]">
-                                {{ $kTodo->assignee_name }}
+                            @if(!$kTodo->work_entry_id && auth()->user()->isManager())
+                            <button type="button" @click="openConvertModal(@js($kTodo))" 
+                                    class="px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded text-[10px] font-bold transition cursor-pointer shrink-0">
+                                ⚡ Log
+                            </button>
+                            @endif
+                        </div>
+
+                        <div class="flex items-center justify-between text-[10px] text-slate-400">
+                            @if($kTodo->due_date)
+                                <span class="flex items-center gap-1 {{ $kTodo->isOverdue() ? 'text-rose-600 font-bold' : ($kTodo->due_date->isToday() ? 'text-amber-700 dark:text-amber-400 font-semibold' : 'text-slate-500') }}">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span>{{ $kTodo->due_date->isToday() ? 'Today' : $kTodo->due_date->format('d M') }}</span>
+                                </span>
+                            @else
+                                <span>No date</span>
+                            @endif
+                            <span class="text-[9px] px-1.5 py-0.2 rounded font-medium {{ $kTodo->assignedTo ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800' }}">
+                                {{ $kTodo->assignedTo ? 'Assigned' : 'Created' }}
                             </span>
                         </div>
                     </div>
@@ -908,42 +930,85 @@
                     @endif
                 </div>
 
-                <div x-data="{ refType: 'url', urlInput: '', previewSrc: '' }" class="space-y-1.5">
+                <div x-data="{ 
+                    refType: 'file', 
+                    urlInput: '', 
+                    previewSrc: '',
+                    fileName: '',
+                    fileSize: '',
+                    handleFileChange(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            this.fileName = file.name;
+                            this.fileSize = (file.size / 1024).toFixed(1) + ' KB';
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                                this.previewSrc = ev.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            this.previewSrc = '';
+                            this.fileName = '';
+                            this.fileSize = '';
+                        }
+                    },
+                    clearFile() {
+                        this.previewSrc = '';
+                        this.fileName = '';
+                        this.fileSize = '';
+                        if (this.$refs.fileInput) {
+                            this.$refs.fileInput.value = '';
+                        }
+                    }
+                }" class="space-y-2">
                     <div class="flex items-center justify-between">
-                        <label class="block font-semibold text-slate-700">Reference (Image / Drive / Figma)</label>
-                        <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg text-[10px] font-semibold">
-                            <button type="button" @click="refType = 'url'" :class="refType === 'url' ? 'bg-white shadow-2xs text-[#0071e3]' : 'text-slate-500'" class="px-2 py-0.5 rounded transition">Link / URL</button>
-                            <button type="button" @click="refType = 'file'" :class="refType === 'file' ? 'bg-white shadow-2xs text-[#0071e3]' : 'text-slate-500'" class="px-2 py-0.5 rounded transition">Upload File</button>
+                        <label class="block font-semibold text-slate-700 dark:text-slate-200">Reference Image / Document</label>
+                        <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-[10px] font-semibold">
+                            <button type="button" @click="refType = 'file'" :class="refType === 'file' ? 'bg-white dark:bg-slate-700 shadow-2xs text-[#0071e3]' : 'text-slate-500'" class="px-2 py-0.5 rounded transition cursor-pointer">Upload Image</button>
+                            <button type="button" @click="refType = 'url'" :class="refType === 'url' ? 'bg-white dark:bg-slate-700 shadow-2xs text-[#0071e3]' : 'text-slate-500'" class="px-2 py-0.5 rounded transition cursor-pointer">Link / URL</button>
                         </div>
                     </div>
 
-                    <div x-show="refType === 'url'">
+                    <!-- File Upload Area -->
+                    <div x-show="refType === 'file'">
+                        <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/30 transition cursor-pointer group">
+                            <input type="file" name="reference_file" accept="image/*" x-ref="fileInput"
+                                   @change="handleFileChange($event)"
+                                   class="hidden">
+                            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                                <svg class="w-5 h-5 text-[#0071e3] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <span class="font-semibold text-xs">Click to browse image</span>
+                                <span class="text-[10px] text-slate-400">(PNG, JPG, WEBP)</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- URL Input Area -->
+                    <div x-show="refType === 'url'" style="display: none;">
                         <input type="text" name="reference_url" x-model="urlInput"
-                               placeholder="https://... (Direct Image, Drive, Figma, Pinterest link)" 
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-hidden focus:border-[#0071e3]">
-                        <p class="text-[10px] text-slate-400 mt-1">Accepts direct images (.png, .jpg, .webp), Google Drive, Pinterest, or Figma links.</p>
+                               placeholder="https://... (Direct Image, Drive, Figma link)" 
+                               class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-hidden focus:border-[#0071e3]">
+                        <p class="text-[10px] text-slate-400 mt-1">Accepts image URLs, Google Drive, Pinterest, or Figma links.</p>
                     </div>
 
-                    <div x-show="refType === 'file'" style="display: none;">
-                        <input type="file" name="reference_file" accept="image/*"
-                               @change="const file = $event.target.files[0]; if(file) { previewSrc = URL.createObjectURL(file); }"
-                               class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#0071e3] hover:file:bg-blue-100 cursor-pointer">
-                        <p class="text-[10px] text-slate-400 mt-1">Upload image reference or screenshot from your device (PNG/JPG).</p>
-                    </div>
-
-                    <!-- Live Image Preview in Create Modal -->
-                    <template x-if="previewSrc || (urlInput && urlInput.match(/\.(jpeg|jpg|gif|png|webp|svg)/i))">
-                        <div class="mt-2 rounded-xl border border-blue-200 bg-blue-50/50 p-2 flex items-center gap-3">
-                            <img :src="previewSrc || urlInput" alt="Preview" class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-200 shadow-2xs shrink-0">
-                            <div class="text-[11px] text-slate-700 truncate">
-                                <span class="font-semibold text-emerald-600 flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Image preview ready
+                    <!-- Live Image Preview Card -->
+                    <div x-show="previewSrc || (urlInput && urlInput.match(/\.(jpeg|jpg|gif|png|webp|svg)/i))" 
+                         class="mt-2 rounded-xl border border-blue-200 bg-blue-50/70 dark:border-blue-900 dark:bg-blue-950/40 p-2.5 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <img :src="previewSrc || urlInput" alt="Preview" 
+                                 class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-200 shrink-0 shadow-2xs">
+                            <div class="min-w-0">
+                                <span class="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                    Image ready for upload
                                 </span>
-                                <p class="text-[10px] text-slate-500 mt-0.5">Will display as an interactive preview on the Todo card</p>
+                                <p class="text-[10px] text-slate-500 truncate" x-text="fileName ? (fileName + ' (' + fileSize + ')') : 'Web image URL detected'"></p>
                             </div>
                         </div>
-                    </template>
+                        <button type="button" @click="clearFile(); urlInput = '';" class="p-1 text-slate-400 hover:text-rose-600 rounded cursor-pointer" title="Remove image">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                </div>
                 </div>
 
                 <div>
@@ -1073,36 +1138,66 @@
                     </div>
                 </div>
 
-                <div class="space-y-1.5" x-data="{ uploadNew: false }">
+                <div class="space-y-2" x-data="{ 
+                    uploadNew: false,
+                    newPreview: '',
+                    newFileName: '',
+                    handleEditFile(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            this.newFileName = file.name;
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                                this.newPreview = ev.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            this.newPreview = '';
+                            this.newFileName = '';
+                        }
+                    }
+                }">
                     <div class="flex items-center justify-between">
-                        <label class="block font-semibold text-slate-700">Figma / Drive / Image Reference</label>
+                        <label class="block font-semibold text-slate-700 dark:text-slate-200">Reference Image / Document</label>
                         <button type="button" @click="uploadNew = !uploadNew" class="text-[10px] text-[#0071e3] hover:underline font-semibold" x-text="uploadNew ? 'Enter URL instead' : 'Upload Image File'"></button>
                     </div>
 
                     <div x-show="!uploadNew">
                         <input type="text" name="reference_url" x-model="editData.reference_url" 
                                placeholder="https://..."
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900">
+                               class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white">
                     </div>
 
                     <div x-show="uploadNew" style="display: none;">
-                        <input type="file" name="reference_file" accept="image/*"
-                               class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#0071e3] hover:file:bg-blue-100 cursor-pointer">
+                        <label class="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-3 hover:border-blue-400 hover:bg-blue-50/30 transition cursor-pointer group">
+                            <input type="file" name="reference_file" accept="image/*"
+                                   @change="handleEditFile($event)"
+                                   class="hidden">
+                            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                                <svg class="w-5 h-5 text-[#0071e3] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <span class="font-semibold text-xs">Choose replacement image</span>
+                            </div>
+                        </label>
                     </div>
 
-                    <!-- Existing Preview if Available -->
-                    <template x-if="editData.reference_preview">
-                        <div class="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-2 flex items-center justify-between">
-                            <div class="flex items-center gap-2 truncate">
-                                <img :src="editData.reference_preview" alt="Preview" class="w-10 h-10 rounded-lg object-cover bg-white border border-slate-200 shrink-0">
-                                <span class="text-[11px] font-medium text-slate-600 truncate">Current image preview attached</span>
+                    <!-- Existing or New Preview -->
+                    <div x-show="newPreview || editData.reference_preview" 
+                         class="mt-2 rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800 p-2.5 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <img :src="newPreview || editData.reference_preview" alt="Preview" 
+                                 class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-200 shrink-0 shadow-2xs">
+                            <div class="min-w-0">
+                                <span class="text-xs font-bold text-slate-700 dark:text-slate-300" x-text="newPreview ? 'New image selected' : 'Current attached reference'"></span>
+                                <p class="text-[10px] text-slate-500 truncate" x-text="newFileName || editData.reference_url || 'Attached file'"></p>
                             </div>
+                        </div>
+                        <template x-if="!newPreview && editData.reference_preview">
                             <button type="button" @click="openImageLightbox(editData.reference_preview, editData.title, editData.reference_url)" 
                                     class="text-[11px] font-semibold text-[#0071e3] hover:underline shrink-0">
                                 View &rarr;
                             </button>
-                        </div>
-                    </template>
+                        </template>
+                    </div>
                 </div>
 
                 @if(auth()->user()->isManager())
@@ -1129,6 +1224,7 @@
                 </div>
             </form>
         </div>
+    </div>
     <!-- Global Reference Image Lightbox Modal -->
     <div x-show="lightboxOpen" 
          x-cloak 

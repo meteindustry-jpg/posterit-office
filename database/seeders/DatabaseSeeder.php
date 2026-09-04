@@ -5,8 +5,11 @@ namespace Database\Seeders;
 use App\Models\AuditLog;
 use App\Models\CompanySetting;
 use App\Models\Department;
+use App\Models\Employee;
 use App\Models\Holiday;
+use App\Models\LeaveRequest;
 use App\Models\LeaveType;
+use App\Models\Todo;
 use App\Models\User;
 use App\Models\WorkCategory;
 use Illuminate\Database\Seeder;
@@ -141,7 +144,7 @@ class DatabaseSeeder extends Seeder
                     ['name' => $ed['name'], 'password' => Hash::make('password'), 'role' => 'employee', 'is_active' => true]
                 );
 
-                $e = \App\Models\Employee::firstOrCreate(
+                $e = Employee::firstOrCreate(
                     ['email' => $ed['email']],
                     [
                         'employee_code' => $ed['code'],
@@ -159,10 +162,10 @@ class DatabaseSeeder extends Seeder
                 $u->update(['employee_id' => $e->id]);
             }
 
-            $firstEmp = \App\Models\Employee::first();
-            $leaveType = \App\Models\LeaveType::first();
+            $firstEmp = Employee::first();
+            $leaveType = LeaveType::first();
             if ($firstEmp && $leaveType) {
-                \App\Models\LeaveRequest::create([
+                LeaveRequest::create([
                     'employee_id' => $firstEmp->id,
                     'leave_type_id' => $leaveType->id,
                     'start_date' => now()->addDays(5)->format('Y-m-d'),
@@ -173,7 +176,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
 
-            \App\Models\Todo::create([
+            Todo::create([
                 'user_id' => $manager->id,
                 'title' => 'Test Initial Task',
                 'description' => 'Test task description',

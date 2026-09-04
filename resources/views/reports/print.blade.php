@@ -84,8 +84,8 @@
                 <td class="py-2 px-3 font-semibold">{{ $r->employee->name }} ({{ $r->employee->employee_code }})</td>
                 <td class="py-2 px-3 text-slate-500">{{ $r->employee->department->name ?? 'N/A' }}</td>
                 <td class="py-2 px-3 font-bold uppercase">{{ $r->status }}</td>
-                <td class="py-2 px-3">{{ $r->check_in ?? '-' }}</td>
-                <td class="py-2 px-3">{{ $r->check_out ?? '-' }}</td>
+                <td class="py-2 px-3 font-mono">{{ $r->check_in ? \Carbon\Carbon::parse($r->check_in)->format('h:i A') : '-' }}</td>
+                <td class="py-2 px-3 font-mono">{{ $r->check_out ? \Carbon\Carbon::parse($r->check_out)->format('h:i A') : '-' }}</td>
             </tr>
             @endforeach
         </tbody>

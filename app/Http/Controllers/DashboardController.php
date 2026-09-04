@@ -8,7 +8,8 @@ use App\Models\DailyWorkEntry;
 use App\Models\Employee;
 use App\Models\Holiday;
 use App\Models\LeaveRequest;
-use App\Models\WorkCategory;
+use App\Models\Todo;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +59,7 @@ class DashboardController extends Controller
         $monthAttendances = DailyAttendance::whereYear('date', $currentYear)
             ->whereMonth('date', $currentMonth)
             ->get();
-        
+
         $totalMonthRecords = $monthAttendances->count();
         $presentLikeCount = $monthAttendances->whereIn('status', ['present', 'wfh'])->count() + ($monthAttendances->where('status', 'half_day')->count() * 0.5);
         $attendancePercentage = $totalMonthRecords > 0 ? round(($presentLikeCount / $totalMonthRecords) * 100, 1) : 100;
@@ -120,18 +121,18 @@ class DashboardController extends Controller
             ->get();
 
         // My Pending Todo Tasks
-        $myPendingTodos = \App\Models\Todo::where(function ($q) use ($user) {
+        $myPendingTodos = Todo::where(function ($q) use ($user) {
             $q->where('user_id', $user->id)
-              ->orWhere('assigned_to_user_id', $user->id);
+                ->orWhere('assigned_to_user_id', $user->id);
         })
-        ->where('is_completed', false)
-        ->orderByRaw("CASE WHEN priority = 'high' THEN 1 WHEN priority = 'medium' THEN 2 ELSE 3 END")
-        ->orderBy('due_date', 'asc')
-        ->take(4)
-        ->get();
+            ->where('is_completed', false)
+            ->orderByRaw("CASE WHEN priority = 'high' THEN 1 WHEN priority = 'medium' THEN 2 ELSE 3 END")
+            ->orderBy('due_date', 'asc')
+            ->take(4)
+            ->get();
 
         $pendingRegistrationCount = $user->isSuperAdmin()
-            ? \App\Models\User::where('is_active', false)->whereNotNull('employee_id')->count()
+            ? User::where('is_active', false)->whereNotNull('employee_id')->count()
             : 0;
 
         return view('dashboard.index', compact(
@@ -162,9 +163,11 @@ class DashboardController extends Controller
     protected function employeeDashboard($user)
     {
         $employee = $user->employee;
-        $today = now()->format('Y-m-d');
-        $currentMonth = now()->month;
-        $currentYear = now()->year;
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $now = now()->setTimezone($tz);
+        $today = $now->format('Y-m-d');
+        $currentMonth = $now->month;
+        $currentYear = $now->year;
 
         $myTodayAttendance = DailyAttendance::where('employee_id', $employee->id)
             ->whereDate('date', $today)
@@ -180,8 +183,8 @@ class DashboardController extends Controller
             ->sum('quantity');
 
         // Week stats
-        $weekStart = now()->startOfWeek();
-        $weekEnd = now()->endOfWeek();
+        $weekStart = $now->copy()->startOfWeek();
+        $weekEnd = $now->copy()->endOfWeek();
         $myWeeklyWorks = (int) DailyWorkEntry::where('employee_id', $employee->id)
             ->whereBetween('date', [$weekStart->format('Y-m-d'), $weekEnd->format('Y-m-d')])
             ->sum('quantity');
@@ -197,8 +200,8 @@ class DashboardController extends Controller
 
         $officeTimingStart = CompanySetting::get('office_timing_start', '09:30');
         $officeTimingEnd = CompanySetting::get('office_timing_end', '18:30');
-        $shiftStart = Carbon::parse(now()->format('Y-m-d') . ' ' . $officeTimingStart);
-        $shiftEnd = Carbon::parse(now()->format('Y-m-d') . ' ' . $officeTimingEnd);
+        $shiftStart = Carbon::parse($today.' '.$officeTimingStart, $tz);
+        $shiftEnd = Carbon::parse($today.' '.$officeTimingEnd, $tz);
         $standardShiftHours = max(1, round($shiftStart->diffInMinutes($shiftEnd) / 60, 1));
 
         $totalMonthHoursEst = round($monthPresentDays * $standardShiftHours, 1);
@@ -211,13 +214,15 @@ class DashboardController extends Controller
         $todayCheckOutFormatted = null;
 
         if ($myTodayAttendance && $myTodayAttendance->check_in) {
-            $todayCheckInFormatted = Carbon::parse($myTodayAttendance->check_in)->format('h:i A');
+            $attDateStr = $myTodayAttendance->date ? $myTodayAttendance->date->format('Y-m-d') : $today;
+            $inTime = Carbon::parse($attDateStr.' '.$myTodayAttendance->check_in, $tz);
+            $todayCheckInFormatted = $inTime->format('h:i A');
+
             if ($myTodayAttendance->check_out) {
-                $todayCheckOutFormatted = Carbon::parse($myTodayAttendance->check_out)->format('h:i A');
+                $todayCheckOutFormatted = Carbon::parse($attDateStr.' '.$myTodayAttendance->check_out, $tz)->format('h:i A');
             }
 
-            $inTime = Carbon::parse($myTodayAttendance->check_in);
-            $outTime = $myTodayAttendance->check_out ? Carbon::parse($myTodayAttendance->check_out) : now();
+            $outTime = $myTodayAttendance->check_out ? Carbon::parse($attDateStr.' '.$myTodayAttendance->check_out, $tz) : $now;
 
             if ($outTime->greaterThanOrEqualTo($inTime)) {
                 $diffMins = $inTime->diffInMinutes($outTime);
@@ -230,8 +235,8 @@ class DashboardController extends Controller
             $todayProgressPct = min(100, round(($diffMins / ($standardShiftHours * 60)) * 100));
         }
 
-        $todayCheckInTimestamp = ($myTodayAttendance && $myTodayAttendance->check_in) 
-            ? Carbon::parse(now()->format('Y-m-d').' '.$myTodayAttendance->check_in)->timestamp * 1000 
+        $todayCheckInTimestamp = ($myTodayAttendance && $myTodayAttendance->check_in)
+            ? Carbon::parse(($myTodayAttendance->date ? $myTodayAttendance->date->format('Y-m-d') : $today).' '.$myTodayAttendance->check_in, $tz)->timestamp * 1000
             : null;
 
         // Leave stats
@@ -259,15 +264,15 @@ class DashboardController extends Controller
             ->get();
 
         // My Active Tasks / Todo items
-        $myPendingTodos = \App\Models\Todo::where(function ($q) use ($user) {
+        $myPendingTodos = Todo::where(function ($q) use ($user) {
             $q->where('assigned_to_user_id', $user->id)
-              ->orWhere('user_id', $user->id);
+                ->orWhere('user_id', $user->id);
         })
-        ->where('is_completed', false)
-        ->orderByRaw("CASE WHEN priority = 'high' THEN 1 WHEN priority = 'medium' THEN 2 ELSE 3 END")
-        ->orderBy('due_date', 'asc')
-        ->take(6)
-        ->get();
+            ->where('is_completed', false)
+            ->orderByRaw("CASE WHEN priority = 'high' THEN 1 WHEN priority = 'medium' THEN 2 ELSE 3 END")
+            ->orderBy('due_date', 'asc')
+            ->take(6)
+            ->get();
 
         return view('dashboard.employee', compact(
             'employee',

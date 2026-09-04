@@ -44,11 +44,12 @@ class Employee extends Model
     {
         $maxId = (int) (static::max('id') ?? 0);
         $next = $maxId + 1;
-        $code = 'EMP-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+        $code = 'EMP-'.str_pad($next, 3, '0', STR_PAD_LEFT);
         while (static::where('employee_code', $code)->exists()) {
             $next++;
-            $code = 'EMP-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+            $code = 'EMP-'.str_pad($next, 3, '0', STR_PAD_LEFT);
         }
+
         return $code;
     }
 
@@ -92,9 +93,10 @@ class Employee extends Model
 
     public function getPhotoUrlAttribute(): string
     {
-        if ($this->photo && file_exists(public_path('storage/' . $this->photo))) {
-            return asset('storage/' . $this->photo);
+        if ($this->photo && file_exists(public_path('storage/'.$this->photo))) {
+            return asset('storage/'.$this->photo);
         }
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=6366f1&color=fff';
+
+        return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=6366f1&color=fff';
     }
 }

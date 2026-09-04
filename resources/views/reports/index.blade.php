@@ -228,8 +228,8 @@
                                 {{ $r->status }}
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-slate-500">{{ $r->check_in ?? '-' }}</td>
-                        <td class="py-3 px-4 text-slate-500">{{ $r->check_out ?? '-' }}</td>
+                        <td class="py-3 px-4 text-slate-500 font-mono">{{ $r->check_in ? \Carbon\Carbon::parse($r->check_in)->format('h:i A') : '-' }}</td>
+                        <td class="py-3 px-4 text-slate-500 font-mono">{{ $r->check_out ? \Carbon\Carbon::parse($r->check_out)->format('h:i A') : '-' }}</td>
                         <td class="py-3 px-4 text-slate-400">{{ $r->remarks ?? '-' }}</td>
                     </tr>
                     @empty

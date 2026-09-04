@@ -6,7 +6,6 @@ use App\Models\DailyAttendance;
 use App\Models\DailyWorkEntry;
 use App\Models\Department;
 use App\Models\Employee;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -47,7 +46,7 @@ class PerformanceController extends Controller
                 ->whereYear('date', $year)
                 ->whereMonth('date', $month)
                 ->get();
-            
+
             $totalAttRecords = $monthAtt->count();
             $presentUnits = $monthAtt->whereIn('status', ['present', 'wfh'])->count() + ($monthAtt->where('status', 'half_day')->count() * 0.5);
             $attendanceRate = $totalAttRecords > 0 ? round(($presentUnits / $totalAttRecords) * 100, 1) : 100;

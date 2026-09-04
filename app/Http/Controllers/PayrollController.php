@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanySetting;
 use App\Models\DailyAttendance;
 use App\Models\Employee;
 use App\Models\LeaveRequest;
 use App\Models\PayrollRun;
 use App\Models\Payslip;
-use App\Models\CompanySetting;
+use App\Models\User;
 use App\Services\AuditService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -103,7 +104,7 @@ class PayrollController extends Controller
                 ->whereBetween('date', [$startDate->format('Y-m-d 00:00:00'), $endDate->format('Y-m-d 23:59:59')])
                 ->get();
 
-            $presentDays = $attendances->filter(fn($a) => in_array($a->status, ['present', 'wfh']))->count();
+            $presentDays = $attendances->filter(fn ($a) => in_array($a->status, ['present', 'wfh']))->count();
             $halfDays = $attendances->where('status', 'half_day')->count();
             $leaveDays = $attendances->where('status', 'leave')->count();
             $absentDays = $attendances->where('status', 'absent')->count();
@@ -113,7 +114,7 @@ class PayrollController extends Controller
                 ->where('status', 'approved')
                 ->where(function ($q) use ($startDate, $endDate) {
                     $q->whereBetween('start_date', [$startDate, $endDate])
-                      ->orWhereBetween('end_date', [$startDate, $endDate]);
+                        ->orWhereBetween('end_date', [$startDate, $endDate]);
                 })
                 ->sum('total_days');
 
@@ -328,7 +329,7 @@ class PayrollController extends Controller
                     $ps->employee->department->name ?? 'Design',
                     $ps->employee->designation ?? 'Team Member',
                     $ps->employee->bank_name ?? 'N/A',
-                    $ps->employee->bank_account_no ? "'" . $ps->employee->bank_account_no : 'N/A',
+                    $ps->employee->bank_account_no ? "'".$ps->employee->bank_account_no : 'N/A',
                     $ps->employee->bank_ifsc ?? 'N/A',
                     $ps->employee->upi_id ?? 'N/A',
                     $ps->basic_salary,

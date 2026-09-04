@@ -10,9 +10,11 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TodoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkCategoryController;
 use Illuminate\Support\Facades\Route;
@@ -70,14 +72,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
 
     // Todo / Task Management (All roles)
-    Route::get('/todos', [\App\Http\Controllers\TodoController::class, 'index'])->name('todos.index');
-    Route::post('/todos', [\App\Http\Controllers\TodoController::class, 'store'])->name('todos.store');
-    Route::put('/todos/{todo}', [\App\Http\Controllers\TodoController::class, 'update'])->name('todos.update');
-    Route::patch('/todos/{todo}/toggle', [\App\Http\Controllers\TodoController::class, 'toggle'])->name('todos.toggle');
-    Route::patch('/todos/{todo}/status', [\App\Http\Controllers\TodoController::class, 'updateStatus'])->name('todos.updateStatus');
-    Route::patch('/todos/{todo}/subtasks/toggle', [\App\Http\Controllers\TodoController::class, 'toggleSubtask'])->name('todos.toggleSubtask');
-    Route::post('/todos/{todo}/convert-work-entry', [\App\Http\Controllers\TodoController::class, 'convertToWorkEntry'])->name('todos.convertToWorkEntry');
-    Route::delete('/todos/{todo}', [\App\Http\Controllers\TodoController::class, 'destroy'])->name('todos.destroy');
+    Route::get('/todos', [TodoController::class, 'index'])->name('todos.index');
+    Route::post('/todos', [TodoController::class, 'store'])->name('todos.store');
+    Route::put('/todos/{todo}', [TodoController::class, 'update'])->name('todos.update');
+    Route::patch('/todos/{todo}/toggle', [TodoController::class, 'toggle'])->name('todos.toggle');
+    Route::patch('/todos/{todo}/status', [TodoController::class, 'updateStatus'])->name('todos.updateStatus');
+    Route::patch('/todos/{todo}/subtasks/toggle', [TodoController::class, 'toggleSubtask'])->name('todos.toggleSubtask');
+    Route::post('/todos/{todo}/convert-work-entry', [TodoController::class, 'convertToWorkEntry'])->name('todos.convertToWorkEntry');
+    Route::delete('/todos/{todo}', [TodoController::class, 'destroy'])->name('todos.destroy');
 
     // ----------------------------------------------------
     // Manager, Admin, Super Admin Level
@@ -101,16 +103,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports/export/{format?}', [ReportController::class, 'export'])->name('reports.export');
 
         // Payroll Management Actions (Manager & Admin Only)
-        Route::post('/payroll/generate', [\App\Http\Controllers\PayrollController::class, 'generate'])->name('payroll.generate');
-        Route::put('/payroll/payslips/{payslip}', [\App\Http\Controllers\PayrollController::class, 'updatePayslip'])->name('payroll.updatePayslip');
-        Route::post('/payroll/runs/{payrollRun}/mark-paid', [\App\Http\Controllers\PayrollController::class, 'bulkMarkPaid'])->name('payroll.bulkMarkPaid');
-        Route::get('/payroll/runs/{payrollRun}/export-bank-csv', [\App\Http\Controllers\PayrollController::class, 'exportBankCsv'])->name('payroll.exportBankCsv');
+        Route::post('/payroll/generate', [PayrollController::class, 'generate'])->name('payroll.generate');
+        Route::put('/payroll/payslips/{payslip}', [PayrollController::class, 'updatePayslip'])->name('payroll.updatePayslip');
+        Route::post('/payroll/runs/{payrollRun}/mark-paid', [PayrollController::class, 'bulkMarkPaid'])->name('payroll.bulkMarkPaid');
+        Route::get('/payroll/runs/{payrollRun}/export-bank-csv', [PayrollController::class, 'exportBankCsv'])->name('payroll.exportBankCsv');
     });
 
     // Payroll Index & Employee Payslip Routes
-    Route::get('/payroll', [\App\Http\Controllers\PayrollController::class, 'index'])->name('payroll.index');
-    Route::get('/my-payslips', [\App\Http\Controllers\PayrollController::class, 'myPayslips'])->name('payroll.myPayslips');
-    Route::get('/payroll/payslips/{payslip}', [\App\Http\Controllers\PayrollController::class, 'showPayslip'])->name('payroll.showPayslip');
+    Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll.index');
+    Route::get('/my-payslips', [PayrollController::class, 'myPayslips'])->name('payroll.myPayslips');
+    Route::get('/payroll/payslips/{payslip}', [PayrollController::class, 'showPayslip'])->name('payroll.showPayslip');
 
     // ----------------------------------------------------
     // Admin & Super Admin Level

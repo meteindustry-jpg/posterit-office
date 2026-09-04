@@ -83,8 +83,8 @@
                 <td>{{ $r->employee->name }}</td>
                 <td>{{ $r->employee->department->name ?? 'N/A' }}</td>
                 <td><span class="badge badge-{{ $r->status }}">{{ strtoupper($r->status) }}</span></td>
-                <td>{{ $r->check_in ?? '-' }}</td>
-                <td>{{ $r->check_out ?? '-' }}</td>
+                <td>{{ $r->check_in ? \Carbon\Carbon::parse($r->check_in)->format('h:i A') : '-' }}</td>
+                <td>{{ $r->check_out ? \Carbon\Carbon::parse($r->check_out)->format('h:i A') : '-' }}</td>
             </tr>
             @endforeach
         </tbody>

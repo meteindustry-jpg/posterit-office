@@ -47,40 +47,40 @@
          },
          markAllPresent() {
              document.querySelectorAll('.attendance-row').forEach(row => {
-                 if (row.style.display !== 'none') {
-                     const select = row.querySelector('.attendance-status-select');
-                     if (select) {
-                         select.value = 'present';
-                         select.dispatchEvent(new Event('change'));
-                     }
-                 }
-             });
-             this.fillStandardTimes();
-             this.updateLiveStats();
-         },
-         markAllWfh() {
-             document.querySelectorAll('.attendance-row').forEach(row => {
-                 if (row.style.display !== 'none') {
-                     const select = row.querySelector('.attendance-status-select');
-                     if (select) {
-                         select.value = 'wfh';
-                         select.dispatchEvent(new Event('change'));
-                     }
-                 }
-             });
-             this.fillStandardTimes();
-             this.updateLiveStats();
-         },
-         fillStandardTimes() {
-             document.querySelectorAll('.attendance-row').forEach(row => {
-                 if (row.style.display !== 'none') {
-                     const inInput = row.querySelector('input[name*=\'[check_in]\']');
-                     const outInput = row.querySelector('input[name*=\'[check_out]\']');
-                     if (inInput && (!inInput.value || inInput.value === '00:00')) inInput.value = '09:30';
-                     if (outInput && (!outInput.value || outInput.value === '00:00')) outInput.value = '18:30';
-                 }
-             });
-         },
+                  if (row.style.display !== 'none') {
+                      const select = row.querySelector('.attendance-status-select');
+                      if (select) {
+                          select.value = 'present';
+                          select.dispatchEvent(new Event('change'));
+                      }
+                  }
+              });
+              this.updateLiveStats();
+          },
+          markAllWfh() {
+              document.querySelectorAll('.attendance-row').forEach(row => {
+                  if (row.style.display !== 'none') {
+                      const select = row.querySelector('.attendance-status-select');
+                      if (select) {
+                          select.value = 'wfh';
+                          select.dispatchEvent(new Event('change'));
+                      }
+                  }
+              });
+              this.updateLiveStats();
+          },
+          fillStandardTimes() {
+              const officeStart = '{{ \App\Models\CompanySetting::get('office_timing_start', '09:30') }}';
+              const officeEnd = '{{ \App\Models\CompanySetting::get('office_timing_end', '18:30') }}';
+              document.querySelectorAll('.attendance-row').forEach(row => {
+                  if (row.style.display !== 'none') {
+                      const inInput = row.querySelector('input[name*=\'[check_in]\']');
+                      const outInput = row.querySelector('input[name*=\'[check_out]\']');
+                      if (inInput && (!inInput.value || inInput.value === '00:00')) inInput.value = officeStart;
+                      if (outInput && (!outInput.value || outInput.value === '00:00')) outInput.value = officeEnd;
+                  }
+              });
+          },
          filterRow(name, code, deptId) {
              const query = this.searchQuery.toLowerCase().trim();
              const matchesQuery = !query || name.toLowerCase().includes(query) || code.toLowerCase().includes(query);
@@ -302,9 +302,9 @@
                         @forelse($employees as $index => $emp)
                         @php
                             $att = $existingAttendances->get($emp->id);
-                            $currentStatus = $att ? $att->status : 'present';
-                            $checkIn = $att ? ($att->check_in ? date('H:i', strtotime($att->check_in)) : '09:30') : '09:30';
-                            $checkOut = $att ? ($att->check_out ? date('H:i', strtotime($att->check_out)) : '18:30') : '18:30';
+                            $currentStatus = $att ? $att->status : 'pending';
+                            $checkIn = $att && $att->check_in ? date('H:i', strtotime($att->check_in)) : '';
+                            $checkOut = $att && $att->check_out ? date('H:i', strtotime($att->check_out)) : '';
                             $remarks = $att ? $att->remarks : '';
                         @endphp
                         <tr class="attendance-row hover:bg-slate-50/80 transition" 
@@ -313,6 +313,17 @@
                                 status: '{{ $currentStatus }}',
                                 onStatusChange(newVal) {
                                     this.status = newVal;
+                                    const row = $el;
+                                    const inInput = row.querySelector('input[name*=\'[check_in]\']');
+                                    const outInput = row.querySelector('input[name*=\'[check_out]\']');
+                                    if ((newVal === 'present' || newVal === 'wfh') && inInput && !inInput.value) {
+                                        const now = new Date();
+                                        inInput.value = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                    }
+                                    if ((newVal === 'absent' || newVal === 'leave' || newVal === 'pending') && inInput) {
+                                        inInput.value = '';
+                                        if (outInput) outInput.value = '';
+                                    }
                                     $nextTick(() => { updateLiveStats(); });
                                 }
                             }">
@@ -331,7 +342,7 @@
                             </td>
 
                             <td class="py-3 px-4 text-slate-600 font-medium whitespace-nowrap">
-                                {{ $emp->department->name ?? 'Studio' }}
+                                {{ $emp->department->name ?? 'Office' }}
                             </td>
 
                             <!-- Semantic Color-Coded Status Select -->
@@ -345,8 +356,10 @@
                                             'bg-indigo-50 text-indigo-800 border-indigo-300': status === 'wfh',
                                             'bg-amber-50 text-amber-800 border-amber-300': status === 'half_day',
                                             'bg-rose-50 text-rose-800 border-rose-300': status === 'leave',
-                                            'bg-slate-100 text-slate-700 border-slate-300': status === 'absent'
+                                            'bg-slate-100 text-slate-700 border-slate-300': status === 'absent',
+                                            'bg-amber-50/70 text-amber-800 border-amber-200': status === 'pending'
                                         }">
+                                    <option value="pending">⏳ Not Clocked In (Pending)</option>
                                     <option value="present">🟢 Present (Office)</option>
                                     <option value="wfh">🔵 WFH (Remote)</option>
                                     <option value="half_day">🟡 Half Day</option>
@@ -358,14 +371,14 @@
                             <!-- Check In -->
                             <td class="py-3 px-4">
                                 <input type="time" name="attendances[{{ $index }}][check_in]" value="{{ $checkIn }}"
-                                       :disabled="status === 'absent' || status === 'leave'"
+                                       :disabled="status === 'absent' || status === 'leave' || status === 'pending'"
                                        class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0071e3] disabled:opacity-30 disabled:bg-slate-100">
                             </td>
 
                             <!-- Check Out -->
                             <td class="py-3 px-4">
                                 <input type="time" name="attendances[{{ $index }}][check_out]" value="{{ $checkOut }}"
-                                       :disabled="status === 'absent' || status === 'leave'"
+                                       :disabled="status === 'absent' || status === 'leave' || status === 'pending'"
                                        class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0071e3] disabled:opacity-30 disabled:bg-slate-100">
                             </td>
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\CompanySetting;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
@@ -21,6 +20,7 @@ class SettingController extends Controller
             'company_tax_id' => CompanySetting::get('company_tax_id', 'GSTIN27ABCDE1234F1Z5'),
             'company_logo' => CompanySetting::get('company_logo'),
             'working_days' => json_decode(CompanySetting::get('working_days', '["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]'), true) ?? [],
+            'timezone' => CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')),
             'office_timing_start' => CompanySetting::get('office_timing_start', '09:30'),
             'office_timing_end' => CompanySetting::get('office_timing_end', '18:30'),
             'late_grace_minutes' => (int) CompanySetting::get('late_grace_minutes', 15),
@@ -47,6 +47,7 @@ class SettingController extends Controller
             'company_tax_id' => ['nullable', 'string', 'max:100'],
             'company_logo' => ['nullable', 'image', 'max:2048'],
             'working_days' => ['required', 'array'],
+            'timezone' => ['nullable', 'string'],
             'office_timing_start' => ['required', 'string'],
             'office_timing_end' => ['required', 'string'],
             'late_grace_minutes' => ['required', 'integer', 'min:0', 'max:120'],
@@ -61,6 +62,12 @@ class SettingController extends Controller
         if ($request->hasFile('company_logo')) {
             $path = $request->file('company_logo')->store('settings', 'public');
             CompanySetting::set('company_logo', $path);
+        }
+
+        if (! empty($validated['timezone'])) {
+            CompanySetting::set('timezone', $validated['timezone']);
+            date_default_timezone_set($validated['timezone']);
+            config(['app.timezone' => $validated['timezone']]);
         }
 
         CompanySetting::set('company_name', $validated['company_name']);

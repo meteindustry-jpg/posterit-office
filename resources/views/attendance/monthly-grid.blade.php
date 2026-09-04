@@ -98,7 +98,15 @@
 
     <!-- Matrix Table Container -->
     <div class="rounded-2xl bg-white border border-slate-200/80 shadow-xs overflow-hidden">
-        <div class="overflow-x-auto custom-scroll">
+        <!-- Mobile Swipe Guide -->
+        <div class="sm:hidden px-3 py-1.5 bg-blue-50/80 text-[11px] font-semibold text-[#0071e3] flex items-center justify-between border-b border-blue-100">
+            <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                <span>Swipe horizontally to view days</span>
+            </span>
+            <span class="text-slate-500 font-normal">{{ $employees->count() }} Staff</span>
+        </div>
+        <div class="overflow-x-auto touch-scroll">
             <table class="w-full text-center text-xs border-collapse">
                 <thead>
                     <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] text-slate-500">
@@ -152,7 +160,7 @@
                                 <img src="{{ $emp->photo_url }}" class="w-7 h-7 rounded-full object-cover border border-slate-200 shrink-0">
                                 <div>
                                     <div class="font-bold text-slate-900 text-xs">{{ $emp->name }}</div>
-                                    <div class="text-[10px] text-slate-400 font-normal">{{ $emp->employee_code }} • {{ $emp->department->name ?? 'Studio' }}</div>
+                                    <div class="text-[10px] text-slate-400 font-normal">{{ $emp->employee_code }} • {{ $emp->department->name ?? 'Office' }}</div>
                                 </div>
                             </div>
                         </td>

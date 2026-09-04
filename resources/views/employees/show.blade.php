@@ -212,8 +212,8 @@
                                 {{ $att->status }}
                             </span>
                         </td>
-                        <td class="py-3 px-3 text-slate-500">{{ $att->check_in ?? '-' }}</td>
-                        <td class="py-3 px-3 text-slate-500">{{ $att->check_out ?? '-' }}</td>
+                        <td class="py-3 px-3 text-slate-500 font-mono">{{ $att->check_in ? \Carbon\Carbon::parse($att->check_in)->format('h:i A') : '-' }}</td>
+                        <td class="py-3 px-3 text-slate-500 font-mono">{{ $att->check_out ? \Carbon\Carbon::parse($att->check_out)->format('h:i A') : '-' }}</td>
                         <td class="py-3 px-3 text-slate-400">{{ $att->remarks ?? '-' }}</td>
                     </tr>
                     @empty

@@ -20,6 +20,7 @@ class UserController extends Controller
 
         $users = User::with('employee.department')->orderBy('id')->paginate(15);
         $employees = Employee::where('employment_status', 'active')->orderBy('name')->get();
+
         return view('users.index', compact('users', 'employees', 'pendingUsers'));
     }
 
@@ -52,7 +53,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'password' => ['nullable', 'string', 'min:6'],
             'role' => ['required', 'in:super_admin,admin,manager,employee'],
             'employee_id' => ['nullable', 'exists:employees,id'],
@@ -78,6 +79,10 @@ class UserController extends Controller
     {
         if ($user->id === auth()->id()) {
             return back()->withErrors(['error' => 'You cannot delete your own account.']);
+        }
+
+        if ($user->isSuperAdmin() && User::where('role', 'super_admin')->count() <= 1) {
+            return back()->withErrors(['error' => 'Cannot delete the only Super Admin account.']);
         }
 
         $name = $user->name;

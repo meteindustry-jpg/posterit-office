@@ -11,6 +11,7 @@ class WorkCategoryController extends Controller
     public function index()
     {
         $categories = WorkCategory::withCount('workEntries')->orderBy('name')->get();
+
         return view('categories.index', compact('categories'));
     }
 
@@ -34,7 +35,7 @@ class WorkCategoryController extends Controller
     public function update(Request $request, WorkCategory $category)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:work_categories,name,' . $category->id],
+            'name' => ['required', 'string', 'max:255', 'unique:work_categories,name,'.$category->id],
             'description' => ['nullable', 'string', 'max:500'],
             'color' => ['required', 'string', 'max:20'],
             'is_active' => ['nullable', 'boolean'],

@@ -21,7 +21,7 @@
                 <span class="text-slate-700 dark:text-slate-300">Preferences</span>
             </div>
             <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-display">System Settings</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Customize studio branding, attendance policies, shift schedules, and payroll rules.</p>
+            <p class="text-xs text-slate-500 mt-0.5">Customize office branding, attendance policies, shift schedules, and payroll rules.</p>
         </div>
         <div class="flex items-center gap-2">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
@@ -49,7 +49,7 @@
                 :class="activeTab === 'brand' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'"
                 class="flex-1 py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
             <svg class="w-4 h-4 text-[#0071E3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-            <span>Studio & Brand</span>
+            <span>Office & Brand</span>
         </button>
 
         <button type="button" @click="activeTab = 'shifts'"
@@ -81,14 +81,14 @@
 
         <div class="p-6 sm:p-8 space-y-8 text-xs">
 
-            <!-- TAB 1: STUDIO & BRAND -->
+            <!-- TAB 1: OFFICE & BRAND -->
             <div x-show="activeTab === 'brand'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                 
                 <!-- Logo & Brand Header Banner -->
                 <div class="p-5 rounded-2xl bg-gradient-to-r from-blue-50/50 via-indigo-50/30 to-purple-50/30 dark:from-slate-800/40 dark:to-slate-800/20 border border-blue-100 dark:border-slate-800 flex flex-col sm:flex-row items-center gap-5">
                     <div class="relative group shrink-0">
                         <template x-if="logoPreview">
-                            <img :src="logoPreview" alt="Studio Logo" class="w-20 h-20 rounded-2xl object-contain">
+                            <img :src="logoPreview" alt="Office Logo" class="w-20 h-20 rounded-2xl object-contain">
                         </template>
                         <template x-if="!logoPreview">
                             <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#0071E3] to-[#AF52DE] text-white font-black text-2xl flex items-center justify-center shadow-sm border-2 border-white">
@@ -103,7 +103,7 @@
 
                     <div class="flex-1 text-center sm:text-left">
                         <h3 class="text-base font-bold text-slate-900 dark:text-white font-display">{{ $settings['company_name'] }}</h3>
-                        <p class="text-xs text-slate-500 mt-0.5">{{ $settings['company_tagline'] ?: 'Set a studio tagline or motto for official slips' }}</p>
+                        <p class="text-xs text-slate-500 mt-0.5">{{ $settings['company_tagline'] ?: 'Set an office tagline or motto for official slips' }}</p>
                         <div class="mt-2.5 flex flex-wrap items-center justify-center sm:justify-start gap-2">
                             <label for="company_logo_input" class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 cursor-pointer shadow-2xs transition">
                                 Upload New Logo
@@ -116,16 +116,16 @@
                 <!-- Form Fields -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="sm:col-span-2">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Studio / Organization Name *</label>
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Office / Organization Name *</label>
                         <input type="text" name="company_name" value="{{ old('company_name', $settings['company_name']) }}" required
-                               placeholder="e.g. Posterit Digital Studio"
+                               placeholder="e.g. Posterit Digital Office"
                                class="w-full px-4 py-2.5 bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm text-slate-900 dark:text-white focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition outline-none">
                     </div>
 
                     <div class="sm:col-span-2">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Studio Tagline / Slogan</label>
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Office Tagline / Slogan</label>
                         <input type="text" name="company_tagline" value="{{ old('company_tagline', $settings['company_tagline']) }}"
-                               placeholder="e.g. Creative Media, Branding & Post-Production Studio"
+                               placeholder="e.g. Creative Media, Branding & Post-Production Office"
                                class="w-full px-4 py-2.5 bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition outline-none">
                     </div>
 
@@ -144,7 +144,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Studio Website URL</label>
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Office Website URL</label>
                         <input type="url" name="company_website" value="{{ old('company_website', $settings['company_website']) }}"
                                placeholder="https://posterit.com"
                                class="w-full px-4 py-2.5 bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition outline-none">
@@ -158,7 +158,7 @@
                     </div>
 
                     <div class="sm:col-span-2">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Physical Studio / Office Address</label>
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Physical Office Address</label>
                         <textarea name="company_address" rows="2" placeholder="Suite, Floor, Street, City, Pincode"
                                   class="w-full px-4 py-2.5 bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition outline-none resize-none">{{ old('company_address', $settings['company_address']) }}</textarea>
                     </div>
@@ -171,7 +171,7 @@
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Weekly Operational Days *</label>
-                        <span class="text-[11px] text-slate-400">Select active studio working days</span>
+                        <span class="text-[11px] text-slate-400">Select active office working days</span>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
                         @foreach(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
@@ -247,6 +247,30 @@
                                    class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold font-mono text-sm text-blue-600 focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition outline-none pr-14">
                             <span class="absolute right-3.5 top-2.5 text-xs text-slate-400 font-semibold">hours</span>
                         </div>
+                    <div class="sm:col-span-2 p-5 rounded-2xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 dark:text-white">Office Timezone</h4>
+                                    <p class="text-[11px] text-slate-400">Used for employee attendance clock-in, shift tracking, and late arrival detection</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 text-[10px] font-bold rounded-lg uppercase tracking-wider self-start sm:self-auto">
+                                Office Clock: {{ now()->format('h:i A T') }}
+                            </span>
+                        </div>
+                        <select name="timezone" class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-sm text-slate-900 dark:text-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition outline-none">
+                            <option value="Asia/Kolkata" {{ old('timezone', $settings['timezone'] ?? 'Asia/Kolkata') === 'Asia/Kolkata' ? 'selected' : '' }}>Asia/Kolkata (IST - India Standard Time, UTC +5:30)</option>
+                            <option value="UTC" {{ old('timezone', $settings['timezone'] ?? '') === 'UTC' ? 'selected' : '' }}>UTC (Coordinated Universal Time)</option>
+                            <option value="Asia/Dubai" {{ old('timezone', $settings['timezone'] ?? '') === 'Asia/Dubai' ? 'selected' : '' }}>Asia/Dubai (GST, UTC +4:00)</option>
+                            <option value="Asia/Singapore" {{ old('timezone', $settings['timezone'] ?? '') === 'Asia/Singapore' ? 'selected' : '' }}>Asia/Singapore (SGT, UTC +8:00)</option>
+                            <option value="Europe/London" {{ old('timezone', $settings['timezone'] ?? '') === 'Europe/London' ? 'selected' : '' }}>Europe/London (GMT/BST)</option>
+                            <option value="America/New_York" {{ old('timezone', $settings['timezone'] ?? '') === 'America/New_York' ? 'selected' : '' }}>America/New_York (EST/EDT)</option>
+                            <option value="America/Los_Angeles" {{ old('timezone', $settings['timezone'] ?? '') === 'America/Los_Angeles' ? 'selected' : '' }}>America/Los_Angeles (PST/PDT)</option>
+                        </select>
                     </div>
                 </div>
             </div>

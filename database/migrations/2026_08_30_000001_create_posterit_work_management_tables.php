@@ -153,14 +153,14 @@ return new class extends Migration
         Schema::dropIfExists('leave_types');
         Schema::dropIfExists('daily_attendances');
         Schema::dropIfExists('work_categories');
-        
+
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
                 $table->dropForeign(['employee_id']);
                 $table->dropColumn(['role', 'avatar', 'employee_id', 'is_active']);
             });
         }
-        
+
         Schema::dropIfExists('employees');
         Schema::dropIfExists('departments');
     }

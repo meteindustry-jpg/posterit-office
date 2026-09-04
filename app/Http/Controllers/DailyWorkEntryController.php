@@ -7,7 +7,6 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\WorkCategory;
 use App\Services\AuditService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -122,6 +121,7 @@ class DailyWorkEntryController extends Controller
     {
         $employees = Employee::where('employment_status', 'active')->orderBy('name')->get();
         $categories = WorkCategory::where('is_active', true)->orderBy('name')->get();
+
         return view('work-entries.edit', compact('workEntry', 'employees', 'categories'));
     }
 

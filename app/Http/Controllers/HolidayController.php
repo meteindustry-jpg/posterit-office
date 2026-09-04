@@ -13,7 +13,7 @@ class HolidayController extends Controller
         $year = (int) $request->get('year', now()->year);
 
         $allHolidays = Holiday::orderBy('date', 'asc')->get();
-        $holidays = $allHolidays->filter(fn($h) => (int) $h->date->format('Y') === $year)->values();
+        $holidays = $allHolidays->filter(fn ($h) => (int) $h->date->format('Y') === $year)->values();
 
         $todayStr = now()->format('Y-m-d');
         $upcomingCount = Holiday::whereDate('date', '>=', $todayStr)->whereYear('date', $year)->count();
@@ -21,7 +21,7 @@ class HolidayController extends Controller
         $nationalCount = $holidays->where('type', 'national')->count();
         $companyCount = $holidays->where('type', 'company')->count();
 
-        $holidaysJson = $allHolidays->map(fn($h) => [
+        $holidaysJson = $allHolidays->map(fn ($h) => [
             'id' => $h->id,
             'name' => $h->name,
             'date' => $h->date->format('Y-m-d'),

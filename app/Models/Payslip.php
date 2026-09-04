@@ -74,13 +74,13 @@ class Payslip extends Model
     {
         $effectiveWorkingDays = max(1, $this->working_days);
         $this->per_day_rate = round($this->basic_salary / $effectiveWorkingDays, 2);
-        
+
         $unpaidDeduction = round($this->unpaid_days * $this->per_day_rate, 2);
         $this->earned_salary = max(0, round($this->basic_salary - $unpaidDeduction, 2));
-        
+
         $totalGross = $this->earned_salary + $this->bonus_amount + $this->allowances_amount;
         $totalDeductions = $this->deductions_amount + $this->tax_deduction;
-        
+
         $this->net_salary = max(0, round($totalGross - $totalDeductions, 2));
         $this->save();
 

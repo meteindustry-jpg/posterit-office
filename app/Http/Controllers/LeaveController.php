@@ -58,7 +58,11 @@ class LeaveController extends Controller
         $user = Auth::user();
         $employees = Employee::where('employment_status', 'active')->orderBy('name')->get();
         $leaveTypes = LeaveType::all();
-        $currentEmployee = $user->employee;
+        $currentEmployee = $user->employee ?: Employee::where('email', $user->email)->first();
+
+        if ($user->isEmployee() && ! $currentEmployee) {
+            return redirect()->route('leaves.index')->withErrors(['error' => 'Your employee profile is not linked to this user account. Please contact the administrator.']);
+        }
 
         return view('leaves.create', compact('employees', 'leaveTypes', 'currentEmployee'));
     }
@@ -80,7 +84,15 @@ class LeaveController extends Controller
 
         $validated = $request->validate($rules);
 
-        $employeeId = $user->isEmployee() ? $user->employee->id : $validated['employee_id'];
+        if ($user->isEmployee()) {
+            $employee = $user->employee ?: Employee::where('email', $user->email)->first();
+            if (! $employee) {
+                return back()->withErrors(['error' => 'No employee profile linked to your account. Please contact an administrator.']);
+            }
+            $employeeId = $employee->id;
+        } else {
+            $employeeId = $validated['employee_id'];
+        }
 
         $start = Carbon::parse($validated['start_date']);
         $end = Carbon::parse($validated['end_date']);

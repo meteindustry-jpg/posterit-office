@@ -20,9 +20,9 @@ class EmployeeController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('employee_code', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('designation', 'like', "%{$search}%");
+                    ->orWhere('employee_code', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('designation', 'like', "%{$search}%");
             });
         }
 
@@ -180,15 +180,16 @@ class EmployeeController extends Controller
     public function edit(Employee $employee)
     {
         $departments = Department::orderBy('name')->get();
+
         return view('employees.edit', compact('employee', 'departments'));
     }
 
     public function update(Request $request, Employee $employee)
     {
         $validated = $request->validate([
-            'employee_code' => ['required', 'string', 'max:50', 'unique:employees,employee_code,' . $employee->id],
+            'employee_code' => ['required', 'string', 'max:50', 'unique:employees,employee_code,'.$employee->id],
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:employees,email,' . $employee->id],
+            'email' => ['required', 'email', 'max:255', 'unique:employees,email,'.$employee->id],
             'mobile_number' => ['nullable', 'string', 'max:30'],
             'designation' => ['required', 'string', 'max:255'],
             'department_id' => ['required', 'exists:departments,id'],
@@ -233,6 +234,14 @@ class EmployeeController extends Controller
 
     public function destroy(Employee $employee)
     {
+        if ($employee->user && $employee->user->isSuperAdmin()) {
+            return back()->withErrors(['error' => 'Cannot delete an employee record linked to the Super Admin.']);
+        }
+
+        if ($employee->user_id === auth()->id()) {
+            return back()->withErrors(['error' => 'You cannot delete your own employee record while logged in.']);
+        }
+
         $old = $employee->toArray();
         $name = $employee->name;
 

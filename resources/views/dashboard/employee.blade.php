@@ -35,6 +35,7 @@
     <!-- Apple-Grade Self Attendance Console -->
     <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all"
          x-data="{
+             timeZone: '{{ \App\Models\CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) }}',
              timeStr: '',
              dateStr: '',
              checkInTs: {{ $todayCheckInTimestamp ?? 'null' }},
@@ -42,8 +43,8 @@
              elapsedStr: '{{ $todayWorkedHours }}h {{ $todayWorkedMinutes }}m',
              updateClock() {
                  const now = new Date();
-                 this.timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                 this.dateStr = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                 this.timeStr = now.toLocaleTimeString([], { timeZone: this.timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                 this.dateStr = now.toLocaleDateString([], { timeZone: this.timeZone, weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
                  
                  if (this.isShiftActive && this.checkInTs) {
                      const diffSec = Math.max(0, Math.floor((now.getTime() - this.checkInTs) / 1000));
@@ -117,7 +118,7 @@
                         <div class="flex items-center gap-2">
                             <h3 class="text-sm font-bold text-slate-900 tracking-tight">Shift in Progress</h3>
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                                ● Working in Studio
+                                ● Working in Office
                             </span>
                         </div>
                         <p class="text-xs text-slate-500 font-medium mt-0.5">
@@ -132,8 +133,9 @@
                         <span class="font-mono text-sm font-bold text-emerald-800" x-text="elapsedStr">{{ $todayWorkedHours }}h {{ $todayWorkedMinutes }}m</span>
                     </div>
 
-                    <form method="POST" action="{{ route('attendance.clockOut') }}">
+                    <form method="POST" action="{{ route('attendance.clockOut') }}" @submit="$refs.clientClockOutTime.value = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })">
                         @csrf
+                        <input type="hidden" name="client_time" x-ref="clientClockOutTime" value="">
                         <button type="submit" class="px-5 py-2.5 bg-[#FF3B30] hover:bg-[#E0342B] text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                             <span>Clock-Out</span>
@@ -168,8 +170,9 @@
                         <span class="text-[10px] text-slate-400 block" x-text="dateStr"></span>
                     </div>
 
-                    <form method="POST" action="{{ route('attendance.clockIn') }}">
+                    <form method="POST" action="{{ route('attendance.clockIn') }}" @submit="$refs.clientClockInTime.value = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })">
                         @csrf
+                        <input type="hidden" name="client_time" x-ref="clientClockInTime" value="">
                         <button type="submit" class="px-5 py-2.5 bg-[#0071E3] hover:bg-[#0062C4] text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                             <span>Mark Attendance (Clock In)</span>

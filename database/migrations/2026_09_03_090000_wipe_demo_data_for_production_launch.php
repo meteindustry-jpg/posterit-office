@@ -9,7 +9,6 @@ use App\Models\PayrollRecord;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 return new class extends Migration

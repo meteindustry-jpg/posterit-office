@@ -3,15 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\DailyAttendance;
-use App\Models\DailyWorkEntry;
 use App\Models\Department;
 use App\Models\Employee;
-use App\Models\Holiday;
 use App\Models\LeaveRequest;
-use App\Models\LeaveType;
+use App\Models\Todo;
 use App\Models\User;
 use App\Models\WorkCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class WorkManagementSystemTest extends TestCase
@@ -23,24 +22,24 @@ class WorkManagementSystemTest extends TestCase
         parent::setUp();
         $this->seed();
 
-        $dept = \App\Models\Department::first();
+        $dept = Department::first();
         if ($dept) {
-            $manager = \App\Models\User::firstOrCreate(
+            $manager = User::firstOrCreate(
                 ['email' => 'manager@posterit.com'],
-                ['name' => 'Test Manager', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'manager', 'is_active' => true]
+                ['name' => 'Test Manager', 'password' => Hash::make('password'), 'role' => 'manager', 'is_active' => true]
             );
 
-            $admin = \App\Models\User::firstOrCreate(
+            $admin = User::firstOrCreate(
                 ['email' => 'admin@posterit.com'],
-                ['name' => 'Test Admin', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'admin', 'is_active' => true]
+                ['name' => 'Test Admin', 'password' => Hash::make('password'), 'role' => 'admin', 'is_active' => true]
             );
 
-            $empUser = \App\Models\User::firstOrCreate(
+            $empUser = User::firstOrCreate(
                 ['email' => 'rahul@posterit.com'],
-                ['name' => 'Rahul Sharma', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role' => 'employee', 'is_active' => true]
+                ['name' => 'Rahul Sharma', 'password' => Hash::make('password'), 'role' => 'employee', 'is_active' => true]
             );
 
-            $emp = \App\Models\Employee::firstOrCreate(
+            $emp = Employee::firstOrCreate(
                 ['email' => 'rahul@posterit.com'],
                 [
                     'employee_code' => 'EMP-001',
@@ -244,7 +243,7 @@ class WorkManagementSystemTest extends TestCase
     public function test_user_can_toggle_todo(): void
     {
         $manager = User::where('role', 'manager')->first();
-        $todo = \App\Models\Todo::where('is_completed', false)->first();
+        $todo = Todo::where('is_completed', false)->first();
 
         $response = $this->actingAs($manager)->patch("/todos/{$todo->id}/toggle");
         $response->assertRedirect();
@@ -258,7 +257,7 @@ class WorkManagementSystemTest extends TestCase
     public function test_user_can_update_task_status(): void
     {
         $manager = User::where('role', 'manager')->first();
-        $todo = \App\Models\Todo::first();
+        $todo = Todo::first();
 
         $response = $this->actingAs($manager)->patch("/todos/{$todo->id}/status", [
             'status' => 'in_progress',
@@ -274,8 +273,8 @@ class WorkManagementSystemTest extends TestCase
     public function test_user_can_convert_task_to_daily_work_entry(): void
     {
         $manager = User::where('role', 'manager')->first();
-        $todo = \App\Models\Todo::first();
-        $category = \App\Models\WorkCategory::first();
+        $todo = Todo::first();
+        $category = WorkCategory::first();
 
         $response = $this->actingAs($manager)->post("/todos/{$todo->id}/convert-work-entry", [
             'work_category_id' => $category->id,

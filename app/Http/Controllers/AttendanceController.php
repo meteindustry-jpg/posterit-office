@@ -81,7 +81,7 @@ class AttendanceController extends Controller
             'date' => ['required', 'date'],
             'attendances' => ['required', 'array'],
             'attendances.*.employee_id' => ['required', 'exists:employees,id'],
-            'attendances.*.status' => ['required', 'in:present,absent,half_day,leave,wfh'],
+            'attendances.*.status' => ['required', 'in:present,absent,half_day,leave,wfh,pending'],
             'attendances.*.check_in' => ['nullable', 'string'],
             'attendances.*.check_out' => ['nullable', 'string'],
             'attendances.*.remarks' => ['nullable', 'string', 'max:255'],
@@ -91,8 +91,10 @@ class AttendanceController extends Controller
         $savedCount = 0;
         $user = Auth::user();
         $employee = $user->isEmployee() ? $this->resolveEmployeeForUser($user) : null;
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $now = now()->setTimezone($tz);
+        $nowTime = $now->format('H:i');
         $officeStart = CompanySetting::get('office_timing_start', '09:30');
-        $officeEnd = CompanySetting::get('office_timing_end', '18:30');
 
         foreach ($request->attendances as $item) {
             if ($employee && $item['employee_id'] != $employee->id) {
@@ -103,11 +105,36 @@ class AttendanceController extends Controller
                 ->whereDate('date', $date)
                 ->first();
 
+            $status = $item['status'];
+
+            if ($status === 'pending') {
+                if ($attendance) {
+                    $attendance->delete();
+                }
+
+                continue;
+            }
+
+            // Check In: prefer submitted value, then existing attendance check-in, then real-time if today
+            $checkIn = ! empty($item['check_in'])
+                ? $item['check_in']
+                : ($attendance?->check_in ?: (in_array($status, ['present', 'wfh']) ? ($date === $now->format('Y-m-d') ? $nowTime : $officeStart) : null));
+
+            // Check Out: prefer submitted value, then existing attendance check-out. DO NOT force check-out if shift is in progress!
+            $checkOut = ! empty($item['check_out'])
+                ? $item['check_out']
+                : ($attendance?->check_out ?: null);
+
+            if (in_array($status, ['absent', 'leave'])) {
+                $checkIn = null;
+                $checkOut = null;
+            }
+
             $data = [
-                'status' => $item['status'],
-                'check_in' => $item['check_in'] ?? ($item['status'] === 'present' || $item['status'] === 'wfh' ? $officeStart : null),
-                'check_out' => $item['check_out'] ?? ($item['status'] === 'present' || $item['status'] === 'wfh' ? $officeEnd : null),
-                'remarks' => $item['remarks'] ?? null,
+                'status' => $status,
+                'check_in' => $checkIn,
+                'check_out' => $checkOut,
+                'remarks' => $item['remarks'] ?? ($attendance?->remarks ?: 'Office Shift'),
                 'recorded_by_user_id' => $user->id,
             ];
 
@@ -192,11 +219,13 @@ class AttendanceController extends Controller
         $employee = Employee::where('email', $user->email)->first();
         if ($employee) {
             $employee->update(['user_id' => $user->id]);
+
             return $employee;
         }
 
         $dept = Department::first();
-        return Employee::create([
+
+        $employee = Employee::create([
             'user_id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
@@ -206,8 +235,11 @@ class AttendanceController extends Controller
             'employment_status' => 'active',
             'joining_date' => now()->subYear()->format('Y-m-d'),
             'leave_quota' => 18,
-            'used_leaves' => 0,
         ]);
+
+        $user->update(['employee_id' => $employee->id]);
+
+        return $employee;
     }
 
     public function clockIn(Request $request)
@@ -215,11 +247,25 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $employee = $this->resolveEmployeeForUser($user);
 
-        $todayStr = now()->format('Y-m-d');
-        $nowTime = now()->format('H:i');
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $now = now()->setTimezone($tz);
+        $todayStr = $now->format('Y-m-d');
+        $nowTime = $now->format('H:i');
+
+        // If client provided device clock time in HH:MM format, validate and use it if close to server time
+        $clientTime = $request->input('client_time');
+        if ($clientTime && preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $clientTime)) {
+            $clientCarbon = Carbon::parse($todayStr.' '.$clientTime, $tz);
+            if (abs($clientCarbon->diffInMinutes($now)) <= 180) {
+                $nowTime = $clientTime;
+                $now = $clientCarbon;
+            }
+        }
+
+        $displayTime = Carbon::parse($todayStr.' '.$nowTime, $tz)->format('h:i A');
         $officeStart = CompanySetting::get('office_timing_start', '09:30');
         $graceMinutes = (int) CompanySetting::get('late_grace_minutes', 15);
-        $lateThreshold = Carbon::parse($todayStr . ' ' . $officeStart)->addMinutes($graceMinutes)->format('H:i');
+        $lateThreshold = Carbon::parse($todayStr.' '.$officeStart, $tz)->addMinutes($graceMinutes)->format('H:i');
 
         // Late detection: after official office start time + grace period
         $isLate = ($nowTime > $lateThreshold);
@@ -240,7 +286,7 @@ class AttendanceController extends Controller
         } else {
             $attendance = DailyAttendance::create([
                 'employee_id' => $employee->id,
-                'date' => Carbon::parse($todayStr)->format('Y-m-d 00:00:00'),
+                'date' => Carbon::parse($todayStr, $tz)->format('Y-m-d 00:00:00'),
                 'status' => 'present',
                 'check_in' => $nowTime,
                 'check_out' => null,
@@ -251,9 +297,9 @@ class AttendanceController extends Controller
 
         AuditService::log('clock_in', 'Attendance', "Employee {$employee->name} clocked in at {$nowTime} on {$todayStr}");
 
-        $msg = $isLate 
-            ? "Attendance marked at {$nowTime} (Late Arrival). Have a productive shift!"
-            : "Attendance marked successfully at {$nowTime}. Have a great shift!";
+        $msg = $isLate
+            ? "Attendance marked at {$displayTime} (Late Arrival). Have a productive shift!"
+            : "Attendance marked successfully at {$displayTime}. Have a great shift!";
 
         return back()->with('success', $msg);
     }
@@ -263,18 +309,31 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $employee = $this->resolveEmployeeForUser($user);
 
-        $todayStr = now()->format('Y-m-d');
-        $nowTime = now()->format('H:i');
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $now = now()->setTimezone($tz);
+        $todayStr = $now->format('Y-m-d');
+        $nowTime = $now->format('H:i');
+
+        $clientTime = $request->input('client_time');
+        if ($clientTime && preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $clientTime)) {
+            $clientCarbon = Carbon::parse($todayStr.' '.$clientTime, $tz);
+            if (abs($clientCarbon->diffInMinutes($now)) <= 180) {
+                $nowTime = $clientTime;
+                $now = $clientCarbon;
+            }
+        }
+
+        $displayTime = Carbon::parse($todayStr.' '.$nowTime, $tz)->format('h:i A');
         $officeStart = CompanySetting::get('office_timing_start', '09:30');
 
         $attendance = DailyAttendance::where('employee_id', $employee->id)
             ->whereDate('date', $todayStr)
             ->first();
 
-        if (!$attendance) {
+        if (! $attendance) {
             $attendance = DailyAttendance::create([
                 'employee_id' => $employee->id,
-                'date' => Carbon::parse($todayStr)->format('Y-m-d 00:00:00'),
+                'date' => Carbon::parse($todayStr, $tz)->format('Y-m-d 00:00:00'),
                 'status' => 'present',
                 'check_in' => $officeStart,
                 'check_out' => $nowTime,
@@ -289,7 +348,7 @@ class AttendanceController extends Controller
 
         AuditService::log('clock_out', 'Attendance', "Employee {$employee->name} clocked out at {$nowTime} on {$todayStr}");
 
-        return back()->with('success', "Clocked out successfully at {$nowTime}. Great work today!");
+        return back()->with('success', "Clocked out successfully at {$displayTime}. Great work today!");
     }
 
     public function exportMonthly(Request $request)
@@ -318,14 +377,14 @@ class AttendanceController extends Controller
             ->get()
             ->groupBy('employee_id');
 
-        $fileName = "attendance_matrix_{$year}_" . str_pad($month, 2, '0', STR_PAD_LEFT) . ".csv";
+        $fileName = "attendance_matrix_{$year}_".str_pad($month, 2, '0', STR_PAD_LEFT).'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
         ];
 
-        $callback = function () use ($employees, $attendances, $daysInMonth, $year, $month) {
+        $callback = function () use ($employees, $attendances, $daysInMonth) {
             $file = fopen('php://output', 'w');
 
             // Header row
@@ -356,8 +415,12 @@ class AttendanceController extends Controller
                 for ($d = 1; $d <= $daysInMonth; $d++) {
                     $rec = $empAtts->get($d);
                     $st = $rec ? $rec->status : null;
-                    if ($st === 'present' || $st === 'wfh') $presentCount++;
-                    if ($st === 'half_day') $halfCount++;
+                    if ($st === 'present' || $st === 'wfh') {
+                        $presentCount++;
+                    }
+                    if ($st === 'half_day') {
+                        $halfCount++;
+                    }
 
                     $statusLetter = match ($st) {
                         'present' => 'P',

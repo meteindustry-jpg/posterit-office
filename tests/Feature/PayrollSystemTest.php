@@ -67,7 +67,7 @@ class PayrollSystemTest extends TestCase
     public function test_manager_can_adjust_bonus_and_deductions(): void
     {
         $manager = User::where('role', 'manager')->first();
-        
+
         // Generate payroll
         $this->actingAs($manager)->post('/payroll/generate', [
             'month' => now()->month,

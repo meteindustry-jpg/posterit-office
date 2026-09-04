@@ -6,17 +6,13 @@ use App\Models\DailyAttendance;
 use App\Models\DailyWorkEntry;
 use App\Models\Department;
 use App\Models\Employee;
-use App\Models\Holiday;
-use App\Models\LeaveRequest;
 use App\Models\LeaveType;
-use App\Models\PayrollRun;
 use App\Models\Payslip;
 use App\Models\Todo;
 use App\Models\User;
 use App\Models\WorkCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class QaComprehensiveEdgeCaseTest extends TestCase
@@ -80,7 +76,7 @@ class QaComprehensiveEdgeCaseTest extends TestCase
 
         // First Clock-in
         $this->actingAs($employee)->post('/attendance/clock-in')->assertRedirect();
-        
+
         // Second Clock-in immediately after
         $this->actingAs($employee)->post('/attendance/clock-in')->assertRedirect();
 
@@ -205,5 +201,89 @@ class QaComprehensiveEdgeCaseTest extends TestCase
         $this->assertNotNull($payslip);
         $this->assertGreaterThanOrEqual(2, $payslip->unpaid_days);
         $this->assertLessThan(30000.00, $payslip->net_salary);
+    }
+
+    public function test_todo_conversion_records_created_by_user_id(): void
+    {
+        $admin = User::where('role', 'super_admin')->first();
+        $dept = Department::first();
+        $employee = Employee::firstOrCreate(
+            ['email' => $admin->email],
+            [
+                'name' => $admin->name,
+                'employee_code' => Employee::generateUniqueCode(),
+                'department_id' => $dept->id,
+                'designation' => 'Administrator',
+                'employment_status' => 'active',
+                'salary' => 50000,
+            ]
+        );
+        $admin->update(['employee_id' => $employee->id]);
+
+        $category = WorkCategory::first();
+        $todo = Todo::create([
+            'user_id' => $admin->id,
+            'title' => 'Convertible Task',
+            'priority' => 'high',
+            'status' => 'todo',
+        ]);
+
+        $response = $this->actingAs($admin)->post("/todos/{$todo->id}/convert-work-entry", [
+            'work_category_id' => $category->id,
+            'quantity' => 3,
+            'date' => now()->format('Y-m-d'),
+            'remarks' => 'Completed quickly',
+        ]);
+
+        $response->assertRedirect();
+        $todo->refresh();
+        $this->assertTrue($todo->is_completed);
+        $this->assertNotNull($todo->work_entry_id);
+
+        $workEntry = DailyWorkEntry::find($todo->work_entry_id);
+        $this->assertNotNull($workEntry);
+        $this->assertEquals($admin->id, $workEntry->created_by_user_id);
+    }
+
+    public function test_cannot_delete_last_super_admin(): void
+    {
+        $superAdmin = User::where('role', 'super_admin')->first();
+        if (! $superAdmin) {
+            $superAdmin = User::create([
+                'name' => 'Super Admin Test',
+                'email' => 'superadmintest@example.com',
+                'password' => bcrypt('password'),
+                'role' => 'super_admin',
+                'is_active' => true,
+            ]);
+        }
+
+        // Test 1: Super admin cannot delete own account
+        $response = $this->actingAs($superAdmin)->delete("/users/{$superAdmin->id}");
+        $response->assertSessionHasErrors();
+        $this->assertDatabaseHas('users', ['id' => $superAdmin->id]);
+    }
+
+    public function test_cannot_delete_employee_linked_to_super_admin(): void
+    {
+        $superAdmin = User::where('role', 'super_admin')->first();
+        $dept = Department::first();
+        $employee = Employee::firstOrCreate(
+            ['email' => $superAdmin->email],
+            [
+                'name' => $superAdmin->name,
+                'user_id' => $superAdmin->id,
+                'employee_code' => Employee::generateUniqueCode(),
+                'department_id' => $dept->id,
+                'designation' => 'Super Administrator',
+                'employment_status' => 'active',
+                'salary' => 75000,
+            ]
+        );
+        $superAdmin->update(['employee_id' => $employee->id]);
+
+        $response = $this->actingAs($superAdmin)->delete("/employees/{$employee->id}");
+        $response->assertSessionHasErrors();
+        $this->assertDatabaseHas('employees', ['id' => $employee->id]);
     }
 }

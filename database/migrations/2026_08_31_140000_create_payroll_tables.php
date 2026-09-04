@@ -29,7 +29,7 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
             $table->integer('month');
             $table->integer('year');
-            
+
             // Salary calculation stats
             $table->decimal('basic_salary', 12, 2)->default(0);
             $table->integer('total_days_in_month')->default(30);
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->integer('half_days')->default(0);
             $table->decimal('paid_leaves', 5, 2)->default(0);
             $table->decimal('unpaid_days', 5, 2)->default(0);
-            
+
             // Financial components
             $table->decimal('per_day_rate', 10, 2)->default(0);
             $table->decimal('earned_salary', 12, 2)->default(0);
@@ -47,7 +47,7 @@ return new class extends Migration
             $table->decimal('deductions_amount', 10, 2)->default(0);
             $table->decimal('tax_deduction', 10, 2)->default(0);
             $table->decimal('net_salary', 12, 2)->default(0);
-            
+
             // Payout Status
             $table->string('payment_status')->default('pending'); // pending, paid
             $table->string('payment_mode')->nullable(); // bank_transfer, upi, cash, cheque

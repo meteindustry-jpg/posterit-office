@@ -2,7 +2,10 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="layoutApp()" class="h-full">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#f6f8fa">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @php
@@ -363,15 +366,20 @@
         <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
             
             <!-- Apple-style Top Bar -->
-            <header class="h-18 glass-nav px-4 sm:px-8 flex items-center justify-between shrink-0 border-b border-slate-200/80 z-30">
+            <header class="h-16 sm:h-18 glass-nav px-3 sm:px-8 flex items-center justify-between shrink-0 border-b border-slate-200/80 z-30">
                 
                 <!-- Left: Mobile Toggle & Spotlight Search Input -->
-                <div class="flex items-center gap-4">
-                    <button @click="sidebarOpen = true" class="p-2 rounded-xl text-slate-600 hover:bg-slate-100 md:hidden">
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button @click="sidebarOpen = true" class="p-2.5 rounded-xl text-slate-600 hover:bg-slate-100 md:hidden" title="Open Navigation">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
 
-                    <!-- Spotlight Search Trigger -->
+                    <!-- Mobile 1-Tap Search Icon -->
+                    <button @click="searchOpen = true" type="button" class="sm:hidden p-2.5 rounded-xl text-slate-600 hover:bg-slate-100" title="Quick Search">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </button>
+
+                    <!-- Spotlight Search Trigger (Desktop) -->
                     <button @click="searchOpen = true" 
                             type="button" 
                             class="hidden sm:flex items-center gap-3 px-4 py-2 bg-slate-100/90 hover:bg-slate-200/80 text-slate-500 rounded-full text-xs font-medium border border-slate-200/80 transition-all w-64 md:w-80 shadow-2xs">
@@ -537,7 +545,7 @@
             </header>
 
             <!-- Main Workspace Body -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-8">
+            <main class="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 pb-24 md:pb-8 touch-scroll">
                 
                 <!-- Flash Alerts (Animated Auto-Dismissing Toasts) -->
                 @if(session('success'))
@@ -553,22 +561,29 @@
                      class="mb-6 p-4 rounded-2xl bg-emerald-500 text-white shadow-lg flex items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
                         <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center font-black text-xs shrink-0">✓</span>
-                        <span class="text-xs font-bold">{{ session('success') }}</span>
+                        <span class="font-bold text-xs tracking-tight">{{ session('success') }}</span>
                     </div>
-                    <button type="button" @click="show = false" class="p-1 text-white/80 hover:text-white text-xs font-bold cursor-pointer">✕</button>
+                    <button @click="show = false" class="text-white/80 hover:text-white text-xs">✕</button>
+                </div>
+                @endif
+
+                @if(session('error'))
+                <div x-data="{ show: true }" 
+                     x-show="show" 
+                     class="mb-6 p-4 rounded-2xl bg-rose-500 text-white shadow-lg flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center font-black text-xs shrink-0">✕</span>
+                        <span class="font-bold text-xs tracking-tight">{{ session('error') }}</span>
+                    </div>
+                    <button @click="show = false" class="text-white/80 hover:text-white text-xs">✕</button>
                 </div>
                 @endif
 
                 @if($errors->any())
-                <div x-data="{ show: true }"
-                     x-show="show"
-                     class="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs space-y-1 shadow-2xs">
-                    <div class="flex items-center justify-between">
-                        <div class="font-bold flex items-center gap-2 text-rose-700">
-                            <span class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center font-bold text-[10px]">!</span>
-                            <span>Please fix the following:</span>
-                        </div>
-                        <button type="button" @click="show = false" class="text-rose-400 hover:text-rose-700 text-xs font-bold">✕</button>
+                <div class="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+                    <div class="flex items-center gap-2 font-bold">
+                        <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        <span>Please correct the errors below:</span>
                     </div>
                     <ul class="list-disc list-inside space-y-0.5 ml-2 mt-2 font-medium">
                         @foreach($errors->all() as $error)
@@ -580,6 +595,62 @@
 
                 @yield('content')
             </main>
+
+            <!-- Native Mobile Bottom Navigation Bar (Phone & Handhelds) -->
+            <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/90 mobile-bottom-nav shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
+                <div class="grid grid-cols-5 h-16 items-center px-1">
+                    <!-- 1. Home -->
+                    <a href="{{ route('dashboard') }}" 
+                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'text-[#0071e3] font-bold' : 'text-slate-500 hover:text-slate-800' }}">
+                        <div class="p-1 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-[#0071e3]' : '' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        </div>
+                        <span class="text-[10px] tracking-tight mt-0.5">Home</span>
+                    </a>
+
+                    <!-- 2. Tasks -->
+                    <a href="{{ route('todos.index') }}" 
+                       class="relative flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('todos.*') ? 'text-[#0071e3] font-bold' : 'text-slate-500 hover:text-slate-800' }}">
+                        <div class="relative p-1 rounded-xl {{ request()->routeIs('todos.*') ? 'bg-blue-50 text-[#0071e3]' : '' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            @if(isset($userPendingTodosCount) && $userPendingTodosCount > 0)
+                                <span class="absolute -top-1 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#ff9500] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white">
+                                    {{ $userPendingTodosCount > 99 ? '99+' : $userPendingTodosCount }}
+                                </span>
+                            @endif
+                        </div>
+                        <span class="text-[10px] tracking-tight mt-0.5">Tasks</span>
+                    </a>
+
+                    <!-- 3. Work Logs -->
+                    <a href="{{ auth()->user()->isManager() ? route('work-entries.batch') : route('work-entries.index') }}" 
+                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('work-entries.*') ? 'text-[#0071e3] font-bold' : 'text-slate-500 hover:text-slate-800' }}">
+                        <div class="p-1 rounded-xl {{ request()->routeIs('work-entries.*') ? 'bg-blue-50 text-[#0071e3]' : '' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <span class="text-[10px] tracking-tight mt-0.5">Work</span>
+                    </a>
+
+                    <!-- 4. Attendance -->
+                    <a href="{{ route('attendance.index') }}" 
+                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('attendance.*') ? 'text-[#0071e3] font-bold' : 'text-slate-500 hover:text-slate-800' }}">
+                        <div class="p-1 rounded-xl {{ request()->routeIs('attendance.*') ? 'bg-blue-50 text-[#0071e3]' : '' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <span class="text-[10px] tracking-tight mt-0.5">Attendance</span>
+                    </a>
+
+                    <!-- 5. Menu Drawer Trigger -->
+                    <button @click="sidebarOpen = !sidebarOpen" 
+                            type="button"
+                            class="flex flex-col items-center justify-center py-1 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
+                        <div class="p-1 rounded-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        </div>
+                        <span class="text-[10px] tracking-tight mt-0.5">Menu</span>
+                    </button>
+                </div>
+            </nav>
 
         </div>
     </div>

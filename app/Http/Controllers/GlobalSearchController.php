@@ -27,21 +27,21 @@ class GlobalSearchController extends Controller
         $employees = Employee::with('department')
             ->where(function ($query) use ($q) {
                 $query->where('name', 'like', "%{$q}%")
-                      ->orWhere('employee_code', 'like', "%{$q}%")
-                      ->orWhere('email', 'like', "%{$q}%")
-                      ->orWhere('designation', 'like', "%{$q}%");
+                    ->orWhere('employee_code', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('designation', 'like', "%{$q}%");
             })
             ->take(6)
             ->get()
             ->map(function ($emp) use ($isAdmin, $currentUserId) {
-                $url = $isAdmin 
+                $url = $isAdmin
                     ? route('employees.show', $emp->id)
                     : ($emp->user_id === $currentUserId ? route('profile') : route('work-entries.index', ['employee_id' => $emp->id]));
 
                 return [
                     'id' => $emp->id,
-                    'title' => $emp->name . ' (' . $emp->employee_code . ')',
-                    'subtitle' => $emp->designation . ' • ' . ($emp->department->name ?? 'No Dept'),
+                    'title' => $emp->name.' ('.$emp->employee_code.')',
+                    'subtitle' => $emp->designation.' • '.($emp->department->name ?? 'No Dept'),
                     'url' => $url,
                     'avatar' => $emp->photo_url,
                 ];
@@ -68,8 +68,8 @@ class GlobalSearchController extends Controller
             ->map(function ($entry) {
                 return [
                     'id' => $entry->id,
-                    'title' => ($entry->employee->name ?? 'Emp') . ' - ' . ($entry->category->name ?? 'Task') . ' (' . $entry->quantity . ')',
-                    'subtitle' => $entry->date->format('d M Y') . ($entry->remarks ? ' • ' . $entry->remarks : ''),
+                    'title' => ($entry->employee->name ?? 'Emp').' - '.($entry->category->name ?? 'Task').' ('.$entry->quantity.')',
+                    'subtitle' => $entry->date->format('d M Y').($entry->remarks ? ' • '.$entry->remarks : ''),
                     'url' => route('work-entries.index', ['date' => $entry->date->format('Y-m-d')]),
                 ];
             });

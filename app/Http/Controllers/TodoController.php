@@ -10,6 +10,7 @@ use App\Models\WorkCategory;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TodoController extends Controller
 {
@@ -115,7 +116,7 @@ class TodoController extends Controller
         $status = $validated['status'] ?? 'todo';
         $isCompleted = ($status === 'completed');
 
-        $referenceUrl = $validated['reference_url'] ?? null;
+        $referenceUrl = ! empty(trim($validated['reference_url'] ?? '')) ? trim($validated['reference_url']) : null;
         if ($request->hasFile('reference_file')) {
             $path = $request->file('reference_file')->store('todos', 'public');
             $referenceUrl = 'todos/'.basename($path);
@@ -160,8 +161,11 @@ class TodoController extends Controller
         $status = $validated['status'] ?? $todo->status;
         $isCompleted = ($status === 'completed');
 
-        $referenceUrl = $validated['reference_url'] ?? $todo->reference_url;
+        $referenceUrl = ! empty(trim($validated['reference_url'] ?? '')) ? trim($validated['reference_url']) : $todo->reference_url;
         if ($request->hasFile('reference_file')) {
+            if ($todo->reference_url && str_starts_with($todo->reference_url, 'todos/')) {
+                Storage::disk('public')->delete($todo->reference_url);
+            }
             $path = $request->file('reference_file')->store('todos', 'public');
             $referenceUrl = 'todos/'.basename($path);
         }

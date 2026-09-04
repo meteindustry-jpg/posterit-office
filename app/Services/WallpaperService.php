@@ -46,6 +46,7 @@ class WallpaperService
     public static function getDailyWallpaper(): string
     {
         $dayIndex = ((int) now()->format('j') - 1) % count(self::$curatedWallpapers);
+
         return self::$curatedWallpapers[$dayIndex] ?? asset('images/mind_refreshing_bg.jpg');
     }
 
