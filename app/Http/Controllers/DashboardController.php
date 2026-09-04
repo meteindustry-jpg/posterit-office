@@ -142,7 +142,7 @@ class DashboardController extends Controller
             ->get();
 
         // Last 14 Days Work Trend (Single grouped query instead of 14 separate queries)
-        $fourteenDaysAgo = now()->subDays(13)->format('Y-m-d');
+        $fourteenDaysAgo = $now->copy()->subDays(13)->format('Y-m-d');
         $rawTrends = DailyWorkEntry::whereDate('date', '>=', $fourteenDaysAgo)
             ->groupBy(DB::raw('DATE(date)'))
             ->select(DB::raw('DATE(date) as entry_date'), DB::raw('SUM(quantity) as total_qty'))
@@ -152,7 +152,7 @@ class DashboardController extends Controller
         $dates = [];
         $workTrend = [];
         for ($i = 13; $i >= 0; $i--) {
-            $carbonDate = now()->subDays($i);
+            $carbonDate = $now->copy()->subDays($i);
             $d = $carbonDate->format('Y-m-d');
             $dates[] = $carbonDate->format('d M');
             $workTrend[] = (int) ($rawTrends[$d] ?? 0);

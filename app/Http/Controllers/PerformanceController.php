@@ -17,14 +17,18 @@ class PerformanceController extends Controller
 {
     public function index(Request $request)
     {
-        $month = (int) $request->get('month', now()->month);
-        $year = (int) $request->get('year', now()->year);
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $now = now()->setTimezone($tz);
+        $month = (int) $request->get('month', $now->month);
+        $year = (int) $request->get('year', $now->year);
         $departmentId = $request->get('department_id');
 
-        $monthStart = Carbon::create($year, $month, 1)->startOfMonth()->toDateTimeString();
-        $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->toDateTimeString();
-        $monthStartDate = substr($monthStart, 0, 10);
-        $monthEndDate = substr($monthEnd, 0, 10);
+        $monthStartCarbon = Carbon::create($year, $month, 1, 0, 0, 0, $tz)->startOfMonth();
+        $monthEndCarbon = Carbon::create($year, $month, 1, 23, 59, 59, $tz)->endOfMonth();
+        $monthStartDate = $monthStartCarbon->format('Y-m-d');
+        $monthEndDate = $monthEndCarbon->format('Y-m-d');
+        $monthStart = $monthStartDate.' 00:00:00';
+        $monthEnd = $monthEndDate.' 23:59:59';
 
         // Calculate company-wide working days recorded in this month
         $companyAttendanceDays = DailyAttendance::whereBetween('date', [$monthStartDate, $monthEndDate])

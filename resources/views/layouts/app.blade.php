@@ -779,36 +779,5 @@
     </div>
 
     @stack('scripts')
-
-    <!-- Instant Page Navigation Pre-fetcher for Blazing Fast Page Transitions -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const prefetched = new Set();
-            const prefetchUrl = (url) => {
-                if (!url || prefetched.has(url) || url.includes('#') || url.includes('logout') || url.includes('clock-in') || url.includes('clock-out')) return;
-                try {
-                    const u = new URL(url, window.location.origin);
-                    if (u.origin !== window.location.origin) return;
-                    prefetched.add(url);
-                    const link = document.createElement('link');
-                    link.rel = 'prefetch';
-                    link.href = url;
-                    document.head.appendChild(link);
-                } catch(e) {}
-            };
-            document.addEventListener('mouseover', (e) => {
-                const a = e.target.closest('a');
-                if (a && a.href && a.origin === window.location.origin) {
-                    prefetchUrl(a.href);
-                }
-            }, { passive: true });
-            document.addEventListener('touchstart', (e) => {
-                const a = e.target.closest('a');
-                if (a && a.href && a.origin === window.location.origin) {
-                    prefetchUrl(a.href);
-                }
-            }, { passive: true });
-        });
-    </script>
 </body>
 </html>
