@@ -111,25 +111,17 @@ class DashboardController extends Controller
             ->count('employee_id');
         $pendingWorkEntries = max(0, ($presentToday + $wfhToday + $halfDayToday) - $employeesWithWorkToday);
 
-        // Overall Attendance % this month
-        $monthAttendances = DailyAttendance::whereYear('date', $currentYear)
+        // Overall Attendance % this month (aggregated in SQL directly)
+        $monthAttAgg = DailyAttendance::whereYear('date', $currentYear)
             ->whereMonth('date', $currentMonth)
-            ->get();
-
-        $totalMonthRecords = $monthAttendances->count();
-        $presentLikeCount = $monthAttendances->whereIn('status', ['present', 'wfh'])->count() + ($monthAttendances->where('status', 'half_day')->count() * 0.5);
-        $attendancePercentage = $totalMonthRecords > 0 ? round(($presentLikeCount / $totalMonthRecords) * 100, 1) : 100;
-
-        // Top Performer of the Month
-        $topPerformerData = DailyWorkEntry::select('employee_id', DB::raw('SUM(quantity) as total_qty'))
-            ->whereYear('date', $currentYear)
-            ->whereMonth('date', $currentMonth)
-            ->groupBy('employee_id')
-            ->orderByDesc('total_qty')
-            ->with('employee.department')
+            ->selectRaw('count(*) as total_count, sum(case when status in ("present", "wfh") then 1 when status = "half_day" then 0.5 else 0 end) as present_count')
             ->first();
 
-        // Top 5 Performers
+        $totalMonthRecords = $monthAttAgg ? (int) $monthAttAgg->total_count : 0;
+        $presentLikeCount = $monthAttAgg ? (float) $monthAttAgg->present_count : 0;
+        $attendancePercentage = $totalMonthRecords > 0 ? round(($presentLikeCount / $totalMonthRecords) * 100, 1) : 100;
+
+        // Top 5 Performers (reuse first record for topPerformerData)
         $topPerformers = DailyWorkEntry::select('employee_id', DB::raw('SUM(quantity) as total_qty'))
             ->whereYear('date', $currentYear)
             ->whereMonth('date', $currentMonth)
@@ -138,6 +130,7 @@ class DashboardController extends Controller
             ->with('employee.department')
             ->take(5)
             ->get();
+        $topPerformerData = $topPerformers->first();
 
         // Work Categories breakdown (this month)
         $categoryBreakdown = DailyWorkEntry::select('work_category_id', DB::raw('SUM(quantity) as total_qty'))
@@ -148,13 +141,21 @@ class DashboardController extends Controller
             ->with('category')
             ->get();
 
-        // Last 14 Days Work Trend
+        // Last 14 Days Work Trend (Single grouped query instead of 14 separate queries)
+        $fourteenDaysAgo = now()->subDays(13)->format('Y-m-d');
+        $rawTrends = DailyWorkEntry::whereDate('date', '>=', $fourteenDaysAgo)
+            ->groupBy(DB::raw('DATE(date)'))
+            ->select(DB::raw('DATE(date) as entry_date'), DB::raw('SUM(quantity) as total_qty'))
+            ->pluck('total_qty', 'entry_date')
+            ->toArray();
+
         $dates = [];
         $workTrend = [];
         for ($i = 13; $i >= 0; $i--) {
-            $d = now()->subDays($i)->format('Y-m-d');
-            $dates[] = now()->subDays($i)->format('d M');
-            $workTrend[] = (int) DailyWorkEntry::whereDate('date', $d)->sum('quantity');
+            $carbonDate = now()->subDays($i);
+            $d = $carbonDate->format('Y-m-d');
+            $dates[] = $carbonDate->format('d M');
+            $workTrend[] = (int) ($rawTrends[$d] ?? 0);
         }
 
         // Upcoming Holidays in next 30 days
