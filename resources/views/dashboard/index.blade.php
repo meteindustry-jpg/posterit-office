@@ -31,6 +31,7 @@
         </div>
     </div>
 
+    @if(!auth()->user()->isSuperAdmin() && $adminEmployee)
     <!-- Executive Admin Self Attendance Console -->
     <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all"
          x-data="{
@@ -164,6 +165,7 @@
             </div>
         @endif
     </div>
+    @endif
 
     @if(!empty($pendingRegistrationCount) && $pendingRegistrationCount > 0)
     <div class="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 flex items-center justify-between shadow-2xs">

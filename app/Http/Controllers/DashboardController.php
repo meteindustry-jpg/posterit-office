@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CompanySetting;
 use App\Models\DailyAttendance;
 use App\Models\DailyWorkEntry;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Holiday;
 use App\Models\LeaveRequest;
@@ -31,24 +32,8 @@ class DashboardController extends Controller
             return $this->employeeDashboard($user);
         }
 
-        // Admin & Manager Attendance / Self Clock-In
-        $adminEmployee = $user->employee ?: Employee::where('user_id', $user->id)->orWhere('email', $user->email)->first();
-        if (! $adminEmployee && ($user->isAdmin() || $user->isSuperAdmin())) {
-            $dept = Department::first();
-            $adminEmployee = Employee::create([
-                'user_id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'employee_code' => Employee::generateUniqueCode(),
-                'department_id' => $dept?->id,
-                'designation' => $user->isSuperAdmin() ? 'Super Admin / Director' : 'Office Administrator',
-                'employment_status' => 'active',
-                'joining_date' => $today,
-                'leave_quota' => 18,
-            ]);
-            $user->update(['employee_id' => $adminEmployee->id]);
-        }
-
+        // Admin & Manager Attendance / Self Clock-In (Super Admin does not clock in)
+        $adminEmployee = null;
         $adminTodayAttendance = null;
         $adminCheckInFormatted = null;
         $adminCheckOutFormatted = null;
@@ -58,30 +43,45 @@ class DashboardController extends Controller
         $officeTimingStart = CompanySetting::get('office_timing_start', '09:30');
         $officeTimingEnd = CompanySetting::get('office_timing_end', '18:30');
 
-        if ($adminEmployee) {
-            $adminTodayAttendance = DailyAttendance::where('employee_id', $adminEmployee->id)
-                ->whereDate('date', $today)
-                ->first();
+        if (! $user->isSuperAdmin()) {
+            $adminEmployee = $user->employee ?: Employee::where('user_id', $user->id)->orWhere('email', $user->email)->first();
+            if (! $adminEmployee && $user->isAdmin()) {
+                $dept = Department::first();
+                $adminEmployee = Employee::create([
+                    'user_id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'employee_code' => Employee::generateUniqueCode(),
+                    'department_id' => $dept?->id,
+                    'designation' => 'Office Administrator',
+                    'employment_status' => 'active',
+                    'joining_date' => $today,
+                    'leave_quota' => 18,
+                ]);
+                $user->update(['employee_id' => $adminEmployee->id]);
+            }
 
-            if ($adminTodayAttendance && $adminTodayAttendance->check_in) {
-                $attDateStr = $adminTodayAttendance->date ? $adminTodayAttendance->date->format('Y-m-d') : $today;
-                $inTime = Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_in, $tz);
-                $adminCheckInFormatted = $inTime->format('h:i A');
+            if ($adminEmployee) {
+                $adminTodayAttendance = DailyAttendance::where('employee_id', $adminEmployee->id)
+                    ->whereDate('date', $today)
+                    ->first();
 
-                if ($adminTodayAttendance->check_out) {
-                    $adminCheckOutFormatted = Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_out, $tz)->format('h:i A');
+                if ($adminTodayAttendance && $adminTodayAttendance->check_in) {
+                    $attDateStr = $adminTodayAttendance->date ? $adminTodayAttendance->date->format('Y-m-d') : $today;
+                    $inTime = Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_in, $tz);
+                    $adminCheckInFormatted = $inTime->format('h:i A');
+
+                    if ($adminTodayAttendance->check_out) {
+                        $adminCheckOutFormatted = Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_out, $tz)->format('h:i A');
+                    }
+
+                    $outTime = $adminTodayAttendance->check_out ? Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_out, $tz) : $now;
+                    $diffMins = $outTime->greaterThanOrEqualTo($inTime) ? $inTime->diffInMinutes($outTime) : 0;
+
+                    $adminWorkedHours = floor($diffMins / 60);
+                    $adminWorkedMinutes = $diffMins % 60;
+                    $adminCheckInTimestamp = $inTime->timestamp * 1000;
                 }
-
-                $outTime = $adminTodayAttendance->check_out ? Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_out, $tz) : $now;
-                if ($outTime->greaterThanOrEqualTo($inTime)) {
-                    $diffMins = $inTime->diffInMinutes($outTime);
-                } else {
-                    $diffMins = 0;
-                }
-
-                $adminWorkedHours = floor($diffMins / 60);
-                $adminWorkedMinutes = $diffMins % 60;
-                $adminCheckInTimestamp = $inTime->timestamp * 1000;
             }
         }
 

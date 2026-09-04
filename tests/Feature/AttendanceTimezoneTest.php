@@ -177,20 +177,27 @@ class AttendanceTimezoneTest extends TestCase
 
     public function test_admin_can_self_clock_in_and_clock_out(): void
     {
-        $superAdmin = User::where('role', 'super_admin')->first();
+        $admin = User::where('role', 'admin')->first();
+        if (! $admin) {
+            $admin = User::factory()->create([
+                'name' => 'Pradip Admin',
+                'email' => 'pradip.admin@example.com',
+                'role' => 'admin',
+            ]);
+        }
         $tz = 'Asia/Kolkata';
 
         $frozenClockIn = Carbon::create(2026, 9, 4, 9, 10, 0, $tz);
         Carbon::setTestNow($frozenClockIn);
 
         // Admin clock in
-        $response = $this->actingAs($superAdmin)->post('/attendance/clock-in', [
+        $response = $this->actingAs($admin)->post('/attendance/clock-in', [
             'client_time' => '09:10',
         ]);
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
-        $emp = Employee::where('user_id', $superAdmin->id)->orWhere('email', $superAdmin->email)->first();
+        $emp = Employee::where('user_id', $admin->id)->orWhere('email', $admin->email)->first();
         $this->assertNotNull($emp);
 
         $att = DailyAttendance::where('employee_id', $emp->id)->whereDate('date', '2026-09-04')->first();
@@ -202,7 +209,7 @@ class AttendanceTimezoneTest extends TestCase
         $frozenClockOut = Carbon::create(2026, 9, 4, 18, 45, 0, $tz);
         Carbon::setTestNow($frozenClockOut);
 
-        $response = $this->actingAs($superAdmin)->post('/attendance/clock-out', [
+        $response = $this->actingAs($admin)->post('/attendance/clock-out', [
             'client_time' => '18:45',
         ]);
         $response->assertRedirect();
@@ -212,5 +219,32 @@ class AttendanceTimezoneTest extends TestCase
         $this->assertEquals('18:45', substr($att->check_out, 0, 5));
 
         Carbon::setTestNow();
+    }
+
+    public function test_super_admin_does_not_have_clock_in_widget(): void
+    {
+        $superAdmin = User::where('role', 'super_admin')->first();
+        $this->assertNotNull($superAdmin);
+
+        $response = $this->actingAs($superAdmin)->get('/dashboard');
+        $response->assertOk();
+        $response->assertDontSee('Executive Attendance Console');
+        $response->assertDontSee('Mark Attendance (Clock In)');
+    }
+
+    public function test_admin_has_attendance_console_on_dashboard(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        if (! $admin) {
+            $admin = User::factory()->create([
+                'name' => 'Pradip Admin',
+                'email' => 'pradip.admin2@example.com',
+                'role' => 'admin',
+            ]);
+        }
+
+        $response = $this->actingAs($admin)->get('/dashboard');
+        $response->assertOk();
+        $response->assertSee('Executive Attendance Console');
     }
 }
