@@ -61,13 +61,7 @@ class Todo extends Model
 
     public function getAssigneeNameAttribute(): string
     {
-        // Only show the assigned user — do NOT fall back to task creator
-        $u = $this->assignedTo;
-        if (! $u && $this->assigned_to_user_id) {
-            // Try to load if not eager-loaded
-            $u = User::find($this->assigned_to_user_id);
-        }
-
+        $u = $this->assignedTo ?? $this->user;
         if ($u) {
             $emp = $u->employee ?? Employee::where('user_id', $u->id)->first();
 
@@ -79,11 +73,7 @@ class Todo extends Model
 
     public function getAssigneePhotoUrlAttribute(): string
     {
-        // Only show the assigned user's photo — do NOT fall back to task creator
-        $u = $this->assignedTo;
-        if (! $u && $this->assigned_to_user_id) {
-            $u = User::find($this->assigned_to_user_id);
-        }
+        $u = $this->assignedTo ?? $this->user;
 
         if ($u) {
             $emp = $u->employee ?? Employee::where('user_id', $u->id)->first();
@@ -100,7 +90,7 @@ class Todo extends Model
             return 'https://ui-avatars.com/api/?name='.urlencode($displayName).'&background=0071e3&color=fff&bold=true';
         }
 
-        return 'https://ui-avatars.com/api/?name=?&background=94a3b8&color=fff';
+        return 'https://ui-avatars.com/api/?name=Team&background=64748b&color=fff';
     }
 
     public function isOverdue(): bool
