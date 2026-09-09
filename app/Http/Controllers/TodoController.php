@@ -274,12 +274,23 @@ class TodoController extends Controller
             'index' => ['required', 'integer'],
         ]);
 
-        $index = $request->input('index');
+        $index = (int) $request->input('index');
         $subtasks = $todo->subtasks ?? [];
 
         if (isset($subtasks[$index])) {
             $subtasks[$index]['completed'] = ! ($subtasks[$index]['completed'] ?? false);
             $todo->update(['subtasks' => $subtasks]);
+
+            AuditService::log('update', 'Todo', "Toggled subtask #{$index} for task #{$todo->id}");
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'subtasks' => $todo->subtasks,
+                'completed_count' => $todo->completedSubtasksCount(),
+                'total_count' => $todo->totalSubtasksCount(),
+            ]);
         }
 
         return back()->with('success', 'Subtask updated.');

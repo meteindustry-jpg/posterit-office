@@ -779,5 +779,32 @@
     </div>
 
     @stack('scripts')
+
+    <!-- Automatic Realtime Sync on Tab Focus & Page Wake -->
+    <script>
+        (function() {
+            let lastActive = Date.now();
+            function checkAndSync() {
+                const elapsed = (Date.now() - lastActive) / 1000;
+                if (elapsed > 45 && (window.location.pathname === '/dashboard' || window.location.pathname === '/' || window.location.pathname === '/todos' || window.location.pathname === '/work-entries')) {
+                    // Only auto-reload if no modals or input fields are currently open/focused
+                    const activeEl = document.activeElement;
+                    const isInputting = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT');
+                    const hasOpenModal = document.querySelector('[x-show*="ModalOpen"][style*="display: block"]') || document.querySelector('[x-show*="ModalOpen"]:not([style*="display: none"])');
+                    if (!isInputting && !hasOpenModal) {
+                        window.location.reload();
+                    }
+                }
+                lastActive = Date.now();
+            }
+
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    checkAndSync();
+                }
+            });
+            window.addEventListener('focus', checkAndSync);
+        })();
+    </script>
 </body>
 </html>

@@ -177,15 +177,19 @@ class DashboardController extends Controller
             ->take(7)
             ->get();
 
-        // My Pending Todo Tasks
-        $myPendingTodos = Todo::where(function ($q) use ($user) {
-            $q->where('user_id', $user->id)
-                ->orWhere('assigned_to_user_id', $user->id);
-        })
-            ->where('is_completed', false)
+        // Pending Todo Tasks on Dashboard (Admin/Manager see all studio tasks, Employees see their own)
+        $pendingTodosQuery = Todo::with(['user.employee', 'assignedTo.employee'])->where('is_completed', false);
+        if ($user->isEmployee()) {
+            $pendingTodosQuery->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('assigned_to_user_id', $user->id);
+            });
+        }
+        $myPendingTodos = $pendingTodosQuery
             ->orderByRaw("CASE WHEN priority = 'high' THEN 1 WHEN priority = 'medium' THEN 2 ELSE 3 END")
             ->orderBy('due_date', 'asc')
-            ->take(4)
+            ->orderBy('id', 'desc')
+            ->take(6)
             ->get();
 
         $pendingRegistrationCount = $user->isSuperAdmin()
