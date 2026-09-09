@@ -83,10 +83,11 @@ class TodoController extends Controller
         ];
 
         $users = User::where('is_active', true)->orderBy('name')->get();
+        $employees = Employee::where('employment_status', 'active')->orderBy('name')->get();
         $workCategories = WorkCategory::where('is_active', true)->orderBy('name')->get();
         $categories = ['Design', 'Client Delivery', 'Social Media', 'Video Edit', 'Revision', 'Meeting', 'General'];
 
-        return view('todos.index', compact('todos', 'allTodosForKanban', 'tab', 'counts', 'users', 'categories', 'workCategories'));
+        return view('todos.index', compact('todos', 'allTodosForKanban', 'tab', 'counts', 'users', 'employees', 'categories', 'workCategories'));
     }
 
     public function store(Request $request)
@@ -287,21 +288,43 @@ class TodoController extends Controller
     public function convertToWorkEntry(Request $request, Todo $todo)
     {
         $validated = $request->validate([
+            'employee_id' => ['nullable', 'exists:employees,id'],
             'work_category_id' => ['required', 'exists:work_categories,id'],
             'quantity' => ['required', 'integer', 'min:1'],
             'date' => ['required', 'date'],
             'remarks' => ['nullable', 'string', 'max:255'],
         ]);
 
-        // Find employee associated with assigned user or current user
-        $targetUserId = $todo->assigned_to_user_id ?: Auth::id();
-        $targetUser = User::find($targetUserId);
-        $employee = Employee::where('user_id', $targetUserId)->first()
-                 ?? Employee::where('email', $targetUser->email)->first()
-                 ?? Employee::first();
+        // Find employee:
+        // 1. Explicitly chosen from modal dropdown (if manager/admin provided one)
+        // 2. Assigned user's linked employee
+        // 3. Task creator user's linked employee
+        // 4. Fallback to current authenticated user's employee
+        $employee = null;
+        if (! empty($validated['employee_id'])) {
+            $employee = Employee::find($validated['employee_id']);
+        }
 
         if (! $employee) {
-            return back()->with('error', 'No active employee profile linked to this user to log daily work.');
+            $targetUserId = $todo->assigned_to_user_id ?: $todo->user_id;
+            if ($targetUserId) {
+                $targetUser = User::find($targetUserId);
+                if ($targetUser) {
+                    $employee = $targetUser->employee
+                             ?? Employee::where('user_id', $targetUser->id)->first()
+                             ?? Employee::where('email', $targetUser->email)->first();
+                }
+            }
+        }
+
+        if (! $employee) {
+            $employee = Auth::user()->employee
+                     ?? Employee::where('user_id', Auth::id())->first()
+                     ?? Employee::first();
+        }
+
+        if (! $employee) {
+            return back()->with('error', 'No active employee profile found to log daily work.');
         }
 
         $workEntry = DailyWorkEntry::create([
@@ -320,9 +343,9 @@ class TodoController extends Controller
             'work_entry_id' => $workEntry->id,
         ]);
 
-        AuditService::log('create', 'DailyWorkEntry', "Converted task #{$todo->id} into Daily Work Entry #{$workEntry->id}", null, $workEntry->toArray());
+        AuditService::log('create', 'DailyWorkEntry', "Converted task #{$todo->id} into Daily Work Entry #{$workEntry->id} for {$employee->name}", null, $workEntry->toArray());
 
-        return back()->with('success', "⚡ Logged {$validated['quantity']} deliverable(s) into Daily Work History!");
+        return back()->with('success', "⚡ Logged {$validated['quantity']} deliverable(s) for {$employee->name} into Daily Work History!");
     }
 
     public function destroy(Todo $todo)

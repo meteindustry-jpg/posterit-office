@@ -57,6 +57,7 @@ class Todo extends Model
         'is_reference_image',
         'assignee_name',
         'assignee_photo_url',
+        'assignee_employee_id',
     ];
 
     public function getAssigneeNameAttribute(): string
@@ -69,6 +70,18 @@ class Todo extends Model
         }
 
         return 'Unassigned';
+    }
+
+    public function getAssigneeEmployeeIdAttribute(): ?int
+    {
+        $u = $this->assignedTo ?? $this->user;
+        if ($u) {
+            $emp = $u->employee ?? Employee::where('user_id', $u->id)->first() ?? Employee::where('email', $u->email)->first();
+
+            return $emp?->id;
+        }
+
+        return null;
     }
 
     public function getAssigneePhotoUrlAttribute(): string

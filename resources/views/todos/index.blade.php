@@ -1034,23 +1034,45 @@
     <!-- 1-Click Convert to Work Entry Modal -->
     <div x-show="convertModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs" style="display: none;">
         <div @click.outside="convertModalOpen = false" class="w-full max-w-md ui-panel p-6 shadow-xl space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div class="flex items-center gap-2">
                     <span class="w-6 h-6 rounded-md bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs">⚡</span>
-                    <h3 class="font-bold text-sm text-slate-900">Log to Daily Work Entry</h3>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Log to Daily Work Entry</h3>
                 </div>
                 <button @click="convertModalOpen = false" class="text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
             </div>
 
-            <p class="text-xs text-slate-500">
-                Record this completed task directly into the studio deliverable log & leaderboard.
-            </p>
+            <!-- Employee attribution highlight -->
+            <div class="p-3 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/60 rounded-2xl flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <img :src="convertEmployeePhoto" class="w-8 h-8 rounded-full object-cover shrink-0 border border-amber-300">
+                    <div class="min-w-0">
+                        <div class="text-[10px] uppercase font-bold text-amber-800 dark:text-amber-400">Logging Work For</div>
+                        <div class="font-extrabold text-slate-900 dark:text-white truncate" x-text="convertEmployeeName"></div>
+                    </div>
+                </div>
+                <span class="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md shrink-0">Employee Work</span>
+            </div>
 
             <form method="POST" :action="convertUrl" class="space-y-3.5 text-xs">
                 @csrf
+
+                @if(auth()->user()->isManager())
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Work Category *</label>
-                    <select name="work_category_id" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium">
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Employee Account *</label>
+                    <select name="employee_id" x-model="convertEmployeeId" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 font-medium">
+                        @foreach($employees as $emp)
+                            <option value="{{ $emp->id }}">{{ $emp->name }} ({{ $emp->employee_code }})</option>
+                        @endforeach
+                    </select>
+                </div>
+                @else
+                <input type="hidden" name="employee_id" :value="convertEmployeeId">
+                @endif
+
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Work Category *</label>
+                    <select name="work_category_id" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 font-medium">
                         @foreach($workCategories as $wc)
                             <option value="{{ $wc->id }}">{{ $wc->name }}</option>
                         @endforeach
@@ -1059,26 +1081,26 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Quantity *</label>
+                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Quantity *</label>
                         <input type="number" name="quantity" value="1" min="1" required 
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold text-center">
+                               class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold text-center">
                     </div>
 
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Work Date *</label>
+                        <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Work Date *</label>
                         <input type="date" name="date" value="{{ now()->format('Y-m-d') }}" required 
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800">
+                               class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Remarks / Note</label>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Remarks / Deliverable Note</label>
                     <input type="text" name="remarks" x-model="convertTitle" 
-                           class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900">
+                           class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white">
                 </div>
 
-                <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-                    <button type="button" @click="convertModalOpen = false" class="px-3.5 py-1.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100">Cancel</button>
+                <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" @click="convertModalOpen = false" class="px-3.5 py-1.5 rounded-xl font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
                     <button type="submit" class="px-4 py-1.5 bg-[#0071e3] hover:bg-[#0062c4] text-white font-semibold rounded-xl shadow-xs cursor-pointer">
                         ⚡ Save to Work History
                     </button>
@@ -1328,6 +1350,9 @@
             convertModalOpen: false,
             convertUrl: '',
             convertTitle: '',
+            convertEmployeeId: '',
+            convertEmployeeName: '',
+            convertEmployeePhoto: '',
             draggedTask: null,
             dragOverColumn: null,
             lightboxOpen: false,
@@ -1421,6 +1446,9 @@
             },
             openConvertModal(t) {
                 this.convertTitle = t.title;
+                this.convertEmployeeId = t.assignee_employee_id || '';
+                this.convertEmployeeName = t.assignee_name || 'Team Member';
+                this.convertEmployeePhoto = t.assignee_photo_url || 'https://ui-avatars.com/api/?name=Team&background=64748b&color=fff';
                 this.convertUrl = `{{ url('todos') }}/${t.id}/convert-work-entry`;
                 this.convertModalOpen = true;
             }

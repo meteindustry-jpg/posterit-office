@@ -10,6 +10,7 @@ use App\Models\LeaveRequest;
 use App\Models\LeaveType;
 use App\Models\Todo;
 use App\Models\User;
+use App\Models\WorkCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -487,5 +488,44 @@ class ComprehensiveSystemAuditTest extends TestCase
         $response->assertSee('Durga Arch Art');
         $response->assertSee($employeeUser->name);
         $response->assertSee($todo->assignee_photo_url);
+    }
+
+    public function test_admin_logging_work_for_employee_todo_assigns_work_to_employee_not_admin(): void
+    {
+        $superAdmin = User::where('role', 'super_admin')->first();
+        $employeeUser = User::where('role', 'employee')->first();
+        $employee = $employeeUser->employee;
+        $category = WorkCategory::first();
+
+        // Employee creates a personal task (user_id = employee, assigned_to_user_id = null)
+        $todo = Todo::create([
+            'user_id' => $employeeUser->id,
+            'assigned_to_user_id' => null,
+            'title' => 'Pradip Durga Vector Task',
+            'priority' => 'high',
+            'status' => 'todo',
+            'category' => 'Design',
+            'due_date' => now()->format('Y-m-d'),
+        ]);
+
+        // Admin logs work for this employee's task
+        $response = $this->actingAs($superAdmin)->post("/todos/{$todo->id}/convert-work-entry", [
+            'work_category_id' => $category->id,
+            'quantity' => 3,
+            'date' => now()->format('Y-m-d'),
+            'remarks' => 'Completed Durga Vector',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        // Check that the created daily work entry belongs to the employee, NOT the super admin
+        $this->assertDatabaseHas('daily_work_entries', [
+            'employee_id' => $employee->id,
+            'work_category_id' => $category->id,
+            'quantity' => 3,
+            'remarks' => 'Completed Durga Vector',
+            'created_by_user_id' => $superAdmin->id,
+        ]);
     }
 }
