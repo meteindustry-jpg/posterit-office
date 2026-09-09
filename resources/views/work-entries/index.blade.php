@@ -79,12 +79,14 @@
             <div class="text-slate-500">
                 Found <strong>{{ $entries->total() }}</strong> entries in this view
             </div>
-            @if($date)
             <div class="flex items-center gap-3">
-                <span class="text-slate-500">Output on {{ $date }}: <strong class="text-indigo-600 dark:text-indigo-400 text-sm font-extrabold">{{ $totalWorksOnDate }} tasks</strong></span>
-                <span class="text-slate-500">Active logged: <strong>{{ $workedEmployeesCount }}/{{ $activeEmployeesCount }}</strong></span>
+                <span class="text-slate-500">
+                    Total Output{{ $date ? " on $date" : '' }}: <strong class="text-indigo-600 dark:text-indigo-400 text-sm font-extrabold">{{ $totalWorks }} tasks</strong>
+                </span>
+                <span class="text-slate-500">
+                    Active logged: <strong>{{ $workedEmployeesCount }}/{{ $activeEmployeesCount }}</strong>
+                </span>
             </div>
-            @endif
         </div>
     </div>
 

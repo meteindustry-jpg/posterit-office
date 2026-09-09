@@ -15,7 +15,7 @@ class DailyWorkEntryController extends Controller
 {
     public function index(Request $request)
     {
-        $date = $request->get('date', now()->format('Y-m-d'));
+        $date = $request->get('date');
         $employeeId = $request->get('employee_id');
         $categoryId = $request->get('category_id');
         $departmentId = $request->get('department_id');
@@ -29,7 +29,7 @@ class DailyWorkEntryController extends Controller
             $query->where('employee_id', $employeeId);
         }
 
-        if ($date) {
+        if (! empty($date)) {
             $query->where('date', $date);
         }
         if ($categoryId) {
@@ -41,15 +41,20 @@ class DailyWorkEntryController extends Controller
             });
         }
 
-        $entries = $query->orderBy('id', 'desc')->paginate(20)->withQueryString();
+        $entries = $query->orderBy('date', 'desc')->orderBy('id', 'desc')->paginate(25)->withQueryString();
 
         $employees = Employee::where('employment_status', 'active')->orderBy('name')->get();
         $categories = WorkCategory::where('is_active', true)->orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
 
-        $totalWorksOnDate = DailyWorkEntry::where('date', $date)->sum('quantity');
+        $totalWorks = ! empty($date)
+            ? DailyWorkEntry::where('date', $date)->sum('quantity')
+            : DailyWorkEntry::sum('quantity');
+
         $activeEmployeesCount = Employee::where('employment_status', 'active')->count();
-        $workedEmployeesCount = DailyWorkEntry::where('date', $date)->distinct('employee_id')->count('employee_id');
+        $workedEmployeesCount = ! empty($date)
+            ? DailyWorkEntry::where('date', $date)->distinct('employee_id')->count('employee_id')
+            : DailyWorkEntry::distinct('employee_id')->count('employee_id');
 
         return view('work-entries.index', compact(
             'entries',
@@ -60,7 +65,7 @@ class DailyWorkEntryController extends Controller
             'employeeId',
             'categoryId',
             'departmentId',
-            'totalWorksOnDate',
+            'totalWorks',
             'activeEmployeesCount',
             'workedEmployeesCount'
         ));
