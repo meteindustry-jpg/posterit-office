@@ -60,7 +60,6 @@ Route::middleware('auth')->group(function () {
 
     // Attendance Views & Exports (All authenticated roles)
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-    Route::post('/attendance/batch', [AttendanceController::class, 'storeBatch'])->name('attendance.storeBatch');
     Route::get('/attendance/monthly-grid', [AttendanceController::class, 'monthlyGrid'])->name('attendance.monthlyGrid');
     Route::get('/attendance/export-monthly', [AttendanceController::class, 'exportMonthly'])->name('attendance.exportMonthly');
 
@@ -85,6 +84,9 @@ Route::middleware('auth')->group(function () {
     // Manager, Admin, Super Admin Level
     // ----------------------------------------------------
     Route::middleware('role:super_admin,admin,manager')->group(function () {
+        // Attendance Batch Management
+        Route::post('/attendance/batch', [AttendanceController::class, 'storeBatch'])->name('attendance.storeBatch');
+
         // Daily Work Entries Batch & CRUD (Manager & Admin Oversight)
         Route::get('/work-entries/batch', [DailyWorkEntryController::class, 'batchCreate'])->name('work-entries.batch');
         Route::post('/work-entries/batch', [DailyWorkEntryController::class, 'batchStore'])->name('work-entries.batchStore');

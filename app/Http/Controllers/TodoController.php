@@ -310,6 +310,10 @@ class TodoController extends Controller
 
     public function convertToWorkEntry(Request $request, Todo $todo)
     {
+        if ($todo->work_entry_id && $todo->workEntry) {
+            return back()->with('info', "Task #{$todo->id} has already been logged as Daily Work Entry #{$todo->work_entry_id}.");
+        }
+
         $validated = $request->validate([
             'employee_id' => ['nullable', 'exists:employees,id'],
             'work_category_id' => ['required', 'exists:work_categories,id'],
