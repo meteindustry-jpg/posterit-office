@@ -30,7 +30,7 @@ class Todo extends Model
     protected function casts(): array
     {
         return [
-            'due_date' => 'date',
+            'due_date' => 'date:Y-m-d',
             'is_completed' => 'boolean',
             'completed_at' => 'datetime',
             'subtasks' => 'array',

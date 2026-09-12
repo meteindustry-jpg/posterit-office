@@ -430,4 +430,22 @@ class WorkManagementSystemTest extends TestCase
         $catRes->assertStatus(200);
         $catRes->assertSee('Work Categories');
     }
+
+    public function test_todo_due_date_serialization_preserves_exact_calendar_date(): void
+    {
+        $user = User::first();
+        $todo = Todo::create([
+            'user_id' => $user->id,
+            'title' => 'Test Timezone Date Preservation',
+            'priority' => 'medium',
+            'status' => 'todo',
+            'due_date' => '2026-09-12',
+        ]);
+
+        $array = $todo->toArray();
+        $this->assertEquals('2026-09-12', $array['due_date']);
+
+        $json = json_decode($todo->toJson(), true);
+        $this->assertEquals('2026-09-12', $json['due_date']);
+    }
 }

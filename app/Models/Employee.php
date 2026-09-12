@@ -34,7 +34,7 @@ class Employee extends Model
     protected function casts(): array
     {
         return [
-            'joining_date' => 'date',
+            'joining_date' => 'date:Y-m-d',
             'salary' => 'decimal:2',
             'leave_quota' => 'integer',
         ];

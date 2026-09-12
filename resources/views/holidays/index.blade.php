@@ -437,7 +437,8 @@ function holidayCalendarApp() {
                 });
             }
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
             
             // Current month
             for (let i = 1; i <= totalDays; i++) {
@@ -509,10 +510,26 @@ function holidayCalendarApp() {
 
         openEdit(h) {
             this.detailModalOpen = false;
+            let dateStr = '';
+            if (h.date) {
+                if (typeof h.date === 'string' && h.date.length === 10 && !h.date.includes('T')) {
+                    dateStr = h.date;
+                } else {
+                    const d = new Date(h.date);
+                    if (!isNaN(d.getTime())) {
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        dateStr = `${y}-${m}-${day}`;
+                    } else if (typeof h.date === 'string') {
+                        dateStr = h.date.split('T')[0];
+                    }
+                }
+            }
             this.editData = {
                 id: h.id,
                 name: h.name,
-                date: h.date.split('T')[0],
+                date: dateStr,
                 type: h.type,
                 description: h.description || '',
                 url: `{{ url('holidays') }}/${h.id}`

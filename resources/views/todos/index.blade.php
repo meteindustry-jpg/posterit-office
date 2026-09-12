@@ -1428,13 +1428,30 @@
                     } catch(e) {}
                 }
 
+                let dueDateStr = '';
+                if (t.due_date) {
+                    if (typeof t.due_date === 'string' && t.due_date.length === 10 && !t.due_date.includes('T')) {
+                        dueDateStr = t.due_date;
+                    } else {
+                        const d = new Date(t.due_date);
+                        if (!isNaN(d.getTime())) {
+                            const y = d.getFullYear();
+                            const m = String(d.getMonth() + 1).padStart(2, '0');
+                            const day = String(d.getDate()).padStart(2, '0');
+                            dueDateStr = `${y}-${m}-${day}`;
+                        } else if (typeof t.due_date === 'string') {
+                            dueDateStr = t.due_date.split('T')[0];
+                        }
+                    }
+                }
+
                 this.editData = {
                     id: t.id,
                     title: t.title,
                     description: t.description || '',
                     priority: t.priority,
                     category: t.category,
-                    due_date: t.due_date ? t.due_date.split('T')[0] : '',
+                    due_date: dueDateStr,
                     due_time: t.due_time ? t.due_time.substring(0, 5) : '',
                     reference_url: t.reference_url || '',
                     reference_preview: t.reference_preview || '',

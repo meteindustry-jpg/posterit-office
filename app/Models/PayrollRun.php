@@ -21,7 +21,7 @@ class PayrollRun extends Model
     ];
 
     protected $casts = [
-        'payment_date' => 'date',
+        'payment_date' => 'date:Y-m-d',
         'total_amount' => 'decimal:2',
     ];
 

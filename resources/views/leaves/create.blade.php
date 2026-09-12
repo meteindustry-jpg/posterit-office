@@ -8,7 +8,7 @@
          quota: {{ $currentEmployee ? (int)$currentEmployee->remaining_leaves : 18 }},
          setPreset(type) {
              const today = new Date();
-             const fmt = (d) => d.toISOString().split('T')[0];
+             const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
              
              if (type === 'today') {
                  this.startDate = fmt(today);
