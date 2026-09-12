@@ -359,7 +359,7 @@
                             $checkOut = $att && $att->check_out ? date('H:i', strtotime($att->check_out)) : '';
                             $remarks = $att ? $att->remarks : '';
 
-                            $initialWorkedText = '--';
+                            $initialWorkedText = '--:-- --';
                             $initialWorkedState = 'empty';
                             if ($att && $att->check_in && in_array($currentStatus, ['present', 'wfh', 'half_day'])) {
                                 if ($att->check_out) {
@@ -455,22 +455,25 @@
                                        class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0071e3] disabled:opacity-30 disabled:bg-slate-100">
                             </td>
 
-                            <!-- Working Hours (Calculated after Check Out / Logout) -->
-                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                            <!-- Working Hours (Button / Input Container Style Matching Check In) -->
+                            <td class="py-3 px-4 whitespace-nowrap">
                                 <template x-if="calcRowDuration(checkIn, checkOut, status).state === 'completed'">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs font-mono">
-                                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                        <span x-text="calcRowDuration(checkIn, checkOut, status).text">{{ $initialWorkedText }}</span>
-                                    </span>
+                                    <div class="flex items-center justify-between gap-1.5 px-2.5 py-1.5 bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-xl text-xs font-bold shadow-2xs min-w-[105px]">
+                                        <span class="font-mono tracking-tight" x-text="calcRowDuration(checkIn, checkOut, status).text">{{ $initialWorkedText }}</span>
+                                        <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
                                 </template>
                                 <template x-if="calcRowDuration(checkIn, checkOut, status).state === 'active'">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-[#0071e3] border border-blue-200 font-mono animate-pulse">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#0071e3]"></span>
-                                        <span>In Progress</span>
-                                    </span>
+                                    <div class="flex items-center justify-between gap-1.5 px-2.5 py-1.5 bg-blue-50 border border-blue-200 text-[#0071e3] rounded-xl text-xs font-bold shadow-2xs min-w-[105px]">
+                                        <span class="font-mono tracking-tight text-[11px]" x-text="calcRowDuration(checkIn, checkOut, status).text">In Progress</span>
+                                        <svg class="w-3.5 h-3.5 text-[#0071e3] shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
                                 </template>
                                 <template x-if="calcRowDuration(checkIn, checkOut, status).state === 'empty'">
-                                    <span class="text-xs text-slate-400 font-mono font-bold">--</span>
+                                    <div class="flex items-center justify-between gap-1.5 px-2.5 py-1.5 bg-slate-50 border border-slate-200 text-slate-400 rounded-xl text-xs font-medium min-w-[105px]">
+                                        <span class="font-mono">--:-- --</span>
+                                        <svg class="w-3.5 h-3.5 text-slate-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
                                 </template>
                             </td>
 
