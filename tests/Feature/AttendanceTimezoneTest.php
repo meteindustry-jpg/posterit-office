@@ -221,15 +221,15 @@ class AttendanceTimezoneTest extends TestCase
         Carbon::setTestNow();
     }
 
-    public function test_super_admin_does_not_have_clock_in_widget(): void
+    public function test_super_admin_has_attendance_console_on_dashboard(): void
     {
         $superAdmin = User::where('role', 'super_admin')->first();
         $this->assertNotNull($superAdmin);
 
         $response = $this->actingAs($superAdmin)->get('/dashboard');
         $response->assertOk();
-        $response->assertDontSee('Executive Attendance Console');
-        $response->assertDontSee('Mark Attendance (Clock In)');
+        $response->assertSee('Executive Attendance Console');
+        $response->assertSee('Mark Attendance (Clock In)');
     }
 
     public function test_admin_has_attendance_console_on_dashboard(): void

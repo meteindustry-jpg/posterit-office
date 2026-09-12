@@ -400,12 +400,17 @@
 
                     @php
                         $headerUser = auth()->user();
-                        $showAttendanceWidget = $headerUser && ! $headerUser->isSuperAdmin();
-                        $headerEmp = $showAttendanceWidget ? ($headerUser->employee ?: \App\Models\Employee::where('user_id', $headerUser->id)->orWhere('email', $headerUser->email)->first()) : null;
-                        $headerAtt = $headerEmp ? \App\Models\DailyAttendance::where('employee_id', $headerEmp->id)->whereDate('date', now()->format('Y-m-d'))->first() : null;
+                        $headerEmp = $headerUser ? ($headerUser->employee ?: \App\Models\Employee::where('user_id', $headerUser->id)->orWhere('email', $headerUser->email)->first()) : null;
+                        $headerTz = \App\Models\CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+                        $headerToday = now()->setTimezone($headerTz)->format('Y-m-d');
+                        $headerAtt = $headerEmp ? \App\Models\DailyAttendance::where('employee_id', $headerEmp->id)->whereDate('date', $headerToday)->first() : null;
+                        if ($headerEmp && ! $headerAtt) {
+                            $yesterdayStr = now()->setTimezone($headerTz)->subDay()->format('Y-m-d');
+                            $headerAtt = \App\Models\DailyAttendance::where('employee_id', $headerEmp->id)->whereDate('date', $yesterdayStr)->whereNull('check_out')->first();
+                        }
                     @endphp
 
-                    @if($showAttendanceWidget && $headerEmp)
+                    @if($headerEmp)
                         @if($headerAtt && $headerAtt->check_in && !$headerAtt->check_out)
                             <!-- On Duty Pill -->
                             <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 shadow-2xs">
