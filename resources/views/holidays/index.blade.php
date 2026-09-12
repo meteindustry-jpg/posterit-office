@@ -6,10 +6,10 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold font-display text-slate-900 tracking-tight">
+            <h1 class="text-2xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight">
                 Holiday Calendar
             </h1>
-            <p class="text-xs text-slate-500 font-medium mt-0.5">
+            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">
                 Official company & national holiday schedule for Posterit.
             </p>
         </div>
@@ -17,7 +17,7 @@
         <div class="flex items-center gap-3">
             @if(auth()->user()->isAdmin())
             <button type="button" @click="addModalOpen = true" 
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white text-xs font-semibold rounded-xl shadow-xs transition cursor-pointer active:scale-[0.98]">
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer active:scale-[0.98]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 <span>Add Holiday</span>
             </button>
@@ -26,44 +26,44 @@
     </div>
 
     <!-- Calendar Controls & Navigation Bar -->
-    <div class="p-2.5 bg-white rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         
         <!-- Left: Month Switcher & Today Button -->
         <div class="flex items-center gap-2">
-            <div class="inline-flex items-center p-0.5 bg-slate-100 rounded-xl border border-slate-200/80">
+            <div class="inline-flex items-center p-0.5 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700">
                 <button type="button" @click="prevMonth()" title="Previous Month" 
-                        class="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white transition cursor-pointer">
+                        class="p-1.5 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-700 transition cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <button type="button" @click="nextMonth()" title="Next Month" 
-                        class="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-white transition cursor-pointer">
+                        class="p-1.5 rounded-lg text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-700 transition cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
             </div>
 
             <button type="button" @click="goToToday()" 
-                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200/70 text-slate-700 text-xs font-bold rounded-xl transition cursor-pointer">
+                    class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition cursor-pointer">
                 Today
             </button>
 
             <!-- Active Month Display -->
             <div class="px-2">
-                <span class="text-base font-black text-slate-900 tracking-tight" x-text="currentMonthName + ' ' + currentYear"></span>
+                <span class="text-base font-black text-slate-900 dark:text-white tracking-tight" x-text="currentMonthName + ' ' + currentYear"></span>
             </div>
         </div>
 
         <!-- Right: View Mode Toggle -->
         <div class="flex items-center gap-2">
-            <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200/80">
+            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700">
                 <button type="button" @click="viewMode = 'month'" 
-                        :class="viewMode === 'month' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-900'"
+                        :class="viewMode === 'month' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'"
                         class="px-3 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     <span>Month Grid</span>
                 </button>
 
                 <button type="button" @click="viewMode = 'list'" 
-                        :class="viewMode === 'list' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-900'"
+                        :class="viewMode === 'list' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'"
                         class="px-3 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                     <span>Annual List</span>
@@ -74,27 +74,27 @@
     </div>
 
     <!-- VIEW 1: Interactive Monthly Calendar Grid (Days 1–31) -->
-    <div x-show="viewMode === 'month'" class="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
+    <div x-show="viewMode === 'month'" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
         
         <!-- 7-Day Column Headers (Mon -> Sun) -->
-        <div class="grid grid-cols-7 border-b border-slate-200 bg-slate-50/75 text-center text-[11px] font-extrabold uppercase tracking-wider text-slate-500 py-3">
+        <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-800/90 text-center text-[11px] font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300 py-3">
             <div>Mon</div>
             <div>Tue</div>
             <div>Wed</div>
             <div>Thu</div>
             <div>Fri</div>
-            <div class="text-rose-500">Sat</div>
-            <div class="text-rose-500">Sun</div>
+            <div class="text-rose-600 dark:text-rose-400 font-black">Sat</div>
+            <div class="text-rose-600 dark:text-rose-400 font-black">Sun</div>
         </div>
 
         <!-- Days Grid (35 or 42 cells) -->
-        <div class="grid grid-cols-7 divide-x divide-y divide-slate-100 border-b border-slate-100">
+        <div class="grid grid-cols-7 divide-x divide-y divide-slate-100 dark:divide-slate-800 border-b border-slate-100 dark:border-slate-800">
             <template x-for="(cell, index) in calendarDays" :key="cell.dateStr + index">
                 <div class="min-h-[115px] p-2 flex flex-col justify-between transition-colors relative"
                      :class="{
-                         'bg-slate-50/40 text-slate-300': !cell.isCurrentMonth,
-                         'bg-white text-slate-800 hover:bg-slate-50/60': cell.isCurrentMonth && !cell.isToday,
-                         'bg-blue-50/30 ring-2 ring-[#0071e3] ring-inset z-10': cell.isToday
+                         'bg-slate-50/60 dark:bg-slate-950/40 text-slate-400 dark:text-slate-600': !cell.isCurrentMonth,
+                         'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-50/80 dark:hover:bg-slate-800/60': cell.isCurrentMonth && !cell.isToday,
+                         'bg-blue-50/40 dark:bg-blue-950/40 ring-2 ring-[#0071e3] ring-inset z-10': cell.isToday
                      }">
                     
                     <!-- Top Day Number & Today Indicator -->
@@ -102,8 +102,8 @@
                         <span class="inline-flex items-center justify-center text-xs font-bold"
                               :class="{
                                   'w-6 h-6 rounded-full bg-[#0071e3] text-white shadow-xs font-black': cell.isToday,
-                                  'text-slate-900 font-bold': cell.isCurrentMonth && !cell.isToday,
-                                  'text-slate-300': !cell.isCurrentMonth
+                                  'text-slate-900 dark:text-white font-extrabold': cell.isCurrentMonth && !cell.isToday,
+                                  'text-slate-400 dark:text-slate-600 font-semibold': !cell.isCurrentMonth
                               }"
                               x-text="cell.dayNum">
                         </span>
@@ -134,24 +134,24 @@
         </div>
 
         <!-- Legend Footer -->
-        <div class="p-3.5 bg-slate-50/60 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500 gap-3">
+        <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-600 dark:text-slate-400 font-medium gap-3">
             <div class="flex items-center gap-4">
-                <span class="font-bold text-slate-700">Legend:</span>
+                <span class="font-extrabold text-slate-800 dark:text-slate-200">Legend:</span>
                 <div class="flex items-center gap-1.5">
                     <span class="w-3 h-3 rounded-md bg-blue-600"></span>
-                    <span>National</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-300">National</span>
                 </div>
                 <div class="flex items-center gap-1.5">
                     <span class="w-3 h-3 rounded-md bg-pink-500"></span>
-                    <span>Religious / Festive</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-300">Religious / Festive</span>
                 </div>
                 <div class="flex items-center gap-1.5">
                     <span class="w-3 h-3 rounded-md bg-teal-600"></span>
-                    <span>Company Off</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-300">Company Off</span>
                 </div>
             </div>
 
-            <div>
+            <div class="text-slate-500 dark:text-slate-400 text-[11px]">
                 Click on any colored holiday event pill to view details.
             </div>
         </div>
@@ -237,10 +237,10 @@
 
             </div>
             @empty
-            <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-slate-200/80 shadow-2xs">
+            <div class="col-span-full py-16 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
                 <div class="text-3xl mb-2">📅</div>
-                <h4 class="font-bold text-slate-800 text-sm">No holidays registered for {{ $year }}</h4>
-                <p class="text-xs text-slate-400 mt-1">Use the "+ Add Holiday" button to create one.</p>
+                <h4 class="font-extrabold text-slate-800 dark:text-white text-sm">No holidays registered for {{ $year }}</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">Use the "+ Add Holiday" button to create one.</p>
             </div>
             @endforelse
         </div>
@@ -248,34 +248,34 @@
 
     <!-- Holiday Details Modal -->
     <div x-show="detailModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs" style="display: none;">
-        <div @click.outside="detailModalOpen = false" class="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 space-y-4">
+        <div @click.outside="detailModalOpen = false" class="w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
             <template x-if="selectedHoliday">
                 <div>
                     <div class="flex items-start justify-between">
                         <div class="flex items-center gap-2">
                             <span class="text-2xl" x-text="getHolidayTheme(selectedHoliday.name, selectedHoliday.type).icon"></span>
                             <div>
-                                <h3 class="font-extrabold text-base text-slate-900" x-text="selectedHoliday.name"></h3>
-                                <span class="text-xs font-bold text-slate-500 capitalize" x-text="selectedHoliday.type + ' Holiday'"></span>
+                                <h3 class="font-extrabold text-base text-slate-900 dark:text-white font-display" x-text="selectedHoliday.name"></h3>
+                                <span class="text-xs font-bold text-slate-600 dark:text-slate-400 capitalize" x-text="selectedHoliday.type + ' Holiday'"></span>
                             </div>
                         </div>
-                        <button type="button" @click="detailModalOpen = false" class="text-slate-400 hover:text-slate-600 text-sm">✕</button>
+                        <button type="button" @click="detailModalOpen = false" class="text-slate-400 hover:text-slate-600 text-sm cursor-pointer">✕</button>
                     </div>
 
-                    <div class="mt-4 p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-2 text-xs">
+                    <div class="mt-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 space-y-2 text-xs">
                         <div class="flex justify-between">
-                            <span class="text-slate-400 font-bold uppercase text-[10px]">Date</span>
-                            <span class="font-bold text-slate-800" x-text="selectedHoliday.date"></span>
+                            <span class="text-slate-600 dark:text-slate-400 font-bold uppercase text-[10px]">Date</span>
+                            <span class="font-bold text-slate-800 dark:text-slate-200" x-text="selectedHoliday.date"></span>
                         </div>
-                        <div x-show="selectedHoliday.description" class="pt-2 border-t border-slate-200/60">
-                            <span class="text-slate-400 font-bold uppercase text-[10px] block mb-1">Details</span>
-                            <p class="text-slate-600 italic" x-text="selectedHoliday.description"></p>
+                        <div x-show="selectedHoliday.description" class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <span class="text-slate-600 dark:text-slate-400 font-bold uppercase text-[10px] block mb-1">Details</span>
+                            <p class="text-slate-700 dark:text-slate-300 font-medium italic" x-text="selectedHoliday.description"></p>
                         </div>
                     </div>
 
                     @if(auth()->user()->isAdmin())
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-                        <button type="button" @click="openEdit(selectedHoliday)" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition">
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+                        <button type="button" @click="openEdit(selectedHoliday)" class="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition cursor-pointer">
                             Edit Holiday
                         </button>
                     </div>
@@ -287,24 +287,24 @@
 
     <!-- Add Modal -->
     <div x-show="addModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs" style="display: none;">
-        <div @click.outside="addModalOpen = false" class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 space-y-4">
-            <h3 class="font-extrabold text-base text-slate-900 font-display">Add New Holiday</h3>
+        <div @click.outside="addModalOpen = false" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white font-display">Add New Holiday</h3>
             
             <form method="POST" action="{{ route('holidays.store') }}" class="space-y-4 text-xs">
                 @csrf
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Holiday Name *</label>
-                    <input type="text" name="name" required placeholder="e.g. Diwali Festival" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:ring-2 focus:ring-[#0071e3]">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Holiday Name *</label>
+                    <input type="text" name="name" required placeholder="e.g. Diwali Festival" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-[#0071e3]">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Holiday Date *</label>
-                    <input type="date" name="date" required value="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:ring-2 focus:ring-[#0071e3]">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Holiday Date *</label>
+                    <input type="date" name="date" required value="{{ now()->format('Y-m-d') }}" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-[#0071e3]">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Holiday Type *</label>
-                    <select name="type" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:bg-white focus:ring-2 focus:ring-[#0071e3]">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Holiday Type *</label>
+                    <select name="type" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-[#0071e3]">
                         <option value="national">National Holiday</option>
                         <option value="religious">Religious Holiday</option>
                         <option value="company" selected>Company Holiday</option>
@@ -313,12 +313,12 @@
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Description (Optional)</label>
-                    <textarea name="description" rows="2" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0071e3]"></textarea>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Description (Optional)</label>
+                    <textarea name="description" rows="2" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-[#0071e3]"></textarea>
                 </div>
 
                 <div class="pt-3 flex items-center justify-end gap-2">
-                    <button type="button" @click="addModalOpen = false" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold cursor-pointer">Cancel</button>
+                    <button type="button" @click="addModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold cursor-pointer">Cancel</button>
                     <button type="submit" class="px-5 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white font-bold rounded-xl shadow-xs cursor-pointer">Add Holiday</button>
                 </div>
             </form>
@@ -327,25 +327,25 @@
 
     <!-- Edit Modal -->
     <div x-show="editModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs" style="display: none;">
-        <div @click.outside="editModalOpen = false" class="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 space-y-4">
-            <h3 class="font-extrabold text-base text-slate-900 font-display">Edit Holiday</h3>
+        <div @click.outside="editModalOpen = false" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <h3 class="font-extrabold text-base text-slate-900 dark:text-white font-display">Edit Holiday</h3>
             
             <form :action="editData.url" method="POST" class="space-y-4 text-xs">
                 @csrf
                 @method('PUT')
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Holiday Name *</label>
-                    <input type="text" name="name" x-model="editData.name" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:ring-2 focus:ring-[#0071e3]">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Holiday Name *</label>
+                    <input type="text" name="name" x-model="editData.name" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-[#0071e3]">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Holiday Date *</label>
-                    <input type="date" name="date" x-model="editData.date" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:bg-white focus:ring-2 focus:ring-[#0071e3]">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Holiday Date *</label>
+                    <input type="date" name="date" x-model="editData.date" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-[#0071e3]">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Holiday Type *</label>
-                    <select name="type" x-model="editData.type" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:bg-white focus:ring-2 focus:ring-[#0071e3]">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Holiday Type *</label>
+                    <select name="type" x-model="editData.type" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-[#0071e3]">
                         <option value="national">National Holiday</option>
                         <option value="religious">Religious Holiday</option>
                         <option value="company">Company Holiday</option>
@@ -354,12 +354,12 @@
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Description (Optional)</label>
-                    <textarea name="description" x-model="editData.description" rows="2" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#0071e3]"></textarea>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Description (Optional)</label>
+                    <textarea name="description" x-model="editData.description" rows="2" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-[#0071e3]"></textarea>
                 </div>
 
                 <div class="pt-3 flex items-center justify-end gap-2">
-                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold cursor-pointer">Cancel</button>
+                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold cursor-pointer">Cancel</button>
                     <button type="submit" class="px-5 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white font-bold rounded-xl shadow-xs cursor-pointer">Update Holiday</button>
                 </div>
             </form>

@@ -148,39 +148,39 @@
         
         <!-- 1. Daily Work Entries Report -->
         @if($reportType === 'daily_work')
-        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span class="font-bold text-slate-700 dark:text-slate-300">Period: {{ $startDate }} to {{ $endDate }}</span>
-            <span class="font-extrabold text-indigo-600 dark:text-indigo-400">Total Quantity Completed: {{ $data['total_quantity'] }} ({{ $data['total_entries'] }} entries)</span>
+        <div class="p-4 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-800 dark:text-slate-200">Period: {{ $startDate }} to {{ $endDate }}</span>
+            <span class="font-extrabold text-indigo-700 dark:text-indigo-400">Total Quantity Completed: {{ $data['total_quantity'] }} ({{ $data['total_entries'] }} entries)</span>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 text-[10px] uppercase">
-                        <th class="py-3 px-4">Date</th>
-                        <th class="py-3 px-4">Employee</th>
-                        <th class="py-3 px-4">Department</th>
-                        <th class="py-3 px-4">Category</th>
-                        <th class="py-3 px-4 text-center">Quantity</th>
-                        <th class="py-3 px-4">Remarks</th>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold uppercase tracking-wider">
+                        <th class="py-3.5 px-4 font-extrabold">Date</th>
+                        <th class="py-3.5 px-4 font-extrabold">Employee</th>
+                        <th class="py-3.5 px-4 font-extrabold">Department</th>
+                        <th class="py-3.5 px-4 font-extrabold">Category</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Quantity</th>
+                        <th class="py-3.5 px-4 font-extrabold">Remarks</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
                     @forelse($data['records'] as $r)
                     <tr>
-                        <td class="py-3 px-4 font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap">{{ $r->date->format('d M, Y') }}</td>
+                        <td class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">{{ $r->date->format('d M, Y') }}</td>
                         <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">{{ $r->employee->name }} ({{ $r->employee->employee_code }})</td>
-                        <td class="py-3 px-4 text-slate-500">{{ $r->employee->department->name ?? 'N/A' }}</td>
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">{{ $r->employee->department->name ?? 'N/A' }}</td>
                         <td class="py-3 px-4">
-                            <span class="px-2 py-0.5 rounded-md font-semibold text-[11px]" style="background-color: {{ $r->category->color }}20; color: {{ $r->category->color }}">
+                            <span class="px-2.5 py-1 rounded-md font-bold text-[11px]" style="background-color: {{ $r->category->color }}20; color: {{ $r->category->color }}">
                                 {{ $r->category->name }}
                             </span>
                         </td>
                         <td class="py-3 px-4 text-center font-extrabold text-sm text-slate-900 dark:text-white">{{ $r->quantity }}</td>
-                        <td class="py-3 px-4 text-slate-500">{{ $r->remarks ?? '-' }}</td>
+                        <td class="py-3 px-4 text-slate-800 dark:text-slate-200 font-medium">{{ $r->remarks ?? '-' }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-400">No records found for this period.</td>
+                        <td colspan="6" class="py-8 text-center text-slate-600 font-medium">No records found for this period.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -189,37 +189,37 @@
 
         <!-- 2. Attendance Report -->
         @elseif($reportType === 'attendance')
-        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-slate-700 dark:text-slate-300">Period: {{ $startDate }} to {{ $endDate }}</span>
-            <div class="flex items-center gap-3 font-semibold text-[11px]">
-                <span class="text-emerald-600">{{ $data['present_count'] }} Present</span> •
-                <span class="text-indigo-600">{{ $data['wfh_count'] }} WFH</span> •
-                <span class="text-amber-600">{{ $data['half_day_count'] }} Half Day</span> •
-                <span class="text-rose-600">{{ $data['leave_count'] }} Leaves</span> •
-                <span class="text-slate-500">{{ $data['absent_count'] }} Absents</span>
+        <div class="p-4 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span class="font-bold text-slate-800 dark:text-slate-200">Period: {{ $startDate }} to {{ $endDate }}</span>
+            <div class="flex items-center gap-3 font-bold text-xs">
+                <span class="text-emerald-700">{{ $data['present_count'] }} Present</span> •
+                <span class="text-indigo-700">{{ $data['wfh_count'] }} WFH</span> •
+                <span class="text-amber-700">{{ $data['half_day_count'] }} Half Day</span> •
+                <span class="text-rose-700">{{ $data['leave_count'] }} Leaves</span> •
+                <span class="text-slate-700">{{ $data['absent_count'] }} Absents</span>
             </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 text-[10px] uppercase">
-                        <th class="py-3 px-4">Date</th>
-                        <th class="py-3 px-4">Employee</th>
-                        <th class="py-3 px-4">Department</th>
-                        <th class="py-3 px-4">Status</th>
-                        <th class="py-3 px-4">Check In</th>
-                        <th class="py-3 px-4">Check Out</th>
-                        <th class="py-3 px-4">Remarks</th>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold uppercase tracking-wider">
+                        <th class="py-3.5 px-4 font-extrabold">Date</th>
+                        <th class="py-3.5 px-4 font-extrabold">Employee</th>
+                        <th class="py-3.5 px-4 font-extrabold">Department</th>
+                        <th class="py-3.5 px-4 font-extrabold">Status</th>
+                        <th class="py-3.5 px-4 font-extrabold">Check In</th>
+                        <th class="py-3.5 px-4 font-extrabold">Check Out</th>
+                        <th class="py-3.5 px-4 font-extrabold">Remarks</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
                     @forelse($data['records'] as $r)
                     <tr>
-                        <td class="py-3 px-4 font-semibold whitespace-nowrap">{{ $r->date->format('d M, Y') }} ({{ $r->date->format('D') }})</td>
+                        <td class="py-3 px-4 font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">{{ $r->date->format('d M, Y') }} ({{ $r->date->format('D') }})</td>
                         <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">{{ $r->employee->name }} ({{ $r->employee->employee_code }})</td>
-                        <td class="py-3 px-4 text-slate-500">{{ $r->employee->department->name ?? 'N/A' }}</td>
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">{{ $r->employee->department->name ?? 'N/A' }}</td>
                         <td class="py-3 px-4">
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase
                                 {{ $r->status === 'present' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : '' }}
                                 {{ $r->status === 'wfh' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300' : '' }}
                                 {{ $r->status === 'half_day' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : '' }}
@@ -228,13 +228,13 @@
                                 {{ $r->status }}
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-slate-500 font-mono">{{ $r->check_in ? \Carbon\Carbon::parse($r->check_in)->format('h:i A') : '-' }}</td>
-                        <td class="py-3 px-4 text-slate-500 font-mono">{{ $r->check_out ? \Carbon\Carbon::parse($r->check_out)->format('h:i A') : '-' }}</td>
-                        <td class="py-3 px-4 text-slate-400">{{ $r->remarks ?? '-' }}</td>
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-mono font-medium">{{ $r->check_in ? \Carbon\Carbon::parse($r->check_in)->format('h:i A') : '-' }}</td>
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-mono font-medium">{{ $r->check_out ? \Carbon\Carbon::parse($r->check_out)->format('h:i A') : '-' }}</td>
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">{{ $r->remarks ?? '-' }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="py-8 text-center text-slate-400">No attendance records found.</td>
+                        <td colspan="7" class="py-8 text-center text-slate-600 font-medium">No attendance records found.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -246,15 +246,15 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 text-[10px] uppercase">
-                        <th class="py-3 px-4">Employee</th>
-                        <th class="py-3 px-4">Department</th>
-                        <th class="py-3 px-4 text-center">Total Works Completed</th>
-                        <th class="py-3 px-4 text-center">Present Days</th>
-                        <th class="py-3 px-4 text-center">WFH Days</th>
-                        <th class="py-3 px-4 text-center">Leave Days</th>
-                        <th class="py-3 px-4 text-center">Absent Days</th>
-                        <th class="py-3 px-4 text-center">Attendance %</th>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold uppercase tracking-wider">
+                        <th class="py-3.5 px-4 font-extrabold">Employee</th>
+                        <th class="py-3.5 px-4 font-extrabold">Department</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Total Works Completed</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Present Days</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">WFH Days</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Leave Days</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Absent Days</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Attendance %</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -262,15 +262,15 @@
                     <tr>
                         <td class="py-3 px-4">
                             <div class="font-bold text-slate-900 dark:text-white">{{ $s['employee']->name }}</div>
-                            <div class="text-[10px] text-slate-400">{{ $s['employee']->employee_code }} • {{ $s['employee']->designation }}</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400 font-medium">{{ $s['employee']->employee_code }} • {{ $s['employee']->designation }}</div>
                         </td>
-                        <td class="py-3 px-4 text-slate-500">{{ $s['employee']->department->name ?? 'N/A' }}</td>
-                        <td class="py-3 px-4 text-center font-extrabold text-sm text-indigo-600 dark:text-indigo-400">{{ $s['total_works'] }}</td>
-                        <td class="py-3 px-4 text-center font-semibold text-emerald-600">{{ $s['present_days'] }}</td>
-                        <td class="py-3 px-4 text-center font-semibold text-indigo-600">{{ $s['wfh_days'] }}</td>
-                        <td class="py-3 px-4 text-center font-semibold text-amber-600">{{ $s['leave_days'] }}</td>
-                        <td class="py-3 px-4 text-center font-semibold text-rose-600">{{ $s['absent_days'] }}</td>
-                        <td class="py-3 px-4 text-center font-black {{ $s['attendance_rate'] >= 85 ? 'text-emerald-600' : 'text-amber-600' }}">{{ $s['attendance_rate'] }}%</td>
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">{{ $s['employee']->department->name ?? 'N/A' }}</td>
+                        <td class="py-3 px-4 text-center font-extrabold text-sm text-indigo-700 dark:text-indigo-400">{{ $s['total_works'] }}</td>
+                        <td class="py-3 px-4 text-center font-bold text-emerald-700">{{ $s['present_days'] }}</td>
+                        <td class="py-3 px-4 text-center font-bold text-indigo-700">{{ $s['wfh_days'] }}</td>
+                        <td class="py-3 px-4 text-center font-bold text-amber-700">{{ $s['leave_days'] }}</td>
+                        <td class="py-3 px-4 text-center font-bold text-rose-700">{{ $s['absent_days'] }}</td>
+                        <td class="py-3 px-4 text-center font-black {{ $s['attendance_rate'] >= 85 ? 'text-emerald-700' : 'text-amber-700' }}">{{ $s['attendance_rate'] }}%</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -279,18 +279,18 @@
 
         <!-- 4. Category Volume Summary Report -->
         @elseif($reportType === 'category_summary')
-        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span class="font-bold text-slate-700 dark:text-slate-300">Period: {{ $startDate }} to {{ $endDate }}</span>
-            <span class="font-extrabold text-indigo-600 dark:text-indigo-400">Total Output Across Categories: {{ $data['total_volume'] }}</span>
+        <div class="p-4 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-800 dark:text-slate-200">Period: {{ $startDate }} to {{ $endDate }}</span>
+            <span class="font-extrabold text-indigo-700 dark:text-indigo-400">Total Output Across Categories: {{ $data['total_volume'] }}</span>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 text-[10px] uppercase">
-                        <th class="py-3 px-4">Work Category</th>
-                        <th class="py-3 px-4 text-center">Total Task Entries</th>
-                        <th class="py-3 px-4 text-center">Total Quantity Completed</th>
-                        <th class="py-3 px-4 text-center">Share of Volume</th>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold uppercase tracking-wider">
+                        <th class="py-3.5 px-4 font-extrabold">Work Category</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Total Task Entries</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Total Quantity Completed</th>
+                        <th class="py-3.5 px-4 font-extrabold text-center">Share of Volume</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -303,11 +303,11 @@
                             <span class="w-3 h-3 rounded-full" style="background-color: {{ $c->category->color ?? '#6366f1' }}"></span>
                             <span>{{ $c->category->name ?? 'N/A' }}</span>
                         </td>
-                        <td class="py-3 px-4 text-center font-semibold text-slate-600 dark:text-slate-300">{{ $c->total_tasks }} logs</td>
-                        <td class="py-3 px-4 text-center font-extrabold text-sm text-indigo-600 dark:text-indigo-400">{{ $c->total_qty }}</td>
+                        <td class="py-3 px-4 text-center font-bold text-slate-800 dark:text-slate-200">{{ $c->total_tasks }} logs</td>
+                        <td class="py-3 px-4 text-center font-extrabold text-sm text-indigo-700 dark:text-indigo-400">{{ $c->total_qty }}</td>
                         <td class="py-3 px-4 text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <span class="font-bold text-xs">{{ $percentage }}%</span>
+                                <span class="font-extrabold text-xs text-slate-800 dark:text-slate-200">{{ $percentage }}%</span>
                                 <div class="w-20 bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
                                     <div class="bg-indigo-600 h-full rounded-full" style="width: {{ $percentage }}%"></div>
                                 </div>

@@ -109,33 +109,33 @@
         <!-- Segmented Tab Pills -->
         <div class="inline-flex p-1 bg-slate-100 rounded-xl overflow-x-auto">
             <a href="{{ route('todos.index', ['tab' => 'all']) }}" 
-               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'all' ? 'bg-white text-slate-900 shadow-2xs font-semibold' : 'text-slate-600 hover:text-slate-900' }}">
+               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'all' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-700 hover:text-slate-900 font-semibold' }}">
                 <span>All Active</span>
-                <span class="ml-1 text-[11px] {{ $tab === 'all' ? 'text-slate-900 font-bold' : 'text-slate-400' }}">{{ $counts['all'] }}</span>
+                <span class="ml-1 text-[11px] {{ $tab === 'all' ? 'text-slate-900 font-bold' : 'text-slate-600 font-bold' }}">{{ $counts['all'] }}</span>
             </a>
 
             <a href="{{ route('todos.index', ['tab' => 'today']) }}" 
-               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'today' ? 'bg-white text-slate-900 shadow-2xs font-semibold' : 'text-slate-600 hover:text-slate-900' }}">
+               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'today' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-700 hover:text-slate-900 font-semibold' }}">
                 <span>Today</span>
-                <span class="ml-1 text-[11px] {{ $tab === 'today' ? 'text-amber-600 font-bold' : 'text-slate-400' }}">{{ $counts['today'] }}</span>
+                <span class="ml-1 text-[11px] {{ $tab === 'today' ? 'text-amber-700 font-bold' : 'text-slate-600 font-bold' }}">{{ $counts['today'] }}</span>
             </a>
 
             <a href="{{ route('todos.index', ['tab' => 'upcoming']) }}" 
-               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'upcoming' ? 'bg-white text-slate-900 shadow-2xs font-semibold' : 'text-slate-600 hover:text-slate-900' }}">
+               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'upcoming' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-700 hover:text-slate-900 font-semibold' }}">
                 <span>Upcoming</span>
-                <span class="ml-1 text-[11px] text-slate-400">{{ $counts['upcoming'] }}</span>
+                <span class="ml-1 text-[11px] text-slate-600 font-bold">{{ $counts['upcoming'] }}</span>
             </a>
 
             <a href="{{ route('todos.index', ['tab' => 'high_priority']) }}" 
-               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'high_priority' ? 'bg-white text-rose-600 font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'high_priority' ? 'bg-white text-rose-700 font-bold shadow-2xs' : 'text-slate-700 hover:text-slate-900 font-semibold' }}">
                 <span>High Priority</span>
-                <span class="ml-1 text-[11px] {{ $tab === 'high_priority' ? 'text-rose-600 font-bold' : 'text-slate-400' }}">{{ $counts['high'] }}</span>
+                <span class="ml-1 text-[11px] {{ $tab === 'high_priority' ? 'text-rose-700 font-bold' : 'text-slate-600 font-bold' }}">{{ $counts['high'] }}</span>
             </a>
 
             <a href="{{ route('todos.index', ['tab' => 'completed']) }}" 
-               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'completed' ? 'bg-white text-emerald-700 font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+               class="px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap {{ $tab === 'completed' ? 'bg-white text-emerald-800 font-bold shadow-2xs' : 'text-slate-700 hover:text-slate-900 font-semibold' }}">
                 <span>Completed</span>
-                <span class="ml-1 text-[11px] text-slate-400">{{ $counts['completed'] }}</span>
+                <span class="ml-1 text-[11px] text-slate-600 font-bold">{{ $counts['completed'] }}</span>
             </a>
         </div>
 
@@ -144,10 +144,10 @@
             <form method="GET" action="{{ route('todos.index') }}" class="relative w-full md:w-52">
                 <input type="hidden" name="tab" value="{{ $tab }}">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search tasks..." 
-                       class="w-full pl-8 pr-7 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-normal focus:outline-hidden focus:bg-white focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3] text-slate-800 placeholder:text-slate-400 transition">
-                <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                       class="w-full pl-8 pr-7 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-hidden focus:bg-white focus:border-[#0071e3] focus:ring-1 focus:ring-[#0071e3] text-slate-900 placeholder:text-slate-500 transition">
+                <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 @if(request('search'))
-                <a href="{{ route('todos.index', ['tab' => $tab]) }}" class="absolute right-2.5 top-1.5 text-xs text-slate-400 hover:text-slate-600">✕</a>
+                <a href="{{ route('todos.index', ['tab' => $tab]) }}" class="absolute right-2.5 top-1.5 text-xs text-slate-500 hover:text-slate-800">✕</a>
                 @endif
             </form>
 
@@ -262,9 +262,9 @@
                     @endif
 
                     <!-- Metadata -->
-                    <div class="flex flex-wrap items-center gap-3 mt-1.5 text-[11px] text-slate-500 font-normal">
+                    <div class="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-slate-600 dark:text-slate-400 font-medium">
                         @if($todo->due_date)
-                        <div class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-semibold' : ($todo->due_date->isToday() ? 'text-amber-700 font-medium' : 'text-slate-500') }}">
+                        <div class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-bold' : ($todo->due_date->isToday() ? 'text-amber-700 font-semibold' : 'text-slate-600') }}">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <span>{{ $todo->due_date->isToday() ? 'Today' : $todo->due_date->format('d M') }}</span>
                             @if($todo->due_time)
@@ -280,24 +280,24 @@
                             @endphp
                             @if($isImg && $previewUrl)
                             <button type="button" @click="openImageLightbox('{{ $previewUrl }}', '{{ addslashes($todo->title) }}', '{{ $todo->reference_url }}')" 
-                                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-[#0071e3] hover:bg-blue-100 dark:hover:bg-blue-900/50 text-[11px] font-medium border border-blue-200/60 dark:border-blue-800/60 transition cursor-pointer">
+                                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-[#0071e3] hover:bg-blue-100 dark:hover:bg-blue-900/50 text-[11px] font-semibold border border-blue-200/60 dark:border-blue-800/60 transition cursor-pointer">
                                 <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 <span>Image Preview</span>
                             </button>
                             @else
-                            <a href="{{ $todo->reference_url }}" target="_blank" class="inline-flex items-center gap-1 text-[#0071e3] hover:underline font-medium">
+                            <a href="{{ $todo->reference_url }}" target="_blank" class="inline-flex items-center gap-1 text-[#0071e3] hover:underline font-semibold">
                                 <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                 <span>Link</span>
                             </a>
                             @endif
                         @endif
 
-                        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800" 
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700" 
                              title="{{ $todo->assignedTo ? 'Assigned to: ' . $todo->assignedTo->name : 'Created by: ' . $todo->user->name }}">
                             <img src="{{ $todo->assignee_photo_url }}" 
                                  alt="{{ $todo->assignee_name }}" 
                                  class="w-4 h-4 rounded-full object-cover shrink-0">
-                            <span class="font-semibold text-[11px] text-slate-700 dark:text-slate-300">
+                            <span class="font-bold text-xs text-slate-800 dark:text-slate-200">
                                 {{ $todo->assignee_name }}
                             </span>
                         </div>
@@ -309,13 +309,13 @@
             <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-center opacity-80 group-hover:opacity-100 transition">
                 @if(!$todo->work_entry_id && auth()->user()->isManager())
                 <button type="button" @click="openConvertModal(@js($todo))" 
-                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 rounded-lg text-[11px] font-semibold transition cursor-pointer">
+                        class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 rounded-lg text-[11px] font-bold transition cursor-pointer">
                     <span>⚡ Log Work</span>
                 </button>
                 @endif
 
                 <button type="button" @click="openEdit(@js($todo))" 
-                        class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition cursor-pointer" title="Edit">
+                        class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition cursor-pointer" title="Edit">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 </button>
 
@@ -331,9 +331,9 @@
         </div>
         @empty
         <div class="py-16 text-center">
-            <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-            <div class="font-semibold text-slate-700 text-xs">No tasks in this view</div>
-            <p class="text-[11px] text-slate-400 mt-0.5">Create a task to get started.</p>
+            <svg class="w-10 h-10 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            <div class="font-bold text-slate-800 text-xs">No tasks in this view</div>
+            <p class="text-xs text-slate-500 mt-0.5 font-medium">Create a task to get started.</p>
         </div>
         @endforelse
     </div>
@@ -362,14 +362,14 @@
 
                     <div class="flex items-center gap-1">
                         @if($todo->priority === 'high')
-                            <span class="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-rose-50 text-rose-600 border border-rose-200">High</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">High</span>
                         @elseif($todo->priority === 'medium')
-                            <span class="px-1.5 py-0.2 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">Medium</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">Medium</span>
                         @else
-                            <span class="px-1.5 py-0.2 rounded text-[10px] font-medium bg-slate-100 text-slate-500 border border-slate-200">Low</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300">Low</span>
                         @endif
 
-                        <button type="button" @click="openEdit(@js($todo))" class="p-1 text-slate-400 hover:text-slate-700 rounded transition cursor-pointer">
+                        <button type="button" @click="openEdit(@js($todo))" class="p-1 text-slate-500 hover:text-slate-800 rounded transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         </button>
                     </div>
@@ -380,7 +380,7 @@
                 </div>
 
                 @if($todo->description)
-                <p class="text-xs text-slate-500 font-normal line-clamp-2 {{ $todo->is_completed ? 'line-through text-slate-400' : '' }}">
+                <p class="text-xs text-slate-600 dark:text-slate-300 font-normal line-clamp-2 {{ $todo->is_completed ? 'line-through text-slate-400' : '' }}">
                     {{ $todo->description }}
                 </p>
                 @endif
@@ -461,16 +461,16 @@
                 <!-- Interactive Expandable Subtasks Checklist -->
                 <div class="pt-2 border-t border-slate-100 dark:border-slate-800" x-data="{ stExpanded: false }">
                     <button type="button" @click="stExpanded = !stExpanded" 
-                            class="w-full flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium mb-1.5 transition cursor-pointer group/st">
-                        <span class="flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-200">
-                            <svg class="w-3.5 h-3.5 text-slate-400 group-hover/st:text-[#0071e3] transition-transform duration-200" 
+                            class="w-full flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white font-medium mb-1.5 transition cursor-pointer group/st">
+                        <span class="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200">
+                            <svg class="w-3.5 h-3.5 text-slate-500 group-hover/st:text-[#0071e3] transition-transform duration-200" 
                                  :class="stExpanded ? 'rotate-180' : ''"
                                  fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             <span>Subtasks (Click to View)</span>
                         </span>
                         <div class="flex items-center gap-1.5">
-                            <span class="font-bold text-slate-700 dark:text-slate-300 text-[10px]">{{ $todo->completedSubtasksCount() }}/{{ $todo->totalSubtasksCount() }}</span>
-                            <span class="text-[10px] font-semibold text-[#0071e3]" x-text="stExpanded ? 'Hide ▲' : 'Show ▼'"></span>
+                            <span class="font-extrabold text-slate-800 dark:text-slate-200 text-xs">{{ $todo->completedSubtasksCount() }}/{{ $todo->totalSubtasksCount() }}</span>
+                            <span class="text-xs font-bold text-[#0071e3]" x-text="stExpanded ? 'Hide ▲' : 'Show ▼'"></span>
                         </div>
                     </button>
 
@@ -489,7 +489,7 @@
                          x-transition:enter-end="opacity-100 translate-y-0"
                          class="space-y-1 pt-1 pb-1">
                         @foreach($todo->subtasks as $sIndex => $subtask)
-                        <form method="POST" action="{{ route('todos.toggleSubtask', $todo) }}" class="flex items-center gap-2 group/item text-[11px] p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 transition">
+                        <form method="POST" action="{{ route('todos.toggleSubtask', $todo) }}" class="flex items-center gap-2 group/item text-xs p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 transition">
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="index" value="{{ $sIndex }}">
@@ -499,7 +499,7 @@
                                     <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                 @endif
                             </button>
-                            <span class="leading-tight select-none {{ !empty($subtask['completed']) ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200' }}">
+                            <span class="leading-tight select-none {{ !empty($subtask['completed']) ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium' }}">
                                 {{ $subtask['title'] }}
                             </span>
                         </form>
@@ -521,7 +521,7 @@
                             <span class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
                                 {{ $todo->assignee_name }}
                             </span>
-                            <span class="text-[9px] px-1.5 py-0.5 rounded font-medium {{ $todo->assignedTo ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' }}">
+                            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold {{ $todo->assignedTo ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200' }}">
                                 {{ $todo->assignedTo ? 'Assigned' : 'Created' }}
                             </span>
                         </div>
@@ -529,24 +529,24 @@
 
                     @if(!$todo->work_entry_id && auth()->user()->isManager())
                     <button type="button" @click="openConvertModal(@js($todo))" 
-                            class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded-lg text-[10px] font-bold transition cursor-pointer shrink-0">
+                            class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded-lg text-[11px] font-bold transition cursor-pointer shrink-0">
                         ⚡ Log
                     </button>
                     @endif
                 </div>
 
                 <!-- Due Date & Meta -->
-                <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">
+                <div class="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-0.5">
                     @if($todo->due_date)
-                    <div class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-bold' : ($todo->due_date->isToday() ? 'text-amber-700 dark:text-amber-400 font-semibold' : 'text-slate-500') }}">
+                    <div class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-bold' : ($todo->due_date->isToday() ? 'text-amber-700 dark:text-amber-400 font-bold' : 'text-slate-600') }}">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         <span>{{ $todo->due_date->isToday() ? 'Today' : $todo->due_date->format('d M') }}</span>
                         @if($todo->due_time)
-                            <span class="text-[10px] opacity-75">({{ date('H:i', strtotime($todo->due_time)) }})</span>
+                            <span class="text-[11px] font-medium opacity-90">({{ date('H:i', strtotime($todo->due_time)) }})</span>
                         @endif
                     </div>
                     @else
-                    <span class="text-slate-400 text-[10px]">No due date</span>
+                    <span class="text-slate-500 font-medium text-xs">No due date</span>
                     @endif
                 </div>
             </div>
@@ -554,9 +554,9 @@
         </div>
         @empty
         <div class="col-span-full py-16 text-center ui-panel">
-            <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-            <div class="font-semibold text-slate-700 text-xs">No tasks found</div>
-            <p class="text-[11px] text-slate-400 mt-0.5">Create a task to get started.</p>
+            <svg class="w-10 h-10 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            <div class="font-bold text-slate-800 text-xs">No tasks found</div>
+            <p class="text-xs text-slate-500 mt-0.5 font-medium">Create a task to get started.</p>
         </div>
         @endforelse
     </div>
@@ -655,20 +655,20 @@
                     
                     <!-- Card Top: Category + Status Dropdown Button -->
                     <div class="flex items-center justify-between gap-1.5">
-                        <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/60">
+                        <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
                             {{ $kTodo->category }}
                         </span>
 
                         <div class="flex items-center gap-1">
                             @if($kTodo->priority === 'high')
-                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500" title="High Priority"></span>
+                                <span class="w-2 h-2 rounded-full bg-rose-500" title="High Priority"></span>
                             @elseif($kTodo->priority === 'medium')
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400" title="Medium Priority"></span>
+                                <span class="w-2 h-2 rounded-full bg-amber-400" title="Medium Priority"></span>
                             @endif
 
                             <!-- Quick Status Menu -->
                             <div class="relative" x-data="{ menuOpen: false }">
-                                <button type="button" @click.stop="menuOpen = !menuOpen" class="text-slate-400 hover:text-slate-700 p-1 rounded transition cursor-pointer">
+                                <button type="button" @click.stop="menuOpen = !menuOpen" class="text-slate-500 hover:text-slate-800 p-1 rounded transition cursor-pointer">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
                                 </button>
 
@@ -678,7 +678,7 @@
                                     <button type="button" @click="moveTaskStatus(@js($kTodo), 'in_review'); menuOpen = false" class="w-full text-left px-2.5 py-1 rounded hover:bg-slate-100 font-medium text-purple-700">➔ In Review</button>
                                     <button type="button" @click="moveTaskStatus(@js($kTodo), 'completed'); menuOpen = false" class="w-full text-left px-2.5 py-1 rounded hover:bg-slate-100 font-medium text-emerald-700">➔ Done</button>
                                     <div class="my-1 border-t border-slate-100"></div>
-                                    <button type="button" @click="openEdit(@js($kTodo)); menuOpen = false" class="w-full text-left px-2.5 py-1 rounded hover:bg-slate-100 text-slate-600">Edit Task</button>
+                                    <button type="button" @click="openEdit(@js($kTodo)); menuOpen = false" class="w-full text-left px-2.5 py-1 rounded hover:bg-slate-100 text-slate-600 font-medium">Edit Task</button>
                                 </div>
                             </div>
                         </div>
@@ -690,7 +690,7 @@
                     </div>
 
                     @if($kTodo->description)
-                    <p class="text-[11px] text-slate-500 font-normal line-clamp-2 leading-relaxed {{ $kTodo->is_completed ? 'line-through text-slate-400' : '' }}">
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-normal line-clamp-2 leading-relaxed {{ $kTodo->is_completed ? 'line-through text-slate-400' : '' }}">
                         {{ $kTodo->description }}
                     </p>
                     @endif
@@ -735,14 +735,14 @@
                                  x-transition:enter="transition ease-out duration-150"
                                  x-transition:enter-start="opacity-0 translate-y-1 scale-95"
                                  x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                                 class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded bg-black/85 text-white text-[9px] font-bold flex items-center gap-1 shadow-md pointer-events-none z-10">
+                                 class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded bg-black/85 text-white text-[10px] font-bold flex items-center gap-1 shadow-md pointer-events-none z-10">
                                 <svg class="w-2.5 h-2.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
                                 <span>2.3x Zoom</span>
                             </div>
                         </div>
                         @else
                         <div class="pt-0.5">
-                            <a href="{{ $kTodo->reference_url }}" target="_blank" @click.stop class="inline-flex items-center gap-1 text-[10px] text-[#0071e3] hover:underline font-medium">
+                            <a href="{{ $kTodo->reference_url }}" target="_blank" @click.stop class="inline-flex items-center gap-1 text-[11px] text-[#0071e3] hover:underline font-semibold">
                                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                 <span>Reference</span>
                             </a>
@@ -754,16 +754,16 @@
                     @if($kTodo->totalSubtasksCount() > 0)
                     <div class="pt-1.5 border-t border-slate-100 dark:border-slate-800" x-data="{ kExpanded: false }">
                         <button type="button" @click.stop="kExpanded = !kExpanded" 
-                                class="w-full flex items-center justify-between text-[10px] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer group/kst">
-                            <span class="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
-                                <svg class="w-2.5 h-2.5 text-slate-400 transition-transform duration-200" 
+                                class="w-full flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium transition cursor-pointer group/kst">
+                            <span class="flex items-center gap-1 font-bold text-slate-800 dark:text-slate-200">
+                                <svg class="w-3 h-3 text-slate-500 transition-transform duration-200" 
                                      :class="kExpanded ? 'rotate-180' : ''"
                                      fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                <span>Subtasks (Click to View)</span>
+                                <span>Subtasks</span>
                             </span>
                             <div class="flex items-center gap-1">
-                                <span class="font-bold text-slate-700 dark:text-slate-300">{{ $kTodo->completedSubtasksCount() }}/{{ $kTodo->totalSubtasksCount() }}</span>
-                                <span class="text-[9px] font-semibold text-[#0071e3]" x-text="kExpanded ? 'Hide ▲' : 'Show ▼'"></span>
+                                <span class="font-extrabold text-slate-800 dark:text-slate-200 text-[11px]">{{ $kTodo->completedSubtasksCount() }}/{{ $kTodo->totalSubtasksCount() }}</span>
+                                <span class="text-[10px] font-bold text-[#0071e3]" x-text="kExpanded ? 'Hide ▲' : 'Show ▼'"></span>
                             </div>
                         </button>
 
@@ -781,7 +781,7 @@
                              x-transition:enter-end="opacity-100 translate-y-0"
                              class="space-y-1 pt-1.5">
                             @foreach($kTodo->subtasks as $sIndex => $subtask)
-                            <form method="POST" action="{{ route('todos.toggleSubtask', $kTodo) }}" class="flex items-center gap-1.5 text-[10px] p-0.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded transition">
+                            <form method="POST" action="{{ route('todos.toggleSubtask', $kTodo) }}" class="flex items-center gap-1.5 text-xs p-0.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 rounded transition">
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="index" value="{{ $sIndex }}">
@@ -791,7 +791,7 @@
                                         <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                     @endif
                                 </button>
-                                <span class="leading-tight select-none truncate {{ !empty($subtask['completed']) ? 'line-through text-slate-400' : 'text-slate-700 dark:text-slate-300' }}">
+                                <span class="leading-tight select-none truncate {{ !empty($subtask['completed']) ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200 font-medium' }}">
                                     {{ $subtask['title'] }}
                                 </span>
                             </form>
@@ -809,7 +809,7 @@
                                 <img src="{{ $kTodo->assignee_photo_url }}" 
                                      alt="{{ $kTodo->assignee_name }}" 
                                      class="w-5 h-5 rounded-full object-cover shrink-0">
-                                <span class="font-bold text-slate-800 dark:text-slate-200 truncate text-[11px]">
+                                <span class="font-bold text-slate-900 dark:text-slate-100 truncate text-xs">
                                     {{ $kTodo->assignee_name }}
                                 </span>
                             </div>
@@ -822,16 +822,16 @@
                             @endif
                         </div>
 
-                        <div class="flex items-center justify-between text-[10px] text-slate-400">
+                        <div class="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
                             @if($kTodo->due_date)
-                                <span class="flex items-center gap-1 {{ $kTodo->isOverdue() ? 'text-rose-600 font-bold' : ($kTodo->due_date->isToday() ? 'text-amber-700 dark:text-amber-400 font-semibold' : 'text-slate-500') }}">
+                                <span class="flex items-center gap-1 {{ $kTodo->isOverdue() ? 'text-rose-600 font-bold' : ($kTodo->due_date->isToday() ? 'text-amber-700 dark:text-amber-400 font-bold' : 'text-slate-600') }}">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     <span>{{ $kTodo->due_date->isToday() ? 'Today' : $kTodo->due_date->format('d M') }}</span>
                                 </span>
                             @else
-                                <span>No date</span>
+                                <span class="text-slate-500 font-medium">No date</span>
                             @endif
-                            <span class="text-[9px] px-1.5 py-0.2 rounded font-medium {{ $kTodo->assignedTo ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800' }}">
+                            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold {{ $kTodo->assignedTo ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200' : 'bg-slate-200 text-slate-700 dark:bg-slate-700' }}">
                                 {{ $kTodo->assignedTo ? 'Assigned' : 'Created' }}
                             </span>
                         </div>
@@ -839,7 +839,7 @@
 
                 </div>
                 @empty
-                <div class="py-14 text-center border-2 border-dashed border-black/[0.06] rounded-xl flex flex-col items-center justify-center text-slate-400 text-xs">
+                <div class="py-14 text-center border-2 border-dashed border-black/[0.08] rounded-xl flex flex-col items-center justify-center text-slate-500 font-medium text-xs">
                     <span>Drop tasks here</span>
                 </div>
                 @endforelse

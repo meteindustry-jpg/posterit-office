@@ -11,8 +11,8 @@
                 <h1 class="text-xl font-bold text-slate-900 tracking-tight">
                     Hello, {{ $employee->name }} 👋
                 </h1>
-                <p class="text-xs text-slate-500 font-normal mt-0.5">
-                    {{ $employee->designation }} • {{ $employee->department->name ?? 'Design' }} • <strong>{{ $employee->employee_code }}</strong>
+                <p class="text-xs text-slate-600 font-medium mt-0.5">
+                    {{ $employee->designation }} • {{ $employee->department->name ?? 'Design' }} • <strong class="text-slate-800">{{ $employee->employee_code }}</strong>
                 </p>
             </div>
         </div>
@@ -71,7 +71,7 @@
                                 ✓ Done
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 font-medium mt-0.5">
+                        <p class="text-xs text-slate-600 font-medium mt-0.5">
                             Shift finished for today. All hours have been recorded accurately.
                         </p>
                     </div>
@@ -81,24 +81,24 @@
                 <div class="flex items-center flex-wrap gap-3 sm:gap-5">
                     <div class="flex items-center gap-4 px-3.5 py-2 bg-slate-50 rounded-xl border border-slate-200/70 text-xs font-medium">
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Clock In</span>
-                            <span class="font-mono font-bold text-slate-800">{{ $todayCheckInFormatted ?? $myTodayAttendance->check_in }}</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Clock In</span>
+                            <span class="font-mono font-bold text-slate-900">{{ $todayCheckInFormatted ?? $myTodayAttendance->check_in }}</span>
                         </div>
                         <div class="h-6 w-px bg-slate-200"></div>
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Clock Out</span>
-                            <span class="font-mono font-bold text-slate-800">{{ $todayCheckOutFormatted ?? $myTodayAttendance->check_out }}</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Clock Out</span>
+                            <span class="font-mono font-bold text-slate-900">{{ $todayCheckOutFormatted ?? $myTodayAttendance->check_out }}</span>
                         </div>
                         <div class="h-6 w-px bg-slate-200"></div>
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Total Worked</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Total Worked</span>
                             <span class="font-mono font-bold text-[#0071E3]">{{ $todayWorkedHours }}h {{ $todayWorkedMinutes }}m</span>
                         </div>
                     </div>
 
                     <div class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 text-right hidden lg:block">
-                        <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Current Time</span>
-                        <span class="font-mono text-xs font-bold text-slate-700" x-text="timeStr"></span>
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Current Time</span>
+                        <span class="font-mono text-xs font-bold text-slate-800" x-text="timeStr"></span>
                     </div>
                 </div>
             </div>
@@ -121,8 +121,8 @@
                                 ● Working in Office
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 font-medium mt-0.5">
-                            Clocked in at <span class="font-mono font-bold text-slate-700">{{ $todayCheckInFormatted ?? $myTodayAttendance->check_in }}</span> • Office hours: {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingStart ?? '09:30'))->format('h:i A') }} – {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingEnd ?? '18:30'))->format('h:i A') }}
+                        <p class="text-xs text-slate-600 font-medium mt-0.5">
+                            Clocked in at <span class="font-mono font-bold text-slate-800">{{ $todayCheckInFormatted ?? $myTodayAttendance->check_in }}</span> • Office hours: {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingStart ?? '09:30'))->format('h:i A') }} – {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingEnd ?? '18:30'))->format('h:i A') }}
                         </p>
                     </div>
                 </div>
@@ -158,7 +158,7 @@
                                 Not Clocked In
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 font-medium mt-0.5">
+                        <p class="text-xs text-slate-600 font-medium mt-0.5">
                             Good day! Office hours are {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingStart ?? '09:30'))->format('h:i A') }} – {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingEnd ?? '18:30'))->format('h:i A') }}. Tap to record your arrival.
                         </p>
                     </div>
@@ -166,8 +166,8 @@
 
                 <div class="flex items-center gap-3">
                     <div class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 text-right hidden sm:block">
-                        <span class="font-mono text-xs font-bold text-slate-700" x-text="timeStr"></span>
-                        <span class="text-[10px] text-slate-400 block" x-text="dateStr"></span>
+                        <span class="font-mono text-xs font-bold text-slate-800" x-text="timeStr"></span>
+                        <span class="text-[10px] text-slate-500 font-medium block" x-text="dateStr"></span>
                     </div>
 
                     <form method="POST" action="{{ route('attendance.clockIn') }}" @submit="$refs.clientClockInTime.value = new Date().toLocaleTimeString('en-GB', { timeZone: timeZone, hour: '2-digit', minute: '2-digit', hour12: false })">
@@ -279,10 +279,10 @@
                 <span class="w-6 h-6 rounded-lg bg-blue-50 text-[#0071e3] flex items-center justify-center font-bold text-xs">☑</span>
                 <div>
                     <h3 class="font-bold text-sm text-slate-900">My Active Tasks</h3>
-                    <p class="text-[11px] text-slate-500 font-normal">Assigned action items and deliverables to complete</p>
+                    <p class="text-xs text-slate-600 font-medium">Assigned action items and deliverables to complete</p>
                 </div>
             </div>
-            <a href="{{ route('todos.index') }}" class="text-xs font-semibold text-[#0071e3] hover:underline">Open Task Board →</a>
+            <a href="{{ route('todos.index') }}" class="text-xs font-bold text-[#0071e3] hover:underline">Open Task Board →</a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -299,46 +299,46 @@
                                     <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
                                 </button>
                             </form>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white text-slate-700 border border-slate-200">
+                            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-white text-slate-800 border border-slate-200">
                                 {{ $todo->category }}
                             </span>
                         </div>
 
                         @if($todo->priority === 'high')
-                            <span class="w-2 h-2 rounded-full bg-rose-500" title="High Priority"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500" title="High Priority"></span>
                         @elseif($todo->priority === 'medium')
-                            <span class="w-2 h-2 rounded-full bg-amber-400" title="Medium Priority"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400" title="Medium Priority"></span>
                         @endif
                     </div>
 
-                    <div class="font-semibold text-xs text-slate-900 leading-snug">
+                    <div class="font-bold text-xs text-slate-900 leading-snug">
                         {{ $todo->title }}
                     </div>
 
                     @if($todo->description)
-                    <p class="text-[11px] text-slate-500 font-normal line-clamp-2">
+                    <p class="text-xs text-slate-600 font-medium line-clamp-2">
                         {{ $todo->description }}
                     </p>
                     @endif
                 </div>
 
-                <div class="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center justify-between text-[10px] text-slate-400">
+                <div class="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600 font-medium">
                     @if($todo->due_date)
-                    <span class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-600 font-bold' : ($todo->due_date->isToday() ? 'text-amber-700 font-semibold' : 'text-slate-500') }}">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span class="flex items-center gap-1 {{ $todo->isOverdue() ? 'text-rose-700 font-bold' : ($todo->due_date->isToday() ? 'text-amber-800 font-bold' : 'text-slate-700 font-semibold') }}">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         <span>{{ $todo->due_date->isToday() ? 'Due Today' : $todo->due_date->format('d M') }}</span>
                     </span>
                     @else
-                    <span>No due date</span>
+                    <span class="text-slate-500">No due date</span>
                     @endif
 
-                    <span class="capitalize font-medium {{ $todo->status === 'in_progress' ? 'text-blue-600' : ($todo->status === 'in_review' ? 'text-purple-600' : 'text-slate-500') }}">
+                    <span class="capitalize font-semibold {{ $todo->status === 'in_progress' ? 'text-blue-700' : ($todo->status === 'in_review' ? 'text-purple-700' : 'text-slate-700') }}">
                         {{ str_replace('_', ' ', $todo->status) }}
                     </span>
                 </div>
             </div>
             @empty
-            <div class="col-span-full py-8 text-center text-xs text-slate-400">
+            <div class="col-span-full py-8 text-center text-xs text-slate-500 font-medium">
                 All caught up! No active tasks assigned right now.
             </div>
             @endforelse
@@ -352,34 +352,34 @@
         <div class="lg:col-span-2 p-5 ui-panel">
             <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
                 <h3 class="font-bold text-sm text-slate-900">My Recent Work Logs</h3>
-                <span class="text-[11px] text-slate-400">Last 10 entries</span>
+                <span class="text-xs text-slate-500 font-semibold">Last 10 entries</span>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
-                        <tr class="border-b border-slate-200 text-slate-400 text-[10px] uppercase bg-slate-50/50">
-                            <th class="py-2.5 px-3 font-semibold">Date</th>
-                            <th class="py-2.5 px-3 font-semibold">Category</th>
-                            <th class="py-2.5 px-3 font-semibold text-center">Quantity</th>
-                            <th class="py-2.5 px-3 font-semibold">Remarks</th>
+                        <tr class="border-b border-slate-200 bg-slate-100 text-slate-700 text-[11px] uppercase font-bold tracking-wider">
+                            <th class="py-2.5 px-3">Date</th>
+                            <th class="py-2.5 px-3">Category</th>
+                            <th class="py-2.5 px-3 text-center">Quantity</th>
+                            <th class="py-2.5 px-3">Remarks</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($recentWorks as $work)
                         <tr class="hover:bg-slate-50/60 transition">
-                            <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">{{ $work->date->format('d M, Y') }}</td>
+                            <td class="py-2.5 px-3 text-slate-700 font-medium whitespace-nowrap">{{ $work->date->format('d M, Y') }}</td>
                             <td class="py-2.5 px-3">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium" style="background-color: {{ $work->category->color }}15; color: {{ $work->category->color }};">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold" style="background-color: {{ $work->category->color }}20; color: {{ $work->category->color }};">
                                     {{ $work->category->name }}
                                 </span>
                             </td>
                             <td class="py-2.5 px-3 text-center font-bold text-slate-900">{{ $work->quantity }}</td>
-                            <td class="py-2.5 px-3 text-slate-500 max-w-xs truncate">{{ $work->remarks ?? '-' }}</td>
+                            <td class="py-2.5 px-3 text-slate-700 font-medium max-w-xs truncate">{{ $work->remarks ?? '-' }}</td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="py-6 text-center text-slate-400">No work logged yet.</td>
+                            <td colspan="4" class="py-6 text-center text-slate-500 font-medium">No work logged yet.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -394,27 +394,27 @@
             <div class="p-5 ui-panel">
                 <div class="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-100">
                     <h3 class="font-bold text-sm text-slate-900">My Leave Requests</h3>
-                    <a href="{{ route('leaves.create') }}" class="text-xs font-semibold text-[#0071e3] hover:underline">+ Apply</a>
+                    <a href="{{ route('leaves.create') }}" class="text-xs font-bold text-[#0071e3] hover:underline">+ Apply</a>
                 </div>
 
                 <div class="space-y-2">
                     @forelse($myLeaves as $l)
                     <div class="p-2.5 rounded-xl bg-slate-50/70 border border-slate-200/60 space-y-1 text-xs">
                         <div class="flex items-center justify-between">
-                            <span class="font-semibold text-slate-800">{{ $l->leaveType->name }}</span>
-                            <span class="px-1.5 py-0.2 rounded text-[10px] font-bold uppercase
+                            <span class="font-bold text-slate-900">{{ $l->leaveType->name }}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
                                 {{ $l->status === 'approved' ? 'bg-emerald-100 text-emerald-800' : '' }}
                                 {{ $l->status === 'pending' ? 'bg-amber-100 text-amber-800' : '' }}
                                 {{ $l->status === 'rejected' ? 'bg-rose-100 text-rose-800' : '' }}">
                                 {{ $l->status }}
                             </span>
                         </div>
-                        <div class="text-[11px] text-slate-500">
+                        <div class="text-xs text-slate-600 font-medium">
                             {{ $l->start_date->format('d M') }} - {{ $l->end_date->format('d M') }} ({{ $l->total_days }}d)
                         </div>
                     </div>
                     @empty
-                    <div class="py-6 text-center text-xs text-slate-400">No leave requests.</div>
+                    <div class="py-6 text-center text-xs text-slate-500 font-medium">No leave requests.</div>
                     @endforelse
                 </div>
             </div>
@@ -432,12 +432,12 @@
                             {{ $h->date->format('d') }}
                         </div>
                         <div class="min-w-0 flex-1">
-                            <div class="font-semibold text-xs text-slate-900 truncate">{{ $h->name }}</div>
-                            <div class="text-[11px] text-slate-500">{{ $h->date->format('l, d M') }}</div>
+                            <div class="font-bold text-xs text-slate-900 truncate">{{ $h->name }}</div>
+                            <div class="text-xs text-slate-600 font-medium">{{ $h->date->format('l, d M') }}</div>
                         </div>
                     </div>
                     @empty
-                    <div class="py-6 text-center text-xs text-slate-400">No upcoming holidays.</div>
+                    <div class="py-6 text-center text-xs text-slate-500 font-medium">No upcoming holidays.</div>
                     @endforelse
                 </div>
             </div>

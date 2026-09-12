@@ -19,7 +19,7 @@
             <h1 class="text-2xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight">
                 Leave Management
             </h1>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">
                 Track employee leave quotas, applications, and manager approvals.
             </p>
         </div>
@@ -122,10 +122,10 @@
     <div class="p-5 bg-white rounded-3xl border border-slate-200/90 shadow-2xs">
         <div class="flex items-center justify-between mb-3">
             <div>
-                <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Your {{ now()->year }} Leave Quota & Balance</h3>
-                <p class="text-[11px] text-slate-400">Available annual leave allocations & usage summary</p>
+                <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Your {{ now()->year }} Leave Quota & Balance</h3>
+                <p class="text-xs text-slate-600 font-medium">Available annual leave allocations & usage summary</p>
             </div>
-            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200/60">
+            <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300">
                 {{ $remainingLeaves }} Days Available
             </span>
         </div>
@@ -134,12 +134,12 @@
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
                 <div class="flex items-center justify-between text-xs mb-1.5">
                     <span class="font-bold text-slate-800">Annual Quota</span>
-                    <span class="font-black text-slate-900">{{ $totalQuota }} <span class="text-[10px] text-slate-400 font-normal">days/year</span></span>
+                    <span class="font-black text-slate-900">{{ $totalQuota }} <span class="text-xs text-slate-500 font-medium">days/year</span></span>
                 </div>
                 <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
                     <div class="bg-[#0071e3] h-1.5 rounded-full" style="width: 100%"></div>
                 </div>
-                <div class="mt-1.5 flex justify-between text-[10px] text-slate-400">
+                <div class="mt-1.5 flex justify-between text-xs text-slate-600 font-medium">
                     <span>Base annual allocation</span>
                 </div>
             </div>
@@ -147,12 +147,12 @@
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
                 <div class="flex items-center justify-between text-xs mb-1.5">
                     <span class="font-bold text-slate-800">Approved Leaves</span>
-                    <span class="font-black text-amber-700">{{ $usedLeaves }} <span class="text-[10px] text-slate-400 font-normal">days used</span></span>
+                    <span class="font-black text-amber-700">{{ $usedLeaves }} <span class="text-xs text-slate-500 font-medium">days used</span></span>
                 </div>
                 <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
                     <div class="bg-amber-500 h-1.5 rounded-full" style="width: {{ $pctUtilized }}%"></div>
                 </div>
-                <div class="mt-1.5 flex justify-between text-[10px] text-slate-400">
+                <div class="mt-1.5 flex justify-between text-xs text-slate-600 font-medium">
                     <span>{{ $pctUtilized }}% quota utilized</span>
                 </div>
             </div>
@@ -160,12 +160,12 @@
             <div class="p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-200/60">
                 <div class="flex items-center justify-between text-xs mb-1.5">
                     <span class="font-bold text-emerald-900">Remaining Balance</span>
-                    <span class="font-black text-emerald-700">{{ $remainingLeaves }} <span class="text-[10px] text-emerald-600 font-normal">days left</span></span>
+                    <span class="font-black text-emerald-700">{{ $remainingLeaves }} <span class="text-xs text-emerald-600 font-medium">days left</span></span>
                 </div>
                 <div class="w-full bg-emerald-200 rounded-full h-1.5 overflow-hidden">
                     <div class="bg-emerald-500 h-1.5 rounded-full" style="width: {{ 100 - $pctUtilized }}%"></div>
                 </div>
-                <div class="mt-1.5 flex justify-between text-[10px] text-emerald-600 font-medium">
+                <div class="mt-1.5 flex justify-between text-xs text-emerald-700 font-bold">
                     <span>Ready for new requests</span>
                 </div>
             </div>
@@ -177,7 +177,7 @@
     <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
         <form method="GET" action="{{ route('leaves.index') }}" class="flex flex-wrap items-center justify-between gap-3 text-xs">
             <div class="flex flex-wrap items-center gap-3">
-                <select name="status" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                <select name="status" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200">
                     <option value="">All Statuses</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
@@ -185,7 +185,7 @@
                 </select>
 
                 @if(!auth()->user()->isEmployee())
-                <select name="employee_id" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                <select name="employee_id" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200">
                     <option value="">All Employees</option>
                     @foreach($employees as $emp)
                         <option value="{{ $emp->id }}" {{ request('employee_id') == $emp->id ? 'selected' : '' }}>{{ $emp->name }}</option>
@@ -193,7 +193,7 @@
                 </select>
                 @endif
 
-                <select name="leave_type_id" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                <select name="leave_type_id" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200">
                     <option value="">All Leave Types</option>
                     @foreach($leaveTypes as $lt)
                         <option value="{{ $lt->id }}" {{ request('leave_type_id') == $lt->id ? 'selected' : '' }}>{{ $lt->name }}</option>
@@ -202,7 +202,7 @@
             </div>
 
             @if(request()->hasAny(['status', 'employee_id', 'leave_type_id']))
-            <a href="{{ route('leaves.index') }}" class="text-xs font-semibold text-slate-500 hover:text-slate-700">
+            <a href="{{ route('leaves.index') }}" class="text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-slate-400">
                 Clear Filters ✕
             </a>
             @endif
@@ -214,7 +214,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
+                    <tr class="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px] font-bold">
                         <th class="py-3.5 px-4 font-bold">Employee</th>
                         <th class="py-3.5 px-4 font-bold">Leave Type</th>
                         <th class="py-3.5 px-4 font-bold">Dates</th>
@@ -235,20 +235,20 @@
                                 <img src="{{ $leave->employee->photo_url }}" class="w-7 h-7 rounded-full object-cover">
                                 <div>
                                     <div class="font-bold text-slate-900 dark:text-white">{{ $leave->employee->name }}</div>
-                                    <div class="text-[10px] text-slate-400">{{ $leave->employee->department->name ?? 'N/A' }}</div>
+                                    <div class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">{{ $leave->employee->department->name ?? 'N/A' }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="py-3 px-4 font-semibold text-slate-700 dark:text-slate-300">
+                        <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">
                             {{ $leave->leaveType->name }}
                         </td>
-                        <td class="py-3 px-4 font-semibold whitespace-nowrap">
+                        <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
                             {{ $leave->start_date->format('d M') }} - {{ $leave->end_date->format('d M, Y') }}
                         </td>
-                        <td class="py-3 px-4 text-center font-extrabold text-slate-900 dark:text-white">
+                        <td class="py-3 px-4 text-center font-black text-slate-900 dark:text-white">
                             {{ $leave->total_days }}
                         </td>
-                        <td class="py-3 px-4 text-slate-600 dark:text-slate-400 max-w-xs">
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium max-w-xs">
                             {{ $leave->reason }}
                         </td>
                         <td class="py-3 px-4">
@@ -259,14 +259,14 @@
                                 {{ $leave->status }}
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-slate-500 text-[11px]">
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium text-xs">
                             @if($leave->action_remarks)
                                 <span>{{ $leave->action_remarks }}</span>
                                 @if($leave->actionBy)
-                                <div class="text-[10px] text-slate-400 mt-0.5">by {{ $leave->actionBy->name }}</div>
+                                <div class="text-[11px] text-slate-500 font-medium mt-0.5">by {{ $leave->actionBy->name }}</div>
                                 @endif
                             @else
-                                <span>-</span>
+                                <span class="text-slate-400">-</span>
                             @endif
                         </td>
 
@@ -278,7 +278,7 @@
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="approved">
-                                    <button type="submit" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition">
+                                    <button type="submit" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition cursor-pointer">
                                         Approve
                                     </button>
                                 </form>
@@ -287,20 +287,20 @@
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="rejected">
-                                    <button type="submit" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold transition">
+                                    <button type="submit" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold transition cursor-pointer">
                                         Reject
                                     </button>
                                 </form>
                             </div>
                             @else
-                                <span class="text-[11px] text-slate-400">Processed</span>
+                                <span class="text-xs font-bold text-slate-600 dark:text-slate-400">Processed</span>
                             @endif
                         </td>
                         @endif
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="py-10 text-center text-slate-400">No leave records found.</td>
+                        <td colspan="8" class="py-10 text-center text-slate-500 font-medium">No leave records found.</td>
                     </tr>
                     @endforelse
                 </tbody>

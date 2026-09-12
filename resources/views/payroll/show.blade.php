@@ -24,7 +24,7 @@
 
         <!-- Top Action Bar (hidden when printing) -->
         <div class="no-print flex items-center justify-between">
-            <a href="javascript:history.back()" class="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1">
+            <a href="javascript:history.back()" class="text-xs font-bold text-slate-700 hover:text-slate-900 flex items-center gap-1">
                 ← Back
             </a>
             <div class="flex items-center gap-2">
@@ -47,49 +47,49 @@
                         </div>
                         <span class="text-xl font-black tracking-tight text-slate-900">{{ $companyName }}</span>
                     </div>
-                    <p class="text-xs text-slate-500 max-w-sm pt-1">
+                    <p class="text-xs text-slate-600 font-medium max-w-sm pt-1">
                         {{ $companyAddress }}<br>
                         Email: {{ $companyEmail }}
                     </p>
                 </div>
 
                 <div class="text-left sm:text-right space-y-1">
-                    <span class="inline-block px-3 py-1 bg-blue-50 text-[#0071e3] font-bold text-xs rounded-full border border-blue-100 uppercase tracking-wider">
+                    <span class="inline-block px-3 py-1 bg-blue-50 text-[#0071e3] font-bold text-xs rounded-full border border-blue-200 uppercase tracking-wider">
                         Salary Payslip
                     </span>
                     <div class="text-lg font-black text-slate-900">{{ $payslip->period_label }}</div>
-                    <div class="text-xs font-mono text-slate-400">SLIP-{{ str_pad($payslip->id, 5, '0', STR_PAD_LEFT) }}</div>
+                    <div class="text-xs font-mono text-slate-600 font-bold">SLIP-{{ str_pad($payslip->id, 5, '0', STR_PAD_LEFT) }}</div>
                 </div>
             </div>
 
             <!-- Employee & Shift Meta Details -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
                 <div>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Employee Name</span>
+                    <span class="text-[11px] text-slate-700 font-bold uppercase tracking-wider block">Employee Name</span>
                     <span class="font-extrabold text-slate-900 text-sm">{{ $payslip->employee->name }}</span>
-                    <span class="text-[11px] text-slate-500 block font-mono">{{ $payslip->employee->employee_code }}</span>
+                    <span class="text-[11px] text-slate-600 block font-mono font-medium">{{ $payslip->employee->employee_code }}</span>
                 </div>
                 <div>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Department & Role</span>
+                    <span class="text-[11px] text-slate-700 font-bold uppercase tracking-wider block">Department & Role</span>
                     <span class="font-bold text-slate-900 block">{{ $payslip->employee->department->name ?? 'Design Studio' }}</span>
-                    <span class="text-[11px] text-slate-500 block">{{ $payslip->employee->designation ?? 'Team Member' }}</span>
+                    <span class="text-[11px] text-slate-600 block font-medium">{{ $payslip->employee->designation ?? 'Team Member' }}</span>
                 </div>
                 <div>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Working Days</span>
+                    <span class="text-[11px] text-slate-700 font-bold uppercase tracking-wider block">Working Days</span>
                     <span class="font-bold text-slate-900 block">{{ $payslip->working_days }} Scheduled</span>
-                    <span class="text-[11px] text-emerald-600 font-semibold block">{{ $payslip->present_days }} Present • {{ $payslip->paid_leaves }} Leave</span>
+                    <span class="text-[11px] text-emerald-700 font-bold block">{{ $payslip->present_days }} Present • {{ $payslip->paid_leaves }} Leave</span>
                 </div>
                 <div>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Payment Status</span>
+                    <span class="text-[11px] text-slate-700 font-bold uppercase tracking-wider block">Payment Status</span>
                     @if($payslip->payment_status === 'paid')
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-extrabold mt-0.5">
+                        <span class="inline-flex items-center gap-1 text-emerald-700 font-extrabold mt-0.5">
                             ✓ PAID ({{ strtoupper($payslip->payment_mode ?? 'BANK') }})
                         </span>
                         @if($payslip->paid_at)
-                            <span class="text-[10px] text-slate-400 block font-mono">{{ $payslip->paid_at->format('d M Y') }}</span>
+                            <span class="text-[10px] text-slate-600 block font-mono font-bold">{{ $payslip->paid_at->format('d M Y') }}</span>
                         @endif
                     @else
-                        <span class="inline-flex items-center gap-1 text-amber-600 font-extrabold mt-0.5">
+                        <span class="inline-flex items-center gap-1 text-amber-700 font-extrabold mt-0.5">
                             ⏳ PENDING
                         </span>
                     @endif
@@ -101,27 +101,27 @@
                 
                 <!-- Earnings Column -->
                 <div class="space-y-3">
-                    <h3 class="font-extrabold text-xs text-slate-500 uppercase tracking-wider pb-2 border-b border-slate-200 flex justify-between">
+                    <h3 class="font-extrabold text-xs text-slate-700 uppercase tracking-wider pb-2 border-b border-slate-200 flex justify-between">
                         <span>Earnings</span>
                         <span>Amount ({{ $currency }})</span>
                     </h3>
                     <div class="space-y-2 text-xs">
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-600">Basic Monthly Rate</span>
-                            <span class="font-semibold text-slate-800 tabular-nums">{{ number_format($payslip->basic_salary, 2) }}</span>
+                            <span class="text-slate-700 font-medium">Basic Monthly Rate</span>
+                            <span class="font-bold text-slate-900 tabular-nums">{{ number_format($payslip->basic_salary, 2) }}</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-600">Earned Attendance Salary</span>
-                            <span class="font-bold text-slate-900 tabular-nums">{{ number_format($payslip->earned_salary, 2) }}</span>
+                            <span class="text-slate-700 font-medium">Earned Attendance Salary</span>
+                            <span class="font-extrabold text-slate-900 tabular-nums">{{ number_format($payslip->earned_salary, 2) }}</span>
                         </div>
                         @if($payslip->bonus_amount > 0)
-                        <div class="flex items-center justify-between text-emerald-600">
+                        <div class="flex items-center justify-between text-emerald-700 font-semibold">
                             <span>Performance Bonus</span>
                             <span class="font-bold tabular-nums">+{{ number_format($payslip->bonus_amount, 2) }}</span>
                         </div>
                         @endif
                         @if($payslip->allowances_amount > 0)
-                        <div class="flex items-center justify-between text-emerald-600">
+                        <div class="flex items-center justify-between text-emerald-700 font-semibold">
                             <span>Studio Allowances</span>
                             <span class="font-bold tabular-nums">+{{ number_format($payslip->allowances_amount, 2) }}</span>
                         </div>
@@ -129,31 +129,31 @@
                     </div>
                     <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
                         <span class="text-slate-900">Total Gross Earnings</span>
-                        <span class="text-slate-900 tabular-nums">{{ $currency }}{{ number_format($payslip->earned_salary + $payslip->bonus_amount + $payslip->allowances_amount, 2) }}</span>
+                        <span class="text-slate-900 tabular-nums font-black">{{ $currency }}{{ number_format($payslip->earned_salary + $payslip->bonus_amount + $payslip->allowances_amount, 2) }}</span>
                     </div>
                 </div>
 
                 <!-- Deductions Column -->
                 <div class="space-y-3">
-                    <h3 class="font-extrabold text-xs text-slate-500 uppercase tracking-wider pb-2 border-b border-slate-200 flex justify-between">
+                    <h3 class="font-extrabold text-xs text-slate-700 uppercase tracking-wider pb-2 border-b border-slate-200 flex justify-between">
                         <span>Deductions</span>
                         <span>Amount ({{ $currency }})</span>
                     </h3>
                     <div class="space-y-2 text-xs">
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-600">Unpaid Absences ({{ $payslip->unpaid_days }}d)</span>
-                            <span class="font-semibold text-slate-800 tabular-nums">
+                            <span class="text-slate-700 font-medium">Unpaid Absences ({{ $payslip->unpaid_days }}d)</span>
+                            <span class="font-bold text-slate-900 tabular-nums">
                                 {{ number_format(max(0, $payslip->basic_salary - $payslip->earned_salary), 2) }}
                             </span>
                         </div>
                         @if($payslip->deductions_amount > 0)
-                        <div class="flex items-center justify-between text-rose-600">
+                        <div class="flex items-center justify-between text-rose-700 font-semibold">
                             <span>Custom Deductions</span>
                             <span class="font-bold tabular-nums">-{{ number_format($payslip->deductions_amount, 2) }}</span>
                         </div>
                         @endif
                         @if($payslip->tax_deduction > 0)
-                        <div class="flex items-center justify-between text-rose-600">
+                        <div class="flex items-center justify-between text-rose-700 font-semibold">
                             <span>Tax / TDS</span>
                             <span class="font-bold tabular-nums">-{{ number_format($payslip->tax_deduction, 2) }}</span>
                         </div>
@@ -161,33 +161,33 @@
                     </div>
                     <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
                         <span class="text-slate-900">Total Deductions</span>
-                        <span class="text-rose-600 tabular-nums">{{ $currency }}{{ number_format($payslip->deductions_amount + $payslip->tax_deduction, 2) }}</span>
+                        <span class="text-rose-700 tabular-nums font-black">{{ $currency }}{{ number_format($payslip->deductions_amount + $payslip->tax_deduction, 2) }}</span>
                     </div>
                 </div>
 
             </div>
 
             <!-- Net Salary Highlight Banner -->
-            <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+            <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
                 <div>
-                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total Net Take-Home Pay</span>
+                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-300">Total Net Take-Home Pay</span>
                     <div class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-0.5 tabular-nums">
                         {{ $currency }}{{ number_format($payslip->net_salary, 2) }}
                     </div>
                 </div>
 
                 <div class="text-left sm:text-right text-xs">
-                    <span class="text-slate-400 block font-medium">Calculation based on</span>
-                    <span class="font-bold text-slate-200">{{ $payslip->present_days + $payslip->paid_leaves + ($payslip->half_days * 0.5) }} / {{ $payslip->working_days }} Payable Days</span>
+                    <span class="text-slate-300 block font-medium">Calculation based on</span>
+                    <span class="font-bold text-white">{{ $payslip->present_days + $payslip->paid_leaves + ($payslip->half_days * 0.5) }} / {{ $payslip->working_days }} Payable Days</span>
                 </div>
             </div>
 
             <!-- Footer & Verification Notice -->
-            <div class="pt-6 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px] text-slate-400">
+            <div class="pt-6 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px] text-slate-600 font-medium">
                 <div>
-                    <span>This is an official system-generated payslip from Posterit Operations.</span>
+                    <span>This is an official system-generated payslip from {{ $companyName }} Operations.</span>
                 </div>
-                <div class="font-mono text-right">
+                <div class="font-mono text-right font-bold">
                     Generated: {{ now()->format('d M Y, h:i A') }}
                 </div>
             </div>

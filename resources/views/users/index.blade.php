@@ -25,7 +25,7 @@
             <h1 class="text-2xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight">
                 User & Role Management
             </h1>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">
                 Manage system logins, access permissions, and assign roles (Super Admin, Admin, Manager, Employee).
             </p>
         </div>
@@ -52,7 +52,7 @@
                     Pending Employee Registrations ({{ $pendingUsers->count() }} Awaiting Approval)
                 </h3>
             </div>
-            <span class="text-[11px] text-amber-700 dark:text-amber-300 font-medium">Approval Required for System Access</span>
+            <span class="text-xs text-amber-800 dark:text-amber-300 font-bold">Approval Required for System Access</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -61,16 +61,16 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <div class="font-bold text-xs text-slate-900 dark:text-white">{{ $pu->name }}</div>
-                        <div class="text-[11px] text-slate-500">{{ $pu->email }}</div>
+                        <div class="text-xs text-slate-600 dark:text-slate-400 font-medium">{{ $pu->email }}</div>
                     </div>
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Pending</span>
                 </div>
 
                 @if($pu->employee)
-                <div class="text-[10px] text-slate-600 dark:text-slate-400 space-y-0.5">
-                    <div><span class="font-semibold">Department:</span> {{ $pu->employee->department->name ?? 'General' }}</div>
-                    <div><span class="font-semibold">Designation:</span> {{ $pu->employee->designation }}</div>
-                    <div><span class="font-semibold">Registered:</span> {{ $pu->created_at->diffForHumans() }}</div>
+                <div class="text-xs text-slate-700 dark:text-slate-300 space-y-0.5">
+                    <div><span class="font-bold">Department:</span> {{ $pu->employee->department->name ?? 'General' }}</div>
+                    <div><span class="font-bold">Designation:</span> {{ $pu->employee->designation }}</div>
+                    <div class="text-slate-500 font-medium"><span class="font-bold">Registered:</span> {{ $pu->created_at->diffForHumans() }}</div>
                 </div>
                 @endif
 
@@ -78,14 +78,14 @@
                     <form method="POST" action="{{ route('users.reject', $pu) }}" onsubmit="return confirm('Reject and delete this registration request?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="px-3 py-1 text-[11px] font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition cursor-pointer">
+                        <button type="submit" class="px-3 py-1 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition cursor-pointer">
                             Reject
                         </button>
                     </form>
                     <form method="POST" action="{{ route('users.approve', $pu) }}">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="px-3 py-1 text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-2xs transition cursor-pointer flex items-center gap-1">
+                        <button type="submit" class="px-3 py-1 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-2xs transition cursor-pointer flex items-center gap-1">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                             <span>Approve</span>
                         </button>
@@ -102,13 +102,13 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
-                        <th class="py-3.5 px-4 font-bold">User</th>
-                        <th class="py-3.5 px-4 font-bold">Email</th>
-                        <th class="py-3.5 px-4 font-bold">Role</th>
-                        <th class="py-3.5 px-4 font-bold">Linked Employee</th>
-                        <th class="py-3.5 px-4 font-bold">Status</th>
-                        <th class="py-3.5 px-4 font-bold text-right">Actions</th>
+                    <tr class="bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px] font-bold">
+                        <th class="py-3.5 px-4">User</th>
+                        <th class="py-3.5 px-4">Email</th>
+                        <th class="py-3.5 px-4">Role</th>
+                        <th class="py-3.5 px-4">Linked Employee</th>
+                        <th class="py-3.5 px-4">Status</th>
+                        <th class="py-3.5 px-4 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -122,7 +122,7 @@
                                 <div class="font-bold text-slate-900 dark:text-white">{{ $user->name }}</div>
                             </div>
                         </td>
-                        <td class="py-3 px-4 font-mono text-slate-500">{{ $user->email }}</td>
+                        <td class="py-3 px-4 font-mono font-medium text-slate-800 dark:text-slate-200">{{ $user->email }}</td>
                         <td class="py-3 px-4">
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase
                                 {{ $user->role === 'super_admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300' : '' }}
@@ -132,9 +132,9 @@
                                 {{ str_replace('_', ' ', $user->role) }}
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-slate-600 dark:text-slate-400">
+                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300 font-medium">
                             @if($user->employee)
-                                <span>{{ $user->employee->name }} ({{ $user->employee->employee_code }})</span>
+                                <span class="font-semibold">{{ $user->employee->name }}</span> <span class="text-slate-500 font-mono">({{ $user->employee->employee_code }})</span>
                             @else
                                 <span class="text-slate-400">-</span>
                             @endif
@@ -146,7 +146,7 @@
                         </td>
                         <td class="py-3 px-4 text-right">
                             <div class="flex items-center justify-end gap-1">
-                                <button type="button" @click="openEdit(@js($user))" class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
+                                <button type="button" @click="openEdit(@js($user))" class="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </button>
 
@@ -154,7 +154,7 @@
                                 <form method="POST" action="{{ route('users.destroy', $user) }}" onsubmit="return confirm('Delete user account {{ $user->name }}?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">
+                                    <button type="submit" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                     </button>
                                 </form>
@@ -176,23 +176,23 @@
             <form method="POST" action="{{ route('users.store') }}" class="space-y-4 text-xs">
                 @csrf
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Full Name *</label>
-                    <input type="text" name="name" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Full Name *</label>
+                    <input type="text" name="name" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Email Address *</label>
-                    <input type="email" name="email" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Email Address *</label>
+                    <input type="email" name="email" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Password *</label>
-                    <input type="password" name="password" required value="password" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Password *</label>
+                    <input type="password" name="password" required value="password" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">User Role *</label>
-                    <select name="role" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">User Role *</label>
+                    <select name="role" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200">
                         <option value="employee">Employee (Read Only)</option>
                         <option value="manager">Manager</option>
                         <option value="admin">Admin</option>
@@ -201,8 +201,8 @@
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Link to Employee Profile</label>
-                    <select name="employee_id" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Link to Employee Profile</label>
+                    <select name="employee_id" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white">
                         <option value="">None / System Operator</option>
                         @foreach($employees as $e)
                             <option value="{{ $e->id }}">{{ $e->name }} ({{ $e->employee_code }})</option>
@@ -216,8 +216,8 @@
                 </div>
 
                 <div class="pt-3 flex items-center justify-end gap-2">
-                    <button type="button" @click="addModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md">Create User</button>
+                    <button type="button" @click="addModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold text-slate-700 dark:text-slate-300">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md cursor-pointer">Create User</button>
                 </div>
             </form>
         </div>
@@ -232,23 +232,23 @@
                 @csrf
                 @method('PUT')
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Full Name *</label>
-                    <input type="text" name="name" x-model="editData.name" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Full Name *</label>
+                    <input type="text" name="name" x-model="editData.name" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Email Address *</label>
-                    <input type="email" name="email" x-model="editData.email" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Email Address *</label>
+                    <input type="email" name="email" x-model="editData.email" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Reset Password (leave empty to keep)</label>
-                    <input type="password" name="password" placeholder="New password..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Reset Password (leave empty to keep)</label>
+                    <input type="password" name="password" placeholder="New password..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-slate-900 dark:text-white placeholder-slate-500">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">User Role *</label>
-                    <select name="role" x-model="editData.role" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">User Role *</label>
+                    <select name="role" x-model="editData.role" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200">
                         <option value="employee">Employee (Read Only)</option>
                         <option value="manager">Manager</option>
                         <option value="admin">Admin</option>
@@ -257,8 +257,8 @@
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Linked Employee</label>
-                    <select name="employee_id" x-model="editData.employee_id" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Linked Employee</label>
+                    <select name="employee_id" x-model="editData.employee_id" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white">
                         <option value="">None / System Operator</option>
                         @foreach($employees as $e)
                             <option value="{{ $e->id }}">{{ $e->name }} ({{ $e->employee_code }})</option>
@@ -272,8 +272,8 @@
                 </div>
 
                 <div class="pt-3 flex items-center justify-end gap-2">
-                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md">Update User</button>
+                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl font-bold text-slate-700 dark:text-slate-300">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md cursor-pointer">Update User</button>
                 </div>
             </form>
         </div>

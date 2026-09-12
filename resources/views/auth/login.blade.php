@@ -40,21 +40,21 @@
             </div>
         @endif
         <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">{{ $brandName }}</h2>
-        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400 font-medium">{{ $brandTagline }}</p>
+        <p class="mt-1 text-xs text-slate-600 dark:text-slate-300 font-semibold">{{ $brandTagline }}</p>
     </div>
 
     <div class="mt-8 w-full max-w-md mx-auto px-4 z-10">
         <div class="glass-panel py-8 px-6 sm:px-10 rounded-3xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_20px_60px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
             
             @if(session('success'))
-            <div class="mb-6 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium flex items-start gap-2.5">
+            <div class="mb-6 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                 <div>{{ session('success') }}</div>
             </div>
             @endif
 
             @if($errors->any())
-            <div class="mb-6 p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-300 text-xs">
+            <div class="mb-6 p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-700 dark:text-rose-200 text-xs font-semibold">
                 @foreach($errors->all() as $error)
                     <div>{{ $error }}</div>
                 @endforeach
@@ -65,21 +65,21 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px] mb-1.5">Email or Username</label>
+                    <label for="email" class="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px] mb-1.5">Email or Username</label>
                     <input id="email" name="email" type="text" autocomplete="username" required value="{{ old('email') }}" placeholder="Enter your work email or username"
-                           class="w-full px-4 py-3 bg-black/[0.03] dark:bg-white/[0.06] border border-black/[0.08] dark:border-white/[0.1] rounded-2xl text-[#1d1d1f] dark:text-white placeholder-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0071e3] transition">
+                           class="w-full px-4 py-3 bg-black/[0.03] dark:bg-white/[0.06] border border-black/[0.08] dark:border-white/[0.1] rounded-2xl text-[#1d1d1f] dark:text-white placeholder-slate-500 font-medium text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0071e3] transition">
                 </div>
 
                 <div>
-                    <label for="password" class="block font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px] mb-1.5">Password</label>
+                    <label for="password" class="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px] mb-1.5">Password</label>
                     <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••"
-                           class="w-full px-4 py-3 bg-black/[0.03] dark:bg-white/[0.06] border border-black/[0.08] dark:border-white/[0.1] rounded-2xl text-[#1d1d1f] dark:text-white placeholder-slate-400 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0071e3] transition">
+                           class="w-full px-4 py-3 bg-black/[0.03] dark:bg-white/[0.06] border border-black/[0.08] dark:border-white/[0.1] rounded-2xl text-[#1d1d1f] dark:text-white placeholder-slate-500 font-medium text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0071e3] transition">
                 </div>
 
                 <div class="flex items-center justify-between text-xs pt-1">
-                    <label class="flex items-center text-slate-500 dark:text-slate-400 cursor-pointer">
+                    <label class="flex items-center text-slate-700 dark:text-slate-300 font-medium cursor-pointer">
                         <input type="checkbox" name="remember" class="rounded border-slate-300 text-[#0071e3] focus:ring-[#0071e3]">
-                        <span class="ml-2 text-[11px]">Remember me on this device</span>
+                        <span class="ml-2 text-xs">Remember me on this device</span>
                     </label>
                 </div>
 
@@ -89,9 +89,9 @@
                     </button>
                 </div>
 
-                <div class="pt-3 text-center text-xs text-slate-500 dark:text-slate-400">
+                <div class="pt-3 text-center text-xs text-slate-600 dark:text-slate-300 font-medium">
                     New team member? 
-                    <a href="{{ route('register') }}" class="font-bold text-[#0071e3] hover:underline">
+                    <a href="{{ route('register') }}" class="font-bold text-[#0071e3] dark:text-blue-400 hover:underline">
                         Register Account &rarr;
                     </a>
                 </div>

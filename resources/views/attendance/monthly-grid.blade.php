@@ -109,9 +109,9 @@
         <div class="overflow-x-auto touch-scroll">
             <table class="w-full text-center text-xs border-collapse">
                 <thead>
-                    <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] text-slate-500">
+                    <tr class="bg-slate-100/90 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wider">
                         <!-- Pinned Left Header -->
-                        <th class="py-3 px-4 text-left font-bold sticky left-0 bg-slate-50 z-20 min-w-[200px] border-r border-slate-200 shadow-sm">
+                        <th class="py-3 px-4 text-left font-bold sticky left-0 bg-slate-100 z-20 min-w-[200px] border-r border-slate-200 shadow-sm">
                             Employee
                         </th>
 
@@ -122,25 +122,25 @@
                                 $isSunday = $dayDate->isSunday();
                                 $holiday = $holidays->get($d);
                             @endphp
-                            <th class="py-2 px-1 font-semibold min-w-[28px] border-r border-slate-100 {{ $isSunday ? 'bg-rose-50/80 text-rose-600 font-bold' : ($holiday ? 'bg-purple-50/80 text-purple-700 font-bold' : '') }}"
+                            <th class="py-2 px-1 font-bold min-w-[28px] border-r border-slate-200 {{ $isSunday ? 'bg-rose-100/80 text-rose-700 font-extrabold' : ($holiday ? 'bg-purple-100/80 text-purple-800 font-extrabold' : 'text-slate-700') }}"
                                 title="{{ $holiday ? $holiday->name : ($isSunday ? 'Sunday Weekend' : $dayDate->format('D, d M')) }}">
                                 <div>{{ $d }}</div>
-                                <div class="text-[9px] uppercase font-bold opacity-75">
+                                <div class="text-[10px] uppercase font-extrabold opacity-85">
                                     {{ substr($dayDate->format('D'), 0, 1) }}
                                 </div>
                             </th>
                         @endfor
 
                         <!-- Summary Columns -->
-                        <th class="py-3 px-2 font-bold bg-slate-50 text-slate-700 min-w-[50px] border-l border-slate-200">Pres.</th>
-                        <th class="py-3 px-2 font-bold bg-slate-50 text-slate-700 min-w-[50px]">WFH</th>
-                        <th class="py-3 px-2 font-bold bg-slate-50 text-slate-700 min-w-[50px]">Half</th>
-                        <th class="py-3 px-2 font-bold bg-slate-50 text-slate-700 min-w-[50px]">Leave</th>
-                        <th class="py-3 px-2 font-bold bg-slate-50 text-slate-700 min-w-[50px]">Abs.</th>
-                        <th class="py-3 px-3 font-extrabold bg-indigo-50 text-indigo-700 min-w-[65px] border-l border-indigo-100">Rate %</th>
+                        <th class="py-3 px-2 font-extrabold bg-slate-100 text-slate-800 min-w-[50px] border-l border-slate-200">Pres.</th>
+                        <th class="py-3 px-2 font-extrabold bg-slate-100 text-slate-800 min-w-[50px]">WFH</th>
+                        <th class="py-3 px-2 font-extrabold bg-slate-100 text-slate-800 min-w-[50px]">Half</th>
+                        <th class="py-3 px-2 font-extrabold bg-slate-100 text-slate-800 min-w-[50px]">Leave</th>
+                        <th class="py-3 px-2 font-extrabold bg-slate-100 text-slate-800 min-w-[50px]">Abs.</th>
+                        <th class="py-3 px-3 font-black bg-indigo-100/80 text-indigo-800 min-w-[65px] border-l border-indigo-200">Rate %</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-[11px]">
+                <tbody class="divide-y divide-slate-100 text-xs">
                     @forelse($employees as $emp)
                     @php
                         $empAtts = ($attendances->get($emp->id) ?? collect())->keyBy(function($item) {
@@ -153,14 +153,14 @@
                         $absentCount = 0;
                         $totalRecorded = $empAtts->count();
                     @endphp
-                    <tr class="hover:bg-slate-50/60 transition group">
+                    <tr class="hover:bg-slate-50/80 transition group">
                         <!-- Employee name pinned left -->
                         <td class="py-2.5 px-4 text-left font-semibold text-slate-900 sticky left-0 bg-white group-hover:bg-slate-50/90 z-10 border-r border-slate-200 shadow-sm whitespace-nowrap">
                             <div class="flex items-center gap-2.5">
                                 <img src="{{ $emp->photo_url }}" class="w-7 h-7 rounded-full object-cover border border-slate-200 shrink-0">
                                 <div>
                                     <div class="font-bold text-slate-900 text-xs">{{ $emp->name }}</div>
-                                    <div class="text-[10px] text-slate-400 font-normal">{{ $emp->employee_code }} • {{ $emp->department->name ?? 'Office' }}</div>
+                                    <div class="text-[11px] text-slate-600 font-medium">{{ $emp->employee_code }} • {{ $emp->department->name ?? 'Office' }}</div>
                                 </div>
                             </div>
                         </td>
@@ -182,7 +182,7 @@
                                 
                                 $tooltip = $rec ? "{$rec->date->format('d M')}: " . strtoupper($st) . ($rec->check_in ? " ({$rec->check_in} - {$rec->check_out})" : "") . ($rec->remarks ? " [{$rec->remarks}]" : "") : ($holiday ? $holiday->name : ($isSunday ? 'Sunday' : "Day {$d}"));
                             @endphp
-                            <td class="p-1 border-r border-slate-50 {{ $isSunday ? 'bg-rose-50/40' : ($holiday ? 'bg-purple-50/40' : '') }}" title="{{ $tooltip }}">
+                            <td class="p-1 border-r border-slate-100 {{ $isSunday ? 'bg-rose-50/50' : ($holiday ? 'bg-purple-50/50' : '') }}" title="{{ $tooltip }}">
                                 @if($st === 'present')
                                     <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-[#34c759] text-white font-bold text-[10px] shadow-2xs cursor-default">P</span>
                                 @elseif($st === 'wfh')
@@ -192,11 +192,11 @@
                                 @elseif($st === 'leave')
                                     <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-[#ff3b30] text-white font-bold text-[10px] shadow-2xs cursor-default">L</span>
                                 @elseif($st === 'absent')
-                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-slate-300 text-slate-700 font-bold text-[10px] cursor-default">A</span>
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-slate-300 text-slate-800 font-extrabold text-[10px] cursor-default">A</span>
                                 @elseif($holiday)
-                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-purple-100 text-purple-700 font-bold text-[9px] cursor-default">H</span>
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-purple-200 text-purple-900 font-extrabold text-[10px] cursor-default">H</span>
                                 @else
-                                    <span class="text-slate-300 text-xs select-none">•</span>
+                                    <span class="text-slate-300 font-bold text-xs select-none">-</span>
                                 @endif
                             </td>
                         @endfor
@@ -206,30 +206,30 @@
                             $effectivePresent = $presentCount + $wfhCount + ($halfCount * 0.5);
                             $rate = $totalRecorded > 0 ? round(($effectivePresent / $totalRecorded) * 100, 1) : 0;
                         @endphp
-                        <td class="py-2 px-1.5 font-bold text-slate-800 border-l border-slate-200">
+                        <td class="py-2 px-1.5 font-bold text-slate-900 border-l border-slate-200">
                             {{ $presentCount }}
                         </td>
-                        <td class="py-2 px-1.5 font-semibold text-indigo-600">
+                        <td class="py-2 px-1.5 font-bold text-indigo-700">
                             {{ $wfhCount }}
                         </td>
-                        <td class="py-2 px-1.5 font-semibold text-amber-600">
+                        <td class="py-2 px-1.5 font-bold text-amber-700">
                             {{ $halfCount }}
                         </td>
-                        <td class="py-2 px-1.5 font-semibold text-rose-600">
+                        <td class="py-2 px-1.5 font-bold text-rose-700">
                             {{ $leaveCount }}
                         </td>
-                        <td class="py-2 px-1.5 font-semibold text-slate-500">
+                        <td class="py-2 px-1.5 font-bold text-slate-700">
                             {{ $absentCount }}
                         </td>
                         <td class="py-2 px-2 border-l border-indigo-100">
-                            <span class="px-2 py-0.5 rounded-full font-extrabold text-[10px] {{ $rate >= 90 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : ($rate >= 75 ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-rose-50 text-rose-700 border border-rose-200') }}">
+                            <span class="px-2 py-0.5 rounded-full font-extrabold text-[11px] {{ $rate >= 90 ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : ($rate >= 75 ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-rose-100 text-rose-800 border border-rose-300') }}">
                                 {{ $rate }}%
                             </span>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="{{ $daysInMonth + 7 }}" class="py-8 text-center text-slate-400">No active employees found.</td>
+                        <td colspan="{{ $daysInMonth + 7 }}" class="py-8 text-center text-slate-600 font-medium">No active employees found.</td>
                     </tr>
                     @endforelse
                 </tbody>

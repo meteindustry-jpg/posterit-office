@@ -4,23 +4,23 @@
     <meta charset="utf-8">
     <title>Posterit Work & Attendance Report</title>
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #1e293b; line-height: 1.4; }
-        .header { border-bottom: 2px solid #4f46e5; padding-bottom: 12px; margin-bottom: 15px; }
-        .title { font-size: 18px; font-weight: bold; color: #4f46e5; }
-        .subtitle { font-size: 11px; color: #64748b; margin-top: 3px; }
-        .meta-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; margin-bottom: 15px; border-radius: 4px; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #0f172a; line-height: 1.4; }
+        .header { border-bottom: 2px solid #0071e3; padding-bottom: 12px; margin-bottom: 15px; }
+        .title { font-size: 18px; font-weight: 900; color: #0071e3; }
+        .subtitle { font-size: 11px; color: #334155; margin-top: 3px; font-weight: 600; }
+        .meta-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; margin-bottom: 15px; border-radius: 4px; color: #1e293b; font-size: 11px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: #f1f5f9; color: #475569; text-transform: uppercase; font-size: 9px; padding: 6px 8px; text-align: left; border-bottom: 1px solid #cbd5e1; }
-        td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; font-size: 10px; }
+        th { background: #f1f5f9; color: #0f172a; text-transform: uppercase; font-size: 10px; font-weight: 800; padding: 7px 8px; text-align: left; border-bottom: 2px solid #cbd5e1; letter-spacing: 0.5px; }
+        td { padding: 7px 8px; border-bottom: 1px solid #e2e8f0; font-size: 10px; color: #1e293b; }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
-        .badge { display: inline-block; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 9px; }
-        .badge-present { background: #dcfce7; color: #166534; }
-        .badge-wfh { background: #e0e7ff; color: #3730a3; }
-        .badge-leave { background: #ffe4e6; color: #9f1239; }
-        .badge-absent { background: #f1f5f9; color: #475569; }
-        .badge-half_day { background: #fef3c7; color: #92400e; }
-        .footer { margin-top: 25px; text-align: center; font-size: 9px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px; }
+        .badge { display: inline-block; padding: 2px 6px; border-radius: 3px; font-weight: 800; font-size: 9px; }
+        .badge-present { background: #dcfce7; color: #14532d; }
+        .badge-wfh { background: #e0e7ff; color: #312e81; }
+        .badge-leave { background: #ffe4e6; color: #881337; }
+        .badge-absent { background: #f1f5f9; color: #334155; }
+        .badge-half_day { background: #fef3c7; color: #78350f; }
+        .footer { margin-top: 25px; text-align: center; font-size: 10px; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 8px; font-weight: 600; }
     </style>
 </head>
 <body>

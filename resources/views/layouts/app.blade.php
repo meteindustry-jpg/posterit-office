@@ -142,10 +142,10 @@
                     @endif
                     <div class="flex flex-col min-w-0">
                         <span class="font-extrabold text-base tracking-tight leading-tight text-slate-900 truncate">{{ $brandName }}</span>
-                        <span class="text-[11px] font-semibold text-slate-400 truncate mt-0.5">{{ $brandTagline }}</span>
+                        <span class="text-xs font-semibold text-slate-500 truncate mt-0.5">{{ $brandTagline }}</span>
                     </div>
                 </a>
-                <button @click="sidebarOpen = false" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 md:hidden shrink-0">
+                <button @click="sidebarOpen = false" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 md:hidden shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -155,14 +155,14 @@
                 
                 <!-- Main Operations -->
                 <div class="space-y-1">
-                    <div class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Main Menu</div>
+                    <div class="px-3 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-2">Main Menu</div>
                     
                     <a href="{{ route('dashboard') }}" 
                        class="flex items-center gap-3 px-3 py-2.5 rounded-2xl font-semibold text-xs transition-all {{ request()->routeIs('dashboard') ? 'bg-[#0071e3] text-white shadow-[0_4px_14px_rgba(0,113,227,0.35)]' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900' }}">
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('dashboard') ? 'bg-white/20 text-white' : 'bg-blue-50 text-[#0071e3]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                         </div>
-                        <span class="text-sm">Dashboard</span>
+                        <span class="text-sm font-bold">Dashboard</span>
                     </a>
 
                     @php
@@ -176,10 +176,10 @@
                             <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('todos.*') ? 'bg-white/20 text-white' : 'bg-amber-50 text-[#ff9500]' }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
-                            <span class="text-sm">Tasks</span>
+                            <span class="text-sm font-bold">Tasks</span>
                         </div>
                         @if($userPendingTodosCount > 0)
-                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full {{ request()->routeIs('todos.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600' }}">{{ $userPendingTodosCount }}</span>
+                            <span class="px-2 py-0.5 text-[10px] font-extrabold rounded-full {{ request()->routeIs('todos.*') ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800' }}">{{ $userPendingTodosCount }}</span>
                         @endif
                     </a>
 
@@ -190,7 +190,7 @@
                             <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('work-entries.batch') ? 'bg-white/20 text-white' : 'bg-cyan-50 text-[#0071e3]' }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             </div>
-                            <span class="text-sm">Daily Work Entry</span>
+                            <span class="text-sm font-bold">Daily Work Entry</span>
                         </div>
                     </a>
                     @endif
@@ -200,7 +200,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('work-entries.index*') && !request()->routeIs('work-entries.batch') ? 'bg-white/20 text-white' : 'bg-indigo-50 text-[#5856d6]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                         </div>
-                        <span class="text-sm">Work History</span>
+                        <span class="text-sm font-bold">Work History</span>
                     </a>
 
                     <a href="{{ route('attendance.index') }}" 
@@ -208,7 +208,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('attendance.index') ? 'bg-white/20 text-white' : 'bg-emerald-50 text-[#34c759]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
-                        <span class="text-sm">Daily Attendance</span>
+                        <span class="text-sm font-bold">Daily Attendance</span>
                     </a>
 
                     <a href="{{ route('attendance.monthlyGrid') }}" 
@@ -216,13 +216,13 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('attendance.monthlyGrid') ? 'bg-white/20 text-white' : 'bg-teal-50 text-[#30b0c7]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                         </div>
-                        <span class="text-sm">Attendance Matrix</span>
+                        <span class="text-sm font-bold">Attendance Matrix</span>
                     </a>
                 </div>
 
                 <!-- Team & Analytics -->
                 <div class="space-y-1">
-                    <div class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Team & Analytics</div>
+                    <div class="px-3 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-2">Team & Analytics</div>
 
                     @if(auth()->user()->isAdmin())
                     <a href="{{ route('employees.index') }}" 
@@ -230,7 +230,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('employees.*') ? 'bg-white/20 text-white' : 'bg-indigo-50 text-[#5856d6]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         </div>
-                        <span class="text-sm">Employees</span>
+                        <span class="text-sm font-bold">Employees</span>
                     </a>
 
                     <a href="{{ route('departments.index') }}" 
@@ -238,7 +238,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('departments.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                         </div>
-                        <span class="text-sm">Departments</span>
+                        <span class="text-sm font-bold">Departments</span>
                     </a>
                     @endif
 
@@ -248,7 +248,7 @@
                             <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('leaves.*') ? 'bg-white/20 text-white' : 'bg-rose-50 text-[#ff3b30]' }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </div>
-                            <span class="text-sm">Leave Center</span>
+                            <span class="text-sm font-bold">Leave Center</span>
                         </div>
                         @php
                             $pendingLeavesCount = \App\Models\LeaveRequest::where('status', 'pending')->count();
@@ -263,7 +263,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('holidays.*') ? 'bg-white/20 text-white' : 'bg-emerald-50 text-[#34c759]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                         </div>
-                        <span class="text-sm">Holidays</span>
+                        <span class="text-sm font-bold">Holidays</span>
                     </a>
 
                     @if(auth()->user()->isManager())
@@ -272,7 +272,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('payroll.*') ? 'bg-white/20 text-white' : 'bg-emerald-50 text-[#34c759]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <span class="text-sm">Payroll & Salary</span>
+                        <span class="text-sm font-bold">Payroll & Salary</span>
                     </a>
                     @endif
 
@@ -282,7 +282,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('payroll.myPayslips') ? 'bg-white/20 text-white' : 'bg-emerald-50 text-[#34c759]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
-                        <span class="text-sm">My Payslips</span>
+                        <span class="text-sm font-bold">My Payslips</span>
                     </a>
                     @endif
 
@@ -292,7 +292,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('performance.*') ? 'bg-white/20 text-white' : 'bg-amber-50 text-[#ff9500]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
                         </div>
-                        <span class="text-sm">Performance Scorecard</span>
+                        <span class="text-sm font-bold">Performance Scorecard</span>
                     </a>
 
                     <a href="{{ route('reports.index') }}" 
@@ -300,7 +300,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('reports.*') ? 'bg-white/20 text-white' : 'bg-blue-50 text-[#0071e3]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
-                        <span class="text-sm">Reports & Export</span>
+                        <span class="text-sm font-bold">Reports & Export</span>
                     </a>
                     @endif
                 </div>
@@ -308,14 +308,14 @@
                 <!-- Preferences -->
                 @if(auth()->user()->isAdmin())
                 <div class="space-y-1">
-                    <div class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Preferences</div>
+                    <div class="px-3 text-[11px] font-extrabold text-slate-500 uppercase tracking-wider mb-2">Preferences</div>
 
                     <a href="{{ route('categories.index') }}" 
                        class="flex items-center gap-3 px-3 py-2.5 rounded-2xl font-semibold text-xs transition-all {{ request()->routeIs('categories.*') ? 'bg-[#0071e3] text-white shadow-[0_4px_14px_rgba(0,113,227,0.35)]' : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900' }}">
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('categories.*') ? 'bg-white/20 text-white' : 'bg-pink-50 text-[#ff2d55]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                         </div>
-                        <span class="text-sm">Work Categories</span>
+                        <span class="text-sm font-bold">Work Categories</span>
                     </a>
 
                     @if(auth()->user()->isSuperAdmin())
@@ -324,7 +324,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('users.*') ? 'bg-white/20 text-white' : 'bg-purple-50 text-[#af52de]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         </div>
-                        <span class="text-sm">User & Roles</span>
+                        <span class="text-sm font-bold">User & Roles</span>
                     </a>
 
                     <a href="{{ route('audit-logs.index') }}" 
@@ -332,7 +332,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('audit-logs.*') ? 'bg-white/20 text-white' : 'bg-amber-50 text-[#ff9500]' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <span class="text-sm">Audit Trail</span>
+                        <span class="text-sm font-bold">Audit Trail</span>
                     </a>
 
                     <a href="{{ route('settings.index') }}" 
@@ -340,7 +340,7 @@
                         <div class="w-7 h-7 rounded-xl flex items-center justify-center {{ request()->routeIs('settings.*') ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                         </div>
-                        <span class="text-sm">Settings</span>
+                        <span class="text-sm font-bold">Settings</span>
                     </a>
                     @endif
                 </div>
@@ -356,7 +356,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="text-xs font-bold truncate text-slate-900">{{ auth()->user()->name }}</div>
-                        <div class="text-[11px] text-slate-400 truncate capitalize">{{ str_replace('_', ' ', auth()->user()->role) }}</div>
+                        <div class="text-xs font-semibold text-slate-500 truncate capitalize">{{ str_replace('_', ' ', auth()->user()->role) }}</div>
                     </div>
                 </div>
             </div>
@@ -637,57 +637,57 @@
             </main>
 
             <!-- Native Mobile Bottom Navigation Bar (Phone & Handhelds) -->
-            <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/90 mobile-bottom-nav shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
+            <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 mobile-bottom-nav shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
                 <div class="grid grid-cols-5 h-16 items-center px-1">
                     <!-- 1. Home -->
                     <a href="{{ route('dashboard') }}" 
-                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'text-[#0071e3] font-bold' : 'text-slate-500 hover:text-slate-800' }}">
-                        <div class="p-1 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-[#0071e3]' : '' }}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'text-[#0071e3] font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium' }}">
+                        <div class="p-1 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-blue-50 dark:bg-blue-900/30 text-[#0071e3]' : '' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                         </div>
-                        <span class="text-[10px] tracking-tight mt-0.5">Home</span>
+                        <span class="text-[11px] tracking-tight mt-0.5 font-semibold">Home</span>
                     </a>
 
                     <!-- 2. Tasks -->
                     <a href="{{ route('todos.index') }}" 
-                       class="relative flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('todos.*') ? 'text-[#0071e3] font-bold' : 'text-slate-500 hover:text-slate-800' }}">
-                        <div class="relative p-1 rounded-xl {{ request()->routeIs('todos.*') ? 'bg-blue-50 text-[#0071e3]' : '' }}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                       class="relative flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('todos.*') ? 'text-[#0071e3] font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium' }}">
+                        <div class="relative p-1 rounded-xl {{ request()->routeIs('todos.*') ? 'bg-blue-50 dark:bg-blue-900/30 text-[#0071e3]' : '' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             @if(isset($userPendingTodosCount) && $userPendingTodosCount > 0)
-                                <span class="absolute -top-1 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#ff9500] text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white">
+                                <span class="absolute -top-1 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#ff9500] text-white text-[10px] font-black flex items-center justify-center ring-2 ring-white dark:ring-slate-900">
                                     {{ $userPendingTodosCount > 99 ? '99+' : $userPendingTodosCount }}
                                 </span>
                             @endif
                         </div>
-                        <span class="text-[10px] tracking-tight mt-0.5">Tasks</span>
+                        <span class="text-[11px] tracking-tight mt-0.5 font-semibold">Tasks</span>
                     </a>
 
                     <!-- 3. Work Logs -->
                     <a href="{{ auth()->user()->isManager() ? route('work-entries.batch') : route('work-entries.index') }}" 
-                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('work-entries.*') ? 'text-[#0071e3] font-bold' : 'text-slate-500 hover:text-slate-800' }}">
-                        <div class="p-1 rounded-xl {{ request()->routeIs('work-entries.*') ? 'bg-blue-50 text-[#0071e3]' : '' }}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('work-entries.*') ? 'text-[#0071e3] font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium' }}">
+                        <div class="p-1 rounded-xl {{ request()->routeIs('work-entries.*') ? 'bg-blue-50 dark:bg-blue-900/30 text-[#0071e3]' : '' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
-                        <span class="text-[10px] tracking-tight mt-0.5">Work</span>
+                        <span class="text-[11px] tracking-tight mt-0.5 font-semibold">Work</span>
                     </a>
 
                     <!-- 4. Attendance -->
                     <a href="{{ route('attendance.index') }}" 
-                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('attendance.*') ? 'text-[#0071e3] font-bold' : 'text-slate-500 hover:text-slate-800' }}">
-                        <div class="p-1 rounded-xl {{ request()->routeIs('attendance.*') ? 'bg-blue-50 text-[#0071e3]' : '' }}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                       class="flex flex-col items-center justify-center py-1 rounded-xl transition-all {{ request()->routeIs('attendance.*') ? 'text-[#0071e3] font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium' }}">
+                        <div class="p-1 rounded-xl {{ request()->routeIs('attendance.*') ? 'bg-blue-50 dark:bg-blue-900/30 text-[#0071e3]' : '' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
-                        <span class="text-[10px] tracking-tight mt-0.5">Attendance</span>
+                        <span class="text-[11px] tracking-tight mt-0.5 font-semibold">Attendance</span>
                     </a>
 
                     <!-- 5. Menu Drawer Trigger -->
                     <button @click="sidebarOpen = !sidebarOpen" 
                             type="button"
-                            class="flex flex-col items-center justify-center py-1 rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
+                            class="flex flex-col items-center justify-center py-1 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer font-medium">
                         <div class="p-1 rounded-xl">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </div>
-                        <span class="text-[10px] tracking-tight mt-0.5">Menu</span>
+                        <span class="text-[11px] tracking-tight mt-0.5 font-semibold">Menu</span>
                     </button>
                 </div>
             </nav>
@@ -704,39 +704,39 @@
          x-transition:leave-start="opacity-100 scale-100"
          x-transition:leave-end="opacity-0 scale-95"
          @keydown.escape.window="searchOpen = false"
-         class="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/40 backdrop-blur-xs"
+         class="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/50 backdrop-blur-xs"
          style="display: none;">
         
-        <div @click.outside="searchOpen = false" class="w-full max-w-2xl glass-panel overflow-hidden shadow-2xl">
-            <div class="p-4 border-b border-slate-200 flex items-center gap-3 bg-slate-50/50">
-                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <div @click.outside="searchOpen = false" class="w-full max-w-2xl glass-panel overflow-hidden shadow-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 bg-slate-50/80 dark:bg-slate-800/80">
+                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 <input type="text" 
                        x-model="searchQuery" 
                        @input.debounce.250ms="doSearch()"
                        placeholder="Spotlight Search: Employee, Category, Date..." 
-                       class="w-full bg-transparent border-none text-sm focus:outline-hidden text-slate-900 placeholder-slate-400 font-medium">
-                <kbd class="px-2 py-0.5 text-[10px] bg-slate-200 text-slate-600 rounded-md">ESC</kbd>
+                       class="w-full bg-transparent border-none text-sm focus:outline-hidden text-slate-900 dark:text-white placeholder-slate-500 font-semibold">
+                <kbd class="px-2.5 py-1 text-[11px] font-bold bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg border border-slate-300 dark:border-slate-600">ESC</kbd>
             </div>
 
             <div class="max-h-96 overflow-y-auto p-4 space-y-4 text-xs">
                 <template x-if="isSearching">
-                    <div class="py-8 text-center text-slate-400">Searching...</div>
+                    <div class="py-8 text-center text-slate-600 dark:text-slate-400 font-medium">Searching...</div>
                 </template>
 
                 <template x-if="!isSearching && searchResults.employees.length === 0 && searchResults.categories.length === 0 && searchResults.work_entries.length === 0 && searchQuery.length >= 2">
-                    <div class="py-8 text-center text-slate-400">No results found for "<span x-text="searchQuery"></span>"</div>
+                    <div class="py-8 text-center text-slate-600 dark:text-slate-400 font-medium">No results found for "<span class="font-bold text-slate-800 dark:text-slate-200" x-text="searchQuery"></span>"</div>
                 </template>
 
                 <template x-if="searchResults.employees.length > 0">
                     <div>
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Employees</div>
+                        <div class="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Employees</div>
                         <div class="space-y-1">
                             <template x-for="emp in searchResults.employees" :key="emp.id">
-                                <a :href="emp.url" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-100 transition">
+                                <a :href="emp.url" class="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                                     <img :src="emp.avatar" class="w-8 h-8 rounded-full object-cover">
                                     <div>
-                                        <div class="font-bold text-slate-900" x-text="emp.title"></div>
-                                        <div class="text-[11px] text-slate-500" x-text="emp.subtitle"></div>
+                                        <div class="font-bold text-slate-900 dark:text-white" x-text="emp.title"></div>
+                                        <div class="text-[11px] text-slate-600 dark:text-slate-400 font-medium" x-text="emp.subtitle"></div>
                                     </div>
                                 </a>
                             </template>
@@ -746,12 +746,12 @@
 
                 <template x-if="searchResults.categories.length > 0">
                     <div>
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Work Categories</div>
+                        <div class="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Work Categories</div>
                         <div class="grid grid-cols-2 gap-2">
                             <template x-for="cat in searchResults.categories" :key="cat.id">
-                                <a :href="cat.url" class="flex items-center gap-2.5 p-2 rounded-2xl hover:bg-slate-100 transition border border-slate-200">
-                                    <span class="w-3 h-3 rounded-full shrink-0" :style="`background-color: ${cat.color}`"></span>
-                                    <div class="font-semibold text-slate-800 truncate" x-text="cat.title"></div>
+                                <a :href="cat.url" class="flex items-center gap-2.5 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition border border-slate-200 dark:border-slate-700">
+                                    <span class="w-3.5 h-3.5 rounded-full shrink-0 ring-1 ring-black/10" :style="`background-color: ${cat.color}`"></span>
+                                    <div class="font-bold text-slate-800 dark:text-slate-200 truncate" x-text="cat.title"></div>
                                 </a>
                             </template>
                         </div>
@@ -760,13 +760,13 @@
 
                 <template x-if="searchResults.work_entries.length > 0">
                     <div>
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Work Entries</div>
+                        <div class="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Work Entries</div>
                         <div class="space-y-1">
                             <template x-for="item in searchResults.work_entries" :key="item.id">
-                                <a :href="item.url" class="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 transition">
+                                <a :href="item.url" class="flex items-center justify-between p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                                     <div>
-                                        <div class="font-bold text-slate-900" x-text="item.title"></div>
-                                        <div class="text-[11px] text-slate-500" x-text="item.subtitle"></div>
+                                        <div class="font-bold text-slate-900 dark:text-white" x-text="item.title"></div>
+                                        <div class="text-[11px] text-slate-600 dark:text-slate-400 font-medium" x-text="item.subtitle"></div>
                                     </div>
                                     <span class="text-[#0071e3] font-bold text-xs">View →</span>
                                 </a>

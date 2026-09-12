@@ -334,15 +334,15 @@
                     <img src="{{ $tp->employee->photo_url }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-200">
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold text-xs text-slate-900 truncate">{{ $tp->employee->name }}</div>
-                        <div class="text-[11px] text-slate-500 truncate">{{ $tp->employee->department->name ?? 'Design' }}</div>
+                        <div class="text-[11px] text-slate-600 dark:text-slate-400 font-medium truncate">{{ $tp->employee->department->name ?? 'Design' }}</div>
                     </div>
                     <div class="text-right shrink-0">
                         <div class="font-bold text-xs text-[#0071e3]">{{ $tp->total_qty }}</div>
-                        <div class="text-[9px] text-slate-400 font-medium uppercase">Tasks</div>
+                        <div class="text-[10px] text-slate-600 font-bold uppercase">Tasks</div>
                     </div>
                 </div>
                 @empty
-                <div class="py-8 text-center text-xs text-slate-400">No output records yet.</div>
+                <div class="py-8 text-center text-xs text-slate-600 font-medium">No output records yet.</div>
                 @endforelse
             </div>
         </div>
@@ -371,13 +371,13 @@
                             </form>
                             <div class="min-w-0 flex-1">
                                 <div class="font-bold text-xs text-slate-900 dark:text-white truncate">{{ $todo->title }}</div>
-                                <div class="flex items-center flex-wrap gap-1.5 text-[10px] text-slate-400 mt-0.5">
-                                    <span class="text-slate-500 dark:text-slate-400 font-medium">{{ $todo->category }}</span>
+                                <div class="flex items-center flex-wrap gap-1.5 text-xs text-slate-600 dark:text-slate-400 mt-0.5 font-medium">
+                                    <span class="text-slate-700 dark:text-slate-300 font-semibold">{{ $todo->category }}</span>
                                     @if($todo->due_date)
                                         <span>• Due {{ $todo->due_date->format('d M') }}</span>
                                     @endif
                                     <span>•</span>
-                                    <span class="inline-flex items-center gap-1 text-slate-700 dark:text-slate-300 font-semibold">
+                                    <span class="inline-flex items-center gap-1 text-slate-800 dark:text-slate-200 font-bold">
                                         <img src="{{ $todo->assignee_photo_url }}" class="w-3.5 h-3.5 rounded-full object-cover shrink-0">
                                         <span class="truncate max-w-[90px]">{{ $todo->assignee_name }}</span>
                                     </span>
@@ -387,7 +387,7 @@
                         <div class="flex items-center gap-1.5 shrink-0">
                             @if($todo->totalSubtasksCount() > 0)
                             <button type="button" @click="openSubtasks = !openSubtasks" 
-                                    class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 cursor-pointer flex items-center gap-1">
+                                    class="text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800/80 cursor-pointer flex items-center gap-1">
                                 <span>{{ $todo->completedSubtasksCount() }}/{{ $todo->totalSubtasksCount() }}</span>
                                 <svg class="w-2.5 h-2.5 transition-transform" :class="openSubtasks ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
@@ -409,7 +409,7 @@
                     <!-- Expandable subtasks list -->
                     <div x-show="openSubtasks" x-cloak class="pt-1.5 space-y-1 border-t border-slate-200/50 dark:border-slate-700/50">
                         @foreach($todo->subtasks as $sIndex => $subtask)
-                        <form method="POST" action="{{ route('todos.toggleSubtask', $todo) }}" class="flex items-center gap-2 p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700/50 transition text-[11px]">
+                        <form method="POST" action="{{ route('todos.toggleSubtask', $todo) }}" class="flex items-center gap-2 p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700/50 transition text-xs">
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="index" value="{{ $sIndex }}">
@@ -418,7 +418,7 @@
                                     <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                 @endif
                             </button>
-                            <span class="truncate {{ !empty($subtask['completed']) ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200 font-medium' }}">
+                            <span class="truncate {{ !empty($subtask['completed']) ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium' }}">
                                 {{ $subtask['title'] }}
                             </span>
                         </form>
@@ -427,7 +427,7 @@
                     @endif
                 </div>
                 @empty
-                <div class="py-8 text-center text-xs text-slate-400">
+                <div class="py-8 text-center text-xs text-slate-600 font-medium">
                     No pending tasks.
                 </div>
                 @endforelse

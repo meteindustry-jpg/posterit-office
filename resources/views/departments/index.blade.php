@@ -22,7 +22,7 @@
             <h1 class="text-2xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight">
                 Department Management
             </h1>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">
                 Organize team members into operational units and departments.
             </p>
         </div>
@@ -43,12 +43,12 @@
             <div>
                 <div class="flex items-center justify-between">
                     <h3 class="font-extrabold text-base text-slate-900 dark:text-white font-display">{{ $dept->name }}</h3>
-                    <span class="px-2.5 py-1 bg-blue-50 text-[#0071e3] font-bold rounded-full text-xs border border-blue-100">
+                    <span class="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-[#0071e3] font-bold rounded-full text-xs border border-blue-200 dark:border-blue-800">
                         {{ $dept->employees_count }} Members
                     </span>
                 </div>
 
-                <p class="text-xs text-slate-500 mt-2 min-h-[36px] line-clamp-2">{{ $dept->description ?? 'No description provided.' }}</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-2 min-h-[36px] line-clamp-2">{{ $dept->description ?? 'No description provided.' }}</p>
             </div>
 
             <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
@@ -57,7 +57,7 @@
                 </a>
 
                 <div class="flex items-center gap-1">
-                    <button type="button" @click="openEdit(@js($dept))" class="p-1.5 rounded-lg text-slate-400 hover:text-[#0071e3] hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
+                    <button type="button" @click="openEdit(@js($dept))" class="p-1.5 rounded-lg text-slate-500 hover:text-[#0071e3] hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     </button>
 
@@ -65,7 +65,7 @@
                     <form method="POST" action="{{ route('departments.destroy', $dept) }}" onsubmit="return confirm('Delete department {{ $dept->name }}?')">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">
+                        <button type="submit" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </form>
@@ -84,18 +84,18 @@
             <form method="POST" action="{{ route('departments.store') }}" class="space-y-4 text-xs">
                 @csrf
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Department Name *</label>
-                    <input type="text" name="name" required placeholder="e.g. 3D Animation & VFX" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Department Name *</label>
+                    <input type="text" name="name" required placeholder="e.g. 3D Animation & VFX" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white placeholder-slate-500">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Description</label>
-                    <textarea name="description" rows="3" placeholder="Department responsibilities..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></textarea>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Description</label>
+                    <textarea name="description" rows="3" placeholder="Department responsibilities..." class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white placeholder-slate-500"></textarea>
                 </div>
 
                 <div class="pt-3 flex items-center justify-end gap-2">
-                    <button type="button" @click="addModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md">Create Department</button>
+                    <button type="button" @click="addModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white font-bold rounded-xl shadow-md">Create Department</button>
                 </div>
             </form>
         </div>
@@ -110,18 +110,18 @@
                 @csrf
                 @method('PUT')
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Department Name *</label>
-                    <input type="text" name="name" x-model="editData.name" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Department Name *</label>
+                    <input type="text" name="name" x-model="editData.name" required class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white placeholder-slate-500">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Description</label>
-                    <textarea name="description" x-model="editData.description" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></textarea>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase mb-1 text-[11px] tracking-wider">Description</label>
+                    <textarea name="description" x-model="editData.description" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-900 dark:text-white placeholder-slate-500"></textarea>
                 </div>
 
                 <div class="pt-3 flex items-center justify-end gap-2">
-                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md">Update Department</button>
+                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white font-bold rounded-xl shadow-md">Update Department</button>
                 </div>
             </form>
         </div>

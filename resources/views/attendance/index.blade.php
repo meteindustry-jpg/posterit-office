@@ -257,11 +257,11 @@
                 <input type="text" 
                        x-model="searchQuery" 
                        placeholder="Search employee or code..." 
-                       class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-[#0071e3] placeholder-slate-400">
-                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="w-full pl-9 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0071e3] placeholder-slate-500 text-slate-900">
+                <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
-                <button type="button" x-show="searchQuery" @click="searchQuery = ''" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 text-xs cursor-pointer">
+                <button type="button" x-show="searchQuery" @click="searchQuery = ''" class="absolute right-2.5 top-2 text-slate-500 hover:text-slate-800 text-xs cursor-pointer">
                     ✕
                 </button>
             </div>
@@ -288,14 +288,14 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs border-collapse">
                     <thead>
-                        <tr class="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase text-[10px]">
-                            <th class="py-3.5 px-4 font-bold w-12">#</th>
-                            <th class="py-3.5 px-4 font-bold min-w-[220px]">Employee</th>
-                            <th class="py-3.5 px-4 font-bold min-w-[120px]">Department</th>
-                            <th class="py-3.5 px-4 font-bold min-w-[160px]">Status</th>
-                            <th class="py-3.5 px-4 font-bold min-w-[110px]">Check In</th>
-                            <th class="py-3.5 px-4 font-bold min-w-[110px]">Check Out</th>
-                            <th class="py-3.5 px-4 font-bold min-w-[200px]">Remarks / Note</th>
+                        <tr class="border-b border-slate-200 bg-slate-100/90 text-slate-700 uppercase text-[11px] font-bold tracking-wider">
+                            <th class="py-3.5 px-4 font-extrabold w-12">#</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[220px]">Employee</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[120px]">Department</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[160px]">Status</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[110px]">Check In</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[110px]">Check Out</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[200px]">Remarks / Note</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -328,7 +328,7 @@
                                 }
                             }">
                             
-                            <td class="py-3 px-4 text-slate-400 font-bold">{{ $index + 1 }}</td>
+                            <td class="py-3 px-4 text-slate-700 font-extrabold">{{ $index + 1 }}</td>
                             
                             <td class="py-3 px-4">
                                 <div class="flex items-center gap-3">
@@ -336,12 +336,12 @@
                                     <img src="{{ $emp->photo_url }}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0">
                                     <div>
                                         <div class="font-bold text-slate-900 text-xs">{{ $emp->name }}</div>
-                                        <div class="text-[10px] text-slate-500 font-normal">{{ $emp->employee_code }} • {{ $emp->designation }}</div>
+                                        <div class="text-[11px] text-slate-600 font-semibold">{{ $emp->employee_code }} • {{ $emp->designation }}</div>
                                     </div>
                                 </div>
                             </td>
 
-                            <td class="py-3 px-4 text-slate-600 font-medium whitespace-nowrap">
+                            <td class="py-3 px-4 text-slate-700 font-semibold whitespace-nowrap">
                                 {{ $emp->department->name ?? 'Office' }}
                             </td>
 
@@ -385,12 +385,12 @@
                             <!-- Remarks -->
                             <td class="py-3 px-4">
                                 <input type="text" name="attendances[{{ $index }}][remarks]" value="{{ $remarks }}" placeholder="Optional note / reason..."
-                                       class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-[#0071e3] placeholder-slate-400">
+                                       class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium focus:ring-2 focus:ring-[#0071e3] placeholder-slate-500">
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="py-8 text-center text-slate-400">No active employees found.</td>
+                            <td colspan="7" class="py-8 text-center text-slate-600 font-medium">No active employees found.</td>
                         </tr>
                         @endforelse
                     </tbody>

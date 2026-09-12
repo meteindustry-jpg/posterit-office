@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight">
                 Employee Management
             </h1>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">
                 Directory of team members, designations, departments, and status.
             </p>
         </div>
@@ -105,16 +105,16 @@
         <form method="GET" action="{{ route('employees.index') }}" class="flex flex-wrap items-center justify-between gap-3 text-xs">
             <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, ID, email, designation..." 
-                       class="px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl w-72 focus:ring-2 focus:ring-indigo-500">
+                       class="px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl w-72 focus:ring-2 focus:ring-indigo-500 font-medium placeholder-slate-500 text-slate-900 dark:text-white">
                 
-                <select name="department_id" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                <select name="department_id" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200">
                     <option value="">All Departments</option>
                     @foreach($departments as $dept)
                         <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
                     @endforeach
                 </select>
 
-                <select name="status" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                <select name="status" onchange="this.form.submit()" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-800 dark:text-slate-200">
                     <option value="">All Statuses</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                     <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -127,7 +127,7 @@
             </div>
 
             @if(request()->hasAny(['search', 'department_id', 'status']))
-            <a href="{{ route('employees.index') }}" class="text-xs font-semibold text-slate-500 hover:text-slate-700">
+            <a href="{{ route('employees.index') }}" class="text-xs font-bold text-slate-600 hover:text-slate-900 dark:text-slate-400">
                 Clear Filters ✕
             </a>
             @endif
@@ -146,7 +146,7 @@
                             <a href="{{ route('employees.show', $emp) }}" class="font-extrabold text-base text-slate-900 dark:text-white hover:text-indigo-600 transition font-display">
                                 {{ $emp->name }}
                             </a>
-                            <div class="text-xs text-slate-500 font-medium">{{ $emp->designation }}</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400 font-semibold">{{ $emp->designation }}</div>
                         </div>
                     </div>
 
@@ -158,22 +158,22 @@
                     </span>
                 </div>
 
-                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs text-slate-600 dark:text-slate-400">
+                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-400">Employee ID:</span>
-                        <span class="font-mono font-bold text-slate-800 dark:text-slate-200">{{ $emp->employee_code }}</span>
+                        <span class="text-slate-500 font-semibold">Employee ID:</span>
+                        <span class="font-mono font-bold text-slate-900 dark:text-slate-100">{{ $emp->employee_code }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-400">Department:</span>
-                        <span class="font-semibold text-slate-800 dark:text-slate-200">{{ $emp->department->name ?? 'N/A' }}</span>
+                        <span class="text-slate-500 font-semibold">Department:</span>
+                        <span class="font-bold text-slate-800 dark:text-slate-200">{{ $emp->department->name ?? 'N/A' }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-400">Email:</span>
-                        <span class="truncate max-w-[170px]">{{ $emp->email }}</span>
+                        <span class="text-slate-500 font-semibold">Email:</span>
+                        <span class="truncate max-w-[170px] text-slate-800 dark:text-slate-200">{{ $emp->email }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-400">Mobile:</span>
-                        <span>{{ $emp->mobile_number ?? '-' }}</span>
+                        <span class="text-slate-500 font-semibold">Mobile:</span>
+                        <span class="text-slate-800 dark:text-slate-200">{{ $emp->mobile_number ?? '-' }}</span>
                     </div>
                 </div>
             </div>
@@ -185,14 +185,14 @@
                 </a>
 
                 <div class="flex items-center gap-1">
-                    <a href="{{ route('employees.edit', $emp) }}" class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800">
+                    <a href="{{ route('employees.edit', $emp) }}" class="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     </a>
 
                     <form method="POST" action="{{ route('employees.destroy', $emp) }}" onsubmit="return confirm('Delete employee {{ $emp->name }}?')">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">
+                        <button type="submit" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </form>
@@ -200,7 +200,7 @@
             </div>
         </div>
         @empty
-        <div class="col-span-full py-12 text-center text-slate-400">
+        <div class="col-span-full py-12 text-center text-slate-500 font-medium">
             No employees found matching criteria.
         </div>
         @endforelse

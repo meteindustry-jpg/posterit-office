@@ -49,7 +49,7 @@
             <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
                 Payroll & Compensation Command Center
             </h1>
-            <p class="text-xs text-slate-500 font-medium">
+            <p class="text-xs text-slate-600 font-medium">
                 Automated monthly salary calculation, attendance deductions, bonus allocations, and bank payout sheets.
             </p>
         </div>
@@ -156,7 +156,7 @@
         <!-- Month & Year Switcher -->
         <form method="GET" action="{{ route('payroll.index') }}" class="flex flex-wrap items-center gap-3 text-xs">
             <div class="flex items-center gap-2">
-                <label class="font-bold text-slate-400 uppercase text-[10px]">Month</label>
+                <label class="font-bold text-slate-700 uppercase text-[11px] tracking-wider">Month</label>
                 <select name="month" onchange="this.form.submit()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-[#0071e3]">
                     @for($m = 1; $m <= 12; $m++)
                         <option value="{{ $m }}" {{ $month === $m ? 'selected' : '' }}>
@@ -167,7 +167,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <label class="font-bold text-slate-400 uppercase text-[10px]">Year</label>
+                <label class="font-bold text-slate-700 uppercase text-[11px] tracking-wider">Year</label>
                 <select name="year" onchange="this.form.submit()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-[#0071e3]">
                     @for($y = now()->year - 2; $y <= now()->year + 1; $y++)
                         <option value="{{ $y }}" {{ $year === $y ? 'selected' : '' }}>{{ $y }}</option>
@@ -194,16 +194,16 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 bg-slate-50/70 text-slate-500 uppercase text-[10px]">
-                        <th class="py-3.5 px-4 font-extrabold">Employee</th>
-                        <th class="py-3.5 px-4 font-extrabold text-right">Base Salary</th>
-                        <th class="py-3.5 px-4 font-extrabold text-center">Attendance Log</th>
-                        <th class="py-3.5 px-4 font-extrabold text-right">Earned</th>
-                        <th class="py-3.5 px-4 font-extrabold text-right">Bonus / Allow</th>
-                        <th class="py-3.5 px-4 font-extrabold text-right">Deductions</th>
-                        <th class="py-3.5 px-4 font-extrabold text-right">Net Payout</th>
-                        <th class="py-3.5 px-4 font-extrabold text-center">Status</th>
-                        <th class="py-3.5 px-4 font-extrabold text-right">Actions</th>
+                    <tr class="border-b border-slate-200 bg-slate-100 text-slate-700 uppercase text-[11px] font-bold tracking-wider">
+                        <th class="py-3.5 px-4">Employee</th>
+                        <th class="py-3.5 px-4 text-right">Base Salary</th>
+                        <th class="py-3.5 px-4 text-center">Attendance Log</th>
+                        <th class="py-3.5 px-4 text-right">Earned</th>
+                        <th class="py-3.5 px-4 text-right">Bonus / Allow</th>
+                        <th class="py-3.5 px-4 text-right">Deductions</th>
+                        <th class="py-3.5 px-4 text-right">Net Payout</th>
+                        <th class="py-3.5 px-4 text-center">Status</th>
+                        <th class="py-3.5 px-4 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -216,45 +216,45 @@
                                     <img src="{{ $slip->employee->photo_url }}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0">
                                     <div>
                                         <div class="font-bold text-slate-900">{{ $slip->employee->name }}</div>
-                                        <div class="text-[11px] text-slate-500 font-mono">{{ $slip->employee->employee_code }} • {{ $slip->employee->department->name ?? 'Studio' }}</div>
+                                        <div class="text-xs text-slate-600 font-mono">{{ $slip->employee->employee_code }} • {{ $slip->employee->department->name ?? 'Studio' }}</div>
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Base Salary -->
-                            <td class="py-3.5 px-4 text-right font-semibold text-slate-700 tabular-nums">
+                            <td class="py-3.5 px-4 text-right font-semibold text-slate-800 tabular-nums">
                                 {{ $currency }}{{ number_format($slip->basic_salary, 2) }}
                             </td>
 
                             <!-- Attendance Breakdown -->
                             <td class="py-3.5 px-4 text-center">
-                                <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200/80">
-                                    <span class="text-emerald-600">{{ $slip->present_days }}P</span> •
-                                    <span class="text-blue-600">{{ $slip->paid_leaves }}L</span>
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200">
+                                    <span class="text-emerald-700">{{ $slip->present_days }}P</span> •
+                                    <span class="text-blue-700">{{ $slip->paid_leaves }}L</span>
                                     @if($slip->unpaid_days > 0)
-                                        • <span class="text-rose-600">{{ $slip->unpaid_days }} Absent</span>
+                                        • <span class="text-rose-700">{{ $slip->unpaid_days }} Absent</span>
                                     @endif
                                 </div>
                             </td>
 
                             <!-- Earned Salary -->
-                            <td class="py-3.5 px-4 text-right font-semibold text-slate-900 tabular-nums">
+                            <td class="py-3.5 px-4 text-right font-bold text-slate-900 tabular-nums">
                                 {{ $currency }}{{ number_format($slip->earned_salary, 2) }}
                             </td>
 
                             <!-- Bonus / Allowances -->
-                            <td class="py-3.5 px-4 text-right tabular-nums">
+                            <td class="py-3.5 px-4 text-right tabular-nums font-semibold">
                                 @if($slip->bonus_amount + $slip->allowances_amount > 0)
-                                    <span class="font-bold text-emerald-600">+{{ $currency }}{{ number_format($slip->bonus_amount + $slip->allowances_amount, 2) }}</span>
+                                    <span class="font-bold text-emerald-700">+{{ $currency }}{{ number_format($slip->bonus_amount + $slip->allowances_amount, 2) }}</span>
                                 @else
                                     <span class="text-slate-400">-</span>
                                 @endif
                             </td>
 
                             <!-- Deductions -->
-                            <td class="py-3.5 px-4 text-right tabular-nums">
+                            <td class="py-3.5 px-4 text-right tabular-nums font-semibold">
                                 @if($slip->deductions_amount + $slip->tax_deduction > 0)
-                                    <span class="font-bold text-rose-600">-{{ $currency }}{{ number_format($slip->deductions_amount + $slip->tax_deduction, 2) }}</span>
+                                    <span class="font-bold text-rose-700">-{{ $currency }}{{ number_format($slip->deductions_amount + $slip->tax_deduction, 2) }}</span>
                                 @else
                                     <span class="text-slate-400">-</span>
                                 @endif
@@ -268,13 +268,13 @@
                             <!-- Status -->
                             <td class="py-3.5 px-4 text-center">
                                 @if($slip->payment_status === 'paid')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                        <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                        <svg class="w-3 h-3 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                         PAID
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
                                         PENDING
                                     </span>
                                 @endif
@@ -284,7 +284,7 @@
                             <td class="py-3.5 px-4 text-right">
                                 <div class="flex items-center justify-end gap-1.5">
                                     <button type="button" @click="openEdit(@js($slip))" 
-                                            class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer" title="Adjust Bonus / Deductions">
+                                            class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition cursor-pointer" title="Adjust Bonus / Deductions">
                                         Adjust
                                     </button>
                                     <a href="{{ route('payroll.showPayslip', $slip) }}" target="_blank"
@@ -298,11 +298,11 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="9" class="py-12 text-center text-slate-400">
+                            <td colspan="9" class="py-12 text-center text-slate-500 font-medium">
                                 <div class="flex flex-col items-center justify-center">
-                                    <svg class="w-12 h-12 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                    <span class="font-semibold text-sm text-slate-600">No payroll calculated yet for {{ date('F Y', mktime(0, 0, 0, $month, 1, $year)) }}</span>
-                                    <span class="text-xs text-slate-400 mt-0.5">Click "Generate Monthly Payroll" above to compute salaries from attendance.</span>
+                                    <svg class="w-12 h-12 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span class="font-bold text-sm text-slate-800">No payroll calculated yet for {{ date('F Y', mktime(0, 0, 0, $month, 1, $year)) }}</span>
+                                    <span class="text-xs text-slate-600 font-medium mt-0.5">Click "Generate Monthly Payroll" above to compute salaries from attendance.</span>
                                 </div>
                             </td>
                         </tr>
@@ -328,8 +328,8 @@
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div>
                     <h3 class="font-extrabold text-sm text-slate-900">Adjust Compensation & Payout</h3>
-                    <p class="text-[11px] text-slate-500 mt-0.5">
-                        <span x-text="selectedSlip.name" class="font-bold text-slate-800"></span> (<span x-text="selectedSlip.code"></span>)
+                    <p class="text-xs text-slate-600 font-medium mt-0.5">
+                        <span x-text="selectedSlip.name" class="font-bold text-slate-900"></span> (<span x-text="selectedSlip.code" class="font-bold text-slate-700"></span>)
                     </p>
                 </div>
                 <button type="button" @click="editModalOpen = false" class="text-slate-400 hover:text-slate-600 p-1 text-base">✕</button>
@@ -340,40 +340,40 @@
                 @method('PUT')
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Monthly Base Salary ({{ $currency }})</label>
+                    <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px] tracking-wider">Monthly Base Salary ({{ $currency }})</label>
                     <input type="number" step="0.01" name="basic_salary" x-model="selectedSlip.basic_salary" 
                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-[#0071e3] text-sm">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-slate-500 uppercase mb-1">Performance Bonus ({{ $currency }})</label>
+                        <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px] tracking-wider">Performance Bonus ({{ $currency }})</label>
                         <input type="number" step="0.01" name="bonus_amount" x-model="selectedSlip.bonus_amount" 
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-emerald-600 focus:ring-2 focus:ring-[#0071e3]">
+                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-emerald-700 focus:ring-2 focus:ring-[#0071e3]">
                     </div>
 
                     <div>
-                        <label class="block font-bold text-slate-500 uppercase mb-1">Custom Allowances ({{ $currency }})</label>
+                        <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px] tracking-wider">Custom Allowances ({{ $currency }})</label>
                         <input type="number" step="0.01" name="allowances_amount" x-model="selectedSlip.allowances_amount" 
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-[#0071e3]">
+                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-[#0071e3]">
                     </div>
 
                     <div>
-                        <label class="block font-bold text-slate-500 uppercase mb-1">Custom Deductions ({{ $currency }})</label>
+                        <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px] tracking-wider">Custom Deductions ({{ $currency }})</label>
                         <input type="number" step="0.01" name="deductions_amount" x-model="selectedSlip.deductions_amount" 
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-rose-600 focus:ring-2 focus:ring-[#0071e3]">
+                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-rose-700 focus:ring-2 focus:ring-[#0071e3]">
                     </div>
 
                     <div>
-                        <label class="block font-bold text-slate-500 uppercase mb-1">Tax / TDS Hold ({{ $currency }})</label>
+                        <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px] tracking-wider">Tax / TDS Hold ({{ $currency }})</label>
                         <input type="number" step="0.01" name="tax_deduction" x-model="selectedSlip.tax_deduction" 
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-[#0071e3]">
+                               class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-[#0071e3]">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 pt-1 border-t border-slate-100">
                     <div>
-                        <label class="block font-bold text-slate-500 uppercase mb-1">Payout Status</label>
+                        <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px] tracking-wider">Payout Status</label>
                         <select name="payment_status" x-model="selectedSlip.payment_status" 
                                 class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-[#0071e3]">
                             <option value="pending">Pending</option>
@@ -382,9 +382,9 @@
                     </div>
 
                     <div>
-                        <label class="block font-bold text-slate-500 uppercase mb-1">Payment Mode</label>
+                        <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px] tracking-wider">Payment Mode</label>
                         <select name="payment_mode" x-model="selectedSlip.payment_mode" 
-                                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:ring-2 focus:ring-[#0071e3]">
+                                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-[#0071e3]">
                             <option value="bank_transfer">Bank Transfer / NEFT</option>
                             <option value="upi">UPI Instant</option>
                             <option value="cheque">Cheque</option>
@@ -394,13 +394,13 @@
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Transaction Ref / Cheque No.</label>
+                    <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px] tracking-wider">Transaction Ref / Cheque No.</label>
                     <input type="text" name="payment_reference" x-model="selectedSlip.payment_reference" placeholder="e.g. UTR1284918239 or Notes" 
-                           class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-800">
+                           class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 font-medium placeholder-slate-500">
                 </div>
 
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200">
+                    <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200">
                         Cancel
                     </button>
                     <button type="submit" class="px-5 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white font-bold rounded-xl shadow-xs transition active:scale-95 cursor-pointer">
