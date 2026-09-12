@@ -108,6 +108,62 @@ class DashboardController extends Controller
         $recordedCount = $todayAttendances->count();
         $pendingAttendanceCount = max(0, $totalEmployees - $recordedCount);
 
+        // Team Total Working Hours (Today & Month)
+        $todayTotalMinutes = 0;
+        $currentlyActiveOnDuty = 0;
+        foreach ($todayAttendances as $att) {
+            if (in_array($att->status, ['present', 'wfh', 'half_day']) && $att->check_in) {
+                $attDateStr = $att->date ? $att->date->format('Y-m-d') : $today;
+                $checkInTime = Carbon::parse($attDateStr.' '.$att->check_in, $tz);
+                if ($att->check_out) {
+                    $checkOutTime = Carbon::parse($attDateStr.' '.$att->check_out, $tz);
+                    if ($checkOutTime->lessThan($checkInTime)) {
+                        $checkOutTime->addDay();
+                    }
+                    $todayTotalMinutes += $checkInTime->diffInMinutes($checkOutTime);
+                } else {
+                    $currentlyActiveOnDuty++;
+                    if ($now->greaterThanOrEqualTo($checkInTime)) {
+                        $todayTotalMinutes += $checkInTime->diffInMinutes($now);
+                    }
+                }
+            }
+        }
+        $todayWorkedHours = floor($todayTotalMinutes / 60);
+        $todayWorkedMinutes = $todayTotalMinutes % 60;
+        $todayWorkingHoursDecimal = round($todayTotalMinutes / 60, 1);
+
+        $monthAttendances = DailyAttendance::whereYear('date', $currentYear)
+            ->whereMonth('date', $currentMonth)
+            ->whereIn('status', ['present', 'wfh', 'half_day'])
+            ->get();
+
+        $monthTotalMinutes = 0;
+        foreach ($monthAttendances as $mAtt) {
+            $attDateStr = $mAtt->date ? $mAtt->date->format('Y-m-d') : $today;
+            if ($mAtt->check_in) {
+                $mIn = Carbon::parse($attDateStr.' '.$mAtt->check_in, $tz);
+                if ($mAtt->check_out) {
+                    $mOut = Carbon::parse($attDateStr.' '.$mAtt->check_out, $tz);
+                    if ($mOut->lessThan($mIn)) {
+                        $mOut->addDay();
+                    }
+                    $monthTotalMinutes += $mIn->diffInMinutes($mOut);
+                } elseif ($attDateStr === $today) {
+                    if ($now->greaterThanOrEqualTo($mIn)) {
+                        $monthTotalMinutes += $mIn->diffInMinutes($now);
+                    }
+                } else {
+                    $monthTotalMinutes += ($mAtt->status === 'half_day' ? 240 : 510);
+                }
+            } else {
+                $monthTotalMinutes += ($mAtt->status === 'half_day' ? 240 : 510);
+            }
+        }
+        $monthWorkedHours = floor($monthTotalMinutes / 60);
+        $monthWorkedMinutes = $monthTotalMinutes % 60;
+        $monthWorkingHoursDecimal = round($monthTotalMinutes / 60, 1);
+
         // Works
         $totalWorksToday = (int) DailyWorkEntry::whereDate('date', $today)->sum('quantity');
         $monthlyWorkCount = (int) DailyWorkEntry::whereYear('date', $currentYear)
@@ -234,6 +290,13 @@ class DashboardController extends Controller
             'adminWorkedHours',
             'adminWorkedMinutes',
             'adminCheckInTimestamp',
+            'todayWorkedHours',
+            'todayWorkedMinutes',
+            'todayWorkingHoursDecimal',
+            'monthWorkedHours',
+            'monthWorkedMinutes',
+            'monthWorkingHoursDecimal',
+            'currentlyActiveOnDuty',
             'officeTimingStart',
             'officeTimingEnd'
         ));

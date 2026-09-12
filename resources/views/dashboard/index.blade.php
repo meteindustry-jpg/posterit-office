@@ -191,7 +191,7 @@
     @endif
 
     <!-- Vibrant Dribbble / Apple Arcade Style KPI Metric Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         
         <!-- Total Active Team (Cyan / Sky Blue Gradient) -->
         <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#0284c7] via-[#0ea5e9] to-[#38bdf8] text-white shadow-[0_8px_22px_rgba(14,165,233,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
@@ -224,10 +224,31 @@
                     <div class="text-3xl font-black text-white tracking-tight">{{ $presentToday + $wfhToday }}</div>
                     <span class="text-xs text-white/85 font-medium">/ {{ $totalEmployees }}</span>
                 </div>
-                <div class="flex items-center gap-1.5 mt-1 text-[11px] font-medium text-white/90">
+                <div class="flex items-center gap-1.5 mt-1 text-[11px] font-medium text-white/90 truncate">
                     <span>{{ $presentToday }} Office</span> •
                     <span>{{ $wfhToday }} WFH</span> •
                     <span>{{ $leaveToday }} Leave</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Working Hours (Indigo / Violet Gradient) -->
+        <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#4338ca] via-[#6366f1] to-[#818cf8] text-white shadow-[0_8px_22px_rgba(99,102,241,0.28)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
+            <svg class="absolute -right-3 -bottom-3 w-28 h-28 text-white/15 pointer-events-none transition-transform group-hover:scale-110 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+
+            <div class="relative z-10">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-white/90">Working Hours</span>
+                <div class="w-6 h-0.5 bg-white/30 rounded-full mt-1"></div>
+            </div>
+            <div class="mt-4 relative z-10">
+                <div class="flex items-baseline gap-1.5">
+                    <div class="text-3xl font-black text-white tracking-tight">{{ $todayWorkedHours }}<span class="text-xl font-bold">h</span> {{ $todayWorkedMinutes }}<span class="text-xl font-bold">m</span></div>
+                </div>
+                <div class="text-[11px] text-white/90 font-medium mt-1 truncate">
+                    <span>{{ $monthWorkedHours }}h this month</span> •
+                    <span>{{ $currentlyActiveOnDuty }} on duty</span>
                 </div>
             </div>
         </div>
@@ -244,7 +265,7 @@
             </div>
             <div class="mt-4 relative z-10">
                 <div class="text-3xl font-black text-white tracking-tight">{{ $totalWorksToday }}</div>
-                <div class="text-[11px] font-medium mt-1">
+                <div class="text-[11px] font-medium mt-1 truncate">
                     @if($pendingWorkEntries > 0)
                         <span class="text-white/95">{{ $pendingWorkEntries }} pending review</span>
                     @else
@@ -255,7 +276,7 @@
         </div>
 
         <!-- Monthly Volume (Violet / Purple Gradient) -->
-        <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#6366f1] via-[#7c3aed] to-[#8b5cf6] text-white shadow-[0_8px_22px_rgba(99,102,241,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
+        <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#7c3aed] via-[#9333ea] to-[#c026d3] text-white shadow-[0_8px_22px_rgba(147,51,234,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group col-span-2 md:col-span-1">
             <svg class="absolute -right-3 -bottom-3 w-28 h-28 text-white/15 pointer-events-none transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
             </svg>
@@ -266,7 +287,7 @@
             </div>
             <div class="mt-4 relative z-10">
                 <div class="text-3xl font-black text-white tracking-tight">{{ $monthlyWorkCount }}</div>
-                <div class="text-[11px] text-white/85 font-medium mt-1">{{ $attendancePercentage }}% Team Attendance</div>
+                <div class="text-[11px] text-white/85 font-medium mt-1 truncate">{{ $attendancePercentage }}% Team Attendance</div>
             </div>
         </div>
 
