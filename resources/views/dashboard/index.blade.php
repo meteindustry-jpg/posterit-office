@@ -4,26 +4,26 @@
 <div class="max-w-7xl mx-auto space-y-6">
     
     <!-- Header & Quick Actions -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200/80 dark:border-slate-800">
         <div>
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight">
+            <h1 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                 Good day, {{ auth()->user()->name }}
             </h1>
-            <p class="text-xs text-slate-500 mt-0.5 font-normal">
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5 font-medium">
                 Posterit Operations & Productivity Activity • {{ now()->format('F Y') }}
             </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
             <a href="{{ route('attendance.index') }}" 
-               class="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 shadow-2xs transition">
+               class="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 shadow-2xs transition">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                 <span>Daily Attendance</span>
             </a>
 
             @if(auth()->user()->isManager())
             <a href="{{ route('work-entries.batch') }}" 
-               class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white text-xs font-semibold rounded-xl shadow-xs transition">
+               class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0071e3] hover:bg-[#0062c4] text-white text-xs font-bold rounded-xl shadow-xs transition">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 <span>Log Works</span>
             </a>
@@ -33,7 +33,7 @@
 
     @if($adminEmployee)
     <!-- Executive Admin Self Attendance Console -->
-    <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all"
+    <div class="p-4 md:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all"
          x-data="{
              timeZone: '{{ \App\Models\CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) }}',
              timeStr: '',
@@ -61,18 +61,18 @@
             <!-- STATE 1: Shift Completed Today -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Executive Duty Completed</h3>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Executive Duty Completed</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
                                 ✓ Shift Logged
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 font-medium mt-0.5">
-                            Clocked in at <span class="font-mono font-bold text-slate-700">{{ $adminCheckInFormatted }}</span> • Clocked out at <span class="font-mono font-bold text-slate-700">{{ $adminCheckOutFormatted }}</span> • Total Time: <span class="font-mono font-bold text-emerald-700">{{ $adminWorkedHours }}h {{ $adminWorkedMinutes }}m</span>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">
+                            Clocked in at <span class="font-mono font-bold text-slate-900 dark:text-white">{{ $adminCheckInFormatted }}</span> • Clocked out at <span class="font-mono font-bold text-slate-900 dark:text-white">{{ $adminCheckOutFormatted }}</span> • Total Time: <span class="font-mono font-bold text-emerald-700 dark:text-emerald-400">{{ $adminWorkedHours }}h {{ $adminWorkedMinutes }}m</span>
                         </p>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                     <form method="POST" action="{{ route('attendance.clockIn') }}" @submit="$refs.adminReClockInTime.value = new Date().toLocaleTimeString('en-GB', { timeZone: timeZone, hour: '2-digit', minute: '2-digit', hour12: false })">
                         @csrf
                         <input type="hidden" name="client_time" x-ref="adminReClockInTime" value="">
-                        <button type="submit" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center gap-1.5">
+                        <button type="submit" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             <span>Clock In Again</span>
                         </button>
@@ -93,33 +93,33 @@
             <!-- STATE 2: Shift in Progress -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100 relative">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800 relative">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 absolute top-2 right-2 ring-2 ring-white animate-pulse"></span>
-                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Executive Duty in Progress</h3>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Executive Duty in Progress</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
                                 ● Working in Office
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 font-medium mt-0.5">
-                            Clocked in at <span class="font-mono font-bold text-slate-700">{{ $adminCheckInFormatted ?? $adminTodayAttendance->check_in }}</span> • Office timing: {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingStart ?? '09:30'))->format('h:i A') }} – {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingEnd ?? '18:30'))->format('h:i A') }}
+                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">
+                            Clocked in at <span class="font-mono font-bold text-slate-900 dark:text-white">{{ $adminCheckInFormatted ?? $adminTodayAttendance->check_in }}</span> • Office timing: {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingStart ?? '09:30'))->format('h:i A') }} – {{ \Carbon\Carbon::parse(now()->format('Y-m-d').' '.($officeTimingEnd ?? '18:30'))->format('h:i A') }}
                         </p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <div class="px-3.5 py-2 bg-emerald-50/70 border border-emerald-200/80 rounded-xl flex items-center gap-2">
-                        <span class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">Duration:</span>
-                        <span class="font-mono text-sm font-bold text-emerald-800" x-text="elapsedStr">{{ $adminWorkedHours }}h {{ $adminWorkedMinutes }}m</span>
+                    <div class="px-3.5 py-2 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800 rounded-xl flex items-center gap-2">
+                        <span class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-300 tracking-wider">Duration:</span>
+                        <span class="font-mono text-sm font-bold text-emerald-800 dark:text-emerald-200" x-text="elapsedStr">{{ $adminWorkedHours }}h {{ $adminWorkedMinutes }}m</span>
                     </div>
 
                     <form method="POST" action="{{ route('attendance.clockOut') }}" @submit="$refs.adminClockOutTime.value = new Date().toLocaleTimeString('en-GB', { timeZone: timeZone, hour: '2-digit', minute: '2-digit', hour12: false })">
                         @csrf
                         <input type="hidden" name="client_time" x-ref="adminClockOutTime" value="">
-                        <button type="submit" class="px-5 py-2.5 bg-[#FF3B30] hover:bg-[#E0342B] text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5">
+                        <button type="submit" class="px-5 py-2.5 bg-[#FF3B30] hover:bg-[#E0342B] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                             <span>Clock-Out</span>
                         </button>
@@ -131,32 +131,32 @@
             <!-- STATE 3: Not Clocked In (Morning / Arrival) -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#0071E3] flex items-center justify-center shrink-0 border border-blue-100">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-[#0071E3] dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200 dark:border-blue-800">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Executive Attendance Console</h3>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Executive Attendance Console</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
                                 Not Clocked In
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 font-medium mt-0.5">
+                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">
                             Record your executive office arrival for today. Tap below to clock in with live local time.
                         </p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <div class="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/70 text-right hidden sm:block">
-                        <span class="font-mono text-xs font-bold text-slate-700" x-text="timeStr"></span>
-                        <span class="text-[10px] text-slate-400 block" x-text="dateStr"></span>
+                    <div class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700 text-right hidden sm:block">
+                        <span class="font-mono text-xs font-bold text-slate-800 dark:text-slate-200" x-text="timeStr"></span>
+                        <span class="text-[11px] text-slate-600 dark:text-slate-400 font-semibold block" x-text="dateStr"></span>
                     </div>
 
                     <form method="POST" action="{{ route('attendance.clockIn') }}" @submit="$refs.adminClockInTime.value = new Date().toLocaleTimeString('en-GB', { timeZone: timeZone, hour: '2-digit', minute: '2-digit', hour12: false })">
                         @csrf
                         <input type="hidden" name="client_time" x-ref="adminClockInTime" value="">
-                        <button type="submit" class="px-5 py-2.5 bg-[#0071E3] hover:bg-[#0062C4] text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-2">
+                        <button type="submit" class="px-5 py-2.5 bg-[#0071E3] hover:bg-[#0062C4] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                             <span>Mark Attendance (Clock In)</span>
                         </button>
@@ -195,7 +195,6 @@
         
         <!-- Total Active Team (Cyan / Sky Blue Gradient) -->
         <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#0284c7] via-[#0ea5e9] to-[#38bdf8] text-white shadow-[0_8px_22px_rgba(14,165,233,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
-            <!-- Large Watermark Illustration -->
             <svg class="absolute -right-3 -bottom-3 w-28 h-28 text-white/15 pointer-events-none transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
             </svg>
@@ -212,7 +211,6 @@
 
         <!-- Attendance Today (Emerald / Mint Gradient) -->
         <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#059669] via-[#10b981] to-[#34d399] text-white shadow-[0_8px_22px_rgba(16,185,129,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
-            <!-- Large Watermark Illustration -->
             <svg class="absolute -right-3 -bottom-3 w-28 h-28 text-white/15 pointer-events-none transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
             </svg>
@@ -236,7 +234,6 @@
 
         <!-- Works Done Today (Orange / Amber Gradient) -->
         <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#f59e0b] via-[#f97316] to-[#fb923c] text-white shadow-[0_8px_22px_rgba(249,115,22,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
-            <!-- Large Watermark Illustration -->
             <svg class="absolute -right-3 -bottom-3 w-28 h-28 text-white/15 pointer-events-none transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
             </svg>
@@ -259,7 +256,6 @@
 
         <!-- Monthly Volume (Violet / Purple Gradient) -->
         <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#6366f1] via-[#7c3aed] to-[#8b5cf6] text-white shadow-[0_8px_22px_rgba(99,102,241,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
-            <!-- Large Watermark Illustration -->
             <svg class="absolute -right-3 -bottom-3 w-28 h-28 text-white/15 pointer-events-none transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
             </svg>
@@ -283,10 +279,10 @@
         <div class="lg:col-span-2 p-5 ui-panel">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h3 class="font-bold text-sm text-slate-900">Daily Output Trend</h3>
-                    <p class="text-xs text-slate-500 font-normal">Design deliverables in the last 14 days</p>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Daily Output Trend</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">Design deliverables in the last 14 days</p>
                 </div>
-                <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-medium">14 Days</span>
+                <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold">14 Days</span>
             </div>
 
             <div id="workTrendChart" class="h-64 w-full"></div>
@@ -295,19 +291,32 @@
         <!-- Work Categories Distribution -->
         <div class="p-5 ui-panel flex flex-col justify-between">
             <div>
-                <h3 class="font-bold text-sm text-slate-900">Category Share</h3>
-                <p class="text-xs text-slate-500 font-normal mb-3">Work breakdown by design type</p>
-                <div id="categoryChart" class="h-52 flex items-center justify-center"></div>
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Category Share</h3>
+                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mb-3">Work breakdown by design type</p>
+                
+                @if($categoryBreakdown->count() > 0)
+                    <div id="categoryChart" class="h-52 flex items-center justify-center"></div>
+                @else
+                    <div class="h-52 flex flex-col items-center justify-center text-center p-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-[#0071e3] dark:text-blue-400 flex items-center justify-center mb-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                        </div>
+                        <p class="text-xs font-bold text-slate-700 dark:text-slate-300">No Category Data Yet</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Logs will reflect here once daily tasks are submitted.</p>
+                    </div>
+                @endif
             </div>
 
-            <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+            @if($categoryBreakdown->count() > 0)
+            <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
                 @foreach($categoryBreakdown->take(6) as $cat)
-                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-50 border border-slate-200 text-slate-700">
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">
                     <span class="w-2 h-2 rounded-full" style="background-color: {{ $cat->category->color ?? '#0071e3' }}"></span>
                     <span>{{ $cat->category->name ?? 'Cat' }}: <strong>{{ $cat->total_qty }}</strong></span>
                 </span>
                 @endforeach
             </div>
+            @endif
         </div>
 
     </div>
@@ -317,44 +326,44 @@
         
         <!-- Top Performer Spotlight -->
         <div class="p-5 ui-panel">
-            <div class="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-100">
+            <div class="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
-                    <h3 class="font-bold text-sm text-slate-900">Top Performers</h3>
-                    <p class="text-[11px] text-slate-500">{{ now()->format('F Y') }} Output Leaderboard</p>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Top Performers</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">{{ now()->format('F Y') }} Output Leaderboard</p>
                 </div>
-                <a href="{{ route('performance.index') }}" class="text-xs font-semibold text-[#0071e3] hover:underline">All →</a>
+                <a href="{{ route('performance.index') }}" class="text-xs font-bold text-[#0071e3] dark:text-blue-400 hover:underline">All →</a>
             </div>
 
             <div class="space-y-2">
                 @forelse($topPerformers as $idx => $tp)
-                <div class="p-2.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex items-center gap-3">
+                <div class="p-2.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 flex items-center gap-3">
                     <div class="w-6 h-6 rounded-lg {{ $idx === 0 ? 'bg-amber-100 text-amber-800 font-bold' : ($idx === 1 ? 'bg-slate-200 text-slate-700' : 'bg-slate-100 text-slate-600') }} flex items-center justify-center text-xs shrink-0">
                         {{ $idx + 1 }}
                     </div>
-                    <img src="{{ $tp->employee->photo_url }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-200">
+                    <img src="{{ $tp->employee->photo_url }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700">
                     <div class="flex-1 min-w-0">
-                        <div class="font-semibold text-xs text-slate-900 truncate">{{ $tp->employee->name }}</div>
+                        <div class="font-bold text-xs text-slate-900 dark:text-white truncate">{{ $tp->employee->name }}</div>
                         <div class="text-[11px] text-slate-600 dark:text-slate-400 font-medium truncate">{{ $tp->employee->department->name ?? 'Design' }}</div>
                     </div>
                     <div class="text-right shrink-0">
-                        <div class="font-bold text-xs text-[#0071e3]">{{ $tp->total_qty }}</div>
-                        <div class="text-[10px] text-slate-600 font-bold uppercase">Tasks</div>
+                        <div class="font-bold text-xs text-[#0071e3] dark:text-blue-400">{{ $tp->total_qty }}</div>
+                        <div class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase">Tasks</div>
                     </div>
                 </div>
                 @empty
-                <div class="py-8 text-center text-xs text-slate-600 font-medium">No output records yet.</div>
+                <div class="py-8 text-center text-xs text-slate-600 dark:text-slate-400 font-medium">No output records yet.</div>
                 @endforelse
             </div>
         </div>
 
         <!-- Pending Tasks Widget -->
         <div class="p-5 ui-panel">
-            <div class="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-100">
+            <div class="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
-                    <h3 class="font-bold text-sm text-slate-900">Pending Tasks</h3>
-                    <p class="text-[11px] text-slate-500">Quick action items</p>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Pending Tasks</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">Quick action items</p>
                 </div>
-                <a href="{{ route('todos.index') }}" class="text-xs font-semibold text-[#0071e3] hover:underline">All →</a>
+                <a href="{{ route('todos.index') }}" class="text-xs font-bold text-[#0071e3] dark:text-blue-400 hover:underline">All →</a>
             </div>
 
             <div class="space-y-2.5">
@@ -387,7 +396,7 @@
                         <div class="flex items-center gap-1.5 shrink-0">
                             @if($todo->totalSubtasksCount() > 0)
                             <button type="button" @click="openSubtasks = !openSubtasks" 
-                                    class="text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800/80 cursor-pointer flex items-center gap-1">
+                                     class="text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800/80 cursor-pointer flex items-center gap-1">
                                 <span>{{ $todo->completedSubtasksCount() }}/{{ $todo->totalSubtasksCount() }}</span>
                                 <svg class="w-2.5 h-2.5 transition-transform" :class="openSubtasks ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
@@ -427,7 +436,7 @@
                     @endif
                 </div>
                 @empty
-                <div class="py-8 text-center text-xs text-slate-600 font-medium">
+                <div class="py-8 text-center text-xs text-slate-600 dark:text-slate-400 font-medium">
                     No pending tasks.
                 </div>
                 @endforelse
@@ -436,22 +445,22 @@
 
         <!-- Pending Leave Requests -->
         <div class="p-5 ui-panel">
-            <div class="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-100">
+            <div class="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div>
-                    <h3 class="font-bold text-sm text-slate-900">Leave Requests</h3>
-                    <p class="text-[11px] text-slate-500">Pending applications</p>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Leave Requests</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">Pending applications</p>
                 </div>
-                <a href="{{ route('leaves.index') }}" class="text-xs font-semibold text-[#0071e3] hover:underline">All →</a>
+                <a href="{{ route('leaves.index') }}" class="text-xs font-bold text-[#0071e3] dark:text-blue-400 hover:underline">All →</a>
             </div>
 
             <div class="space-y-2.5">
                 @forelse($pendingLeaves as $leave)
-                <div class="p-2.5 rounded-xl bg-slate-50/70 border border-slate-200/60 space-y-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-2 text-xs">
                     <div class="flex items-center justify-between">
-                        <div class="font-semibold text-slate-900">{{ $leave->employee->name }}</div>
-                        <span class="px-1.5 py-0.5 text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200 rounded">{{ $leave->leaveType->name }}</span>
+                        <div class="font-bold text-slate-900 dark:text-white">{{ $leave->employee->name }}</div>
+                        <span class="px-1.5 py-0.5 text-[10px] font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded">{{ $leave->leaveType->name }}</span>
                     </div>
-                    <div class="text-[11px] text-slate-500">
+                    <div class="text-xs text-slate-600 dark:text-slate-400 font-medium">
                         {{ $leave->start_date->format('d M') }} - {{ $leave->end_date->format('d M') }} ({{ $leave->total_days }}d)
                     </div>
                     
@@ -460,7 +469,7 @@
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="status" value="approved">
-                            <button type="submit" class="w-full py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-semibold transition cursor-pointer">
+                            <button type="submit" class="w-full py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-bold transition cursor-pointer">
                                 Approve
                             </button>
                         </form>
@@ -469,14 +478,14 @@
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="status" value="rejected">
-                            <button type="submit" class="w-full py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[11px] font-semibold transition cursor-pointer">
+                            <button type="submit" class="w-full py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-[11px] font-bold transition cursor-pointer">
                                 Reject
                             </button>
                         </form>
                     </div>
                 </div>
                 @empty
-                <div class="py-8 text-center text-xs text-slate-400">
+                <div class="py-8 text-center text-xs text-slate-600 dark:text-slate-400 font-medium">
                     No pending leave requests.
                 </div>
                 @endforelse
@@ -487,49 +496,49 @@
 
     <!-- Recent Daily Work Activity Stream -->
     <div class="p-5 ui-panel">
-        <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+        <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
             <div>
-                <h3 class="font-bold text-sm text-slate-900">Live Work Stream</h3>
-                <p class="text-xs text-slate-500 font-normal">Real-time team deliverables & submissions</p>
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Live Work Stream</h3>
+                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">Real-time team deliverables & submissions</p>
             </div>
-            <a href="{{ route('work-entries.index') }}" class="text-xs font-semibold text-[#0071e3] hover:underline">View All →</a>
+            <a href="{{ route('work-entries.index') }}" class="text-xs font-bold text-[#0071e3] dark:text-blue-400 hover:underline">View All →</a>
         </div>
 
         <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-slate-200 text-slate-500 uppercase text-[10px] bg-slate-50/50">
-                        <th class="py-2.5 px-3 font-semibold">Date</th>
-                        <th class="py-2.5 px-3 font-semibold">Employee</th>
-                        <th class="py-2.5 px-3 font-semibold">Department</th>
-                        <th class="py-2.5 px-3 font-semibold">Category</th>
-                        <th class="py-2.5 px-3 font-semibold text-center">Quantity</th>
-                        <th class="py-2.5 px-3 font-semibold">Remarks</th>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase text-[11px] font-bold tracking-wider">
+                        <th class="py-2.5 px-3">Date</th>
+                        <th class="py-2.5 px-3">Employee</th>
+                        <th class="py-2.5 px-3">Department</th>
+                        <th class="py-2.5 px-3">Category</th>
+                        <th class="py-2.5 px-3 text-center">Quantity</th>
+                        <th class="py-2.5 px-3">Remarks</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                     @forelse($recentWorkEntries as $entry)
-                    <tr class="hover:bg-slate-50/70 transition">
-                        <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">{{ $entry->date->format('d M, Y') }}</td>
+                    <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition">
+                        <td class="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap">{{ $entry->date->format('d M, Y') }}</td>
                         <td class="py-2.5 px-3">
                             <div class="flex items-center gap-2">
-                                <img src="{{ $entry->employee->photo_url }}" class="w-6 h-6 rounded-full object-cover border border-slate-200">
-                                <span class="font-medium text-slate-900">{{ $entry->employee->name }}</span>
+                                <img src="{{ $entry->employee->photo_url }}" class="w-6 h-6 rounded-full object-cover border border-slate-200 dark:border-slate-700">
+                                <span class="font-bold text-slate-900 dark:text-white">{{ $entry->employee->name }}</span>
                             </div>
                         </td>
-                        <td class="py-2.5 px-3 text-slate-500">{{ $entry->employee->department->name ?? 'N/A' }}</td>
+                        <td class="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-medium">{{ $entry->employee->department->name ?? 'N/A' }}</td>
                         <td class="py-2.5 px-3">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium" style="background-color: {{ $entry->category->color }}15; color: {{ $entry->category->color }};">
+                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold" style="background-color: {{ $entry->category->color }}15; color: {{ $entry->category->color }};">
                                 <span class="w-1.5 h-1.5 rounded-full" style="background-color: {{ $entry->category->color }}"></span>
                                 {{ $entry->category->name }}
                             </span>
                         </td>
-                        <td class="py-2.5 px-3 text-center font-bold text-slate-900">{{ $entry->quantity }}</td>
-                        <td class="py-2.5 px-3 text-slate-500 max-w-xs truncate">{{ $entry->remarks ?? '-' }}</td>
+                        <td class="py-2.5 px-3 text-center font-black text-slate-900 dark:text-white">{{ $entry->quantity }}</td>
+                        <td class="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-medium max-w-xs truncate">{{ $entry->remarks ?? '-' }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="py-6 text-center text-slate-400">No work entries logged yet.</td>
+                        <td colspan="6" class="py-6 text-center text-slate-600 dark:text-slate-400 font-medium">No work entries logged yet.</td>
                     </tr>
                     @endforelse
                 </tbody>
