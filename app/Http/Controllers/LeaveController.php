@@ -98,6 +98,23 @@ class LeaveController extends Controller
         $end = Carbon::parse($validated['end_date']);
         $totalDays = $start->diffInDays($end) + 1;
 
+        // Check for overlapping pending/approved leave requests
+        $overlap = LeaveRequest::where('employee_id', $employeeId)
+            ->whereIn('status', ['pending', 'approved'])
+            ->where(function ($q) use ($validated) {
+                $q->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
+                    ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']])
+                    ->orWhere(function ($q2) use ($validated) {
+                        $q2->where('start_date', '<=', $validated['start_date'])
+                            ->where('end_date', '>=', $validated['end_date']);
+                    });
+            })
+            ->exists();
+
+        if ($overlap) {
+            return back()->withErrors(['start_date' => 'You already have a pending or approved leave request overlapping these dates.'])->withInput();
+        }
+
         $leave = LeaveRequest::create([
             'employee_id' => $employeeId,
             'leave_type_id' => $validated['leave_type_id'],

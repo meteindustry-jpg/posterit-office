@@ -36,7 +36,7 @@ class HolidayController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'date' => ['required', 'date'],
+            'date' => ['required', 'date', 'unique:holidays,date'],
             'type' => ['required', 'in:national,religious,company,optional'],
             'description' => ['nullable', 'string'],
         ]);
@@ -52,7 +52,7 @@ class HolidayController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'date' => ['required', 'date'],
+            'date' => ['required', 'date', 'unique:holidays,date,'.$holiday->id],
             'type' => ['required', 'in:national,religious,company,optional'],
             'description' => ['nullable', 'string'],
         ]);

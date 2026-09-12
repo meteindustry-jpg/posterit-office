@@ -47,14 +47,29 @@ class DailyWorkEntryController extends Controller
         $categories = WorkCategory::where('is_active', true)->orderBy('name')->get();
         $departments = Department::orderBy('name')->get();
 
-        $totalWorks = ! empty($date)
-            ? DailyWorkEntry::where('date', $date)->sum('quantity')
-            : DailyWorkEntry::sum('quantity');
+        // Build summary query with the same filters as the main query
+        $summaryQuery = DailyWorkEntry::query();
+        if (Auth::user()->isEmployee() && Auth::user()->employee) {
+            $summaryQuery->where('employee_id', Auth::user()->employee->id);
+        } elseif ($employeeId) {
+            $summaryQuery->where('employee_id', $employeeId);
+        }
+        if (! empty($date)) {
+            $summaryQuery->where('date', $date);
+        }
+        if ($categoryId) {
+            $summaryQuery->where('work_category_id', $categoryId);
+        }
+        if ($departmentId) {
+            $summaryQuery->whereHas('employee', function ($q) use ($departmentId) {
+                $q->where('department_id', $departmentId);
+            });
+        }
+
+        $totalWorks = (clone $summaryQuery)->sum('quantity');
 
         $activeEmployeesCount = Employee::where('employment_status', 'active')->count();
-        $workedEmployeesCount = ! empty($date)
-            ? DailyWorkEntry::where('date', $date)->distinct('employee_id')->count('employee_id')
-            : DailyWorkEntry::distinct('employee_id')->count('employee_id');
+        $workedEmployeesCount = (clone $summaryQuery)->distinct('employee_id')->count('employee_id');
 
         return view('work-entries.index', compact(
             'entries',

@@ -83,11 +83,10 @@ class AuthController extends Controller
         $loginInput = trim($request->input('email'));
         $password = $request->input('password');
 
-        // Look up by exact email or name (case-insensitive)
+        // Look up by exact email or exact name (case-insensitive)
         $user = User::where('email', $loginInput)
             ->orWhereRaw('LOWER(email) = ?', [strtolower($loginInput)])
             ->orWhereRaw('LOWER(name) = ?', [strtolower($loginInput)])
-            ->orWhereRaw('LOWER(name) LIKE ?', ['%'.strtolower($loginInput).'%'])
             ->first();
 
         if ($user && Hash::check($password, $user->password)) {
@@ -137,7 +136,7 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id, 'unique:employees,email,'.($user->employee?->id ?? 'NULL')],
             'avatar' => ['nullable', 'image', 'max:2048'],
             'mobile_number' => ['nullable', 'string', 'max:30'],
             'emergency_contact_name' => ['nullable', 'string', 'max:255'],

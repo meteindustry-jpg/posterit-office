@@ -68,7 +68,18 @@ class UserController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
         $old = $user->toArray();
+        $oldEmployeeId = $user->employee_id;
         $user->update($validated);
+
+        // Sync inverse employee relationship when employee_id changes
+        if ($oldEmployeeId !== $user->employee_id) {
+            if ($oldEmployeeId) {
+                Employee::where('id', $oldEmployeeId)->update(['user_id' => null]);
+            }
+            if ($user->employee_id) {
+                Employee::where('id', $user->employee_id)->update(['user_id' => $user->id]);
+            }
+        }
 
         AuditService::log('update', 'User Management', "Updated user {$user->name}", $old, $user->toArray());
 

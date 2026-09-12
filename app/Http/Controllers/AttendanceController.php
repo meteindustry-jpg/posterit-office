@@ -115,10 +115,10 @@ class AttendanceController extends Controller
                 continue;
             }
 
-            // Check In: prefer submitted value, then existing attendance check-in, then real-time if today
+            // Check In: prefer submitted value, then existing attendance check-in, then office start time
             $checkIn = ! empty($item['check_in'])
                 ? $item['check_in']
-                : ($attendance?->check_in ?: (in_array($status, ['present', 'wfh']) ? ($date === $now->format('Y-m-d') ? $nowTime : $officeStart) : null));
+                : ($attendance?->check_in ?: (in_array($status, ['present', 'wfh']) ? $officeStart : null));
 
             // Check Out: prefer submitted value, then existing attendance check-out. DO NOT force check-out if shift is in progress!
             $checkOut = ! empty($item['check_out'])
@@ -329,6 +329,15 @@ class AttendanceController extends Controller
         $attendance = DailyAttendance::where('employee_id', $employee->id)
             ->whereDate('date', $todayStr)
             ->first();
+
+        // Night-shift support: if no attendance today, check yesterday for an open shift
+        if (! $attendance) {
+            $yesterdayStr = Carbon::parse($todayStr, $tz)->subDay()->format('Y-m-d');
+            $attendance = DailyAttendance::where('employee_id', $employee->id)
+                ->whereDate('date', $yesterdayStr)
+                ->whereNull('check_out')
+                ->first();
+        }
 
         if (! $attendance) {
             $attendance = DailyAttendance::create([

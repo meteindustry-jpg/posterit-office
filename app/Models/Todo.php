@@ -90,10 +90,13 @@ class Todo extends Model
 
         if ($u) {
             $emp = $u->employee ?? Employee::where('user_id', $u->id)->first();
-            if ($emp && ! empty($emp->photo_url)) {
-                return $emp->photo_url;
+
+            // Check if employee has an actual uploaded photo (not the generated fallback)
+            if ($emp && ! empty($emp->photo) && file_exists(public_path('storage/'.$emp->photo))) {
+                return asset('storage/'.$emp->photo);
             }
 
+            // Fallback to User's uploaded avatar
             if (! empty($u->avatar) && file_exists(public_path('storage/'.$u->avatar))) {
                 return asset('storage/'.$u->avatar);
             }

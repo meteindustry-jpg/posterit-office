@@ -109,19 +109,35 @@ class PayrollController extends Controller
             $leaveDays = $attendances->where('status', 'leave')->count();
             $absentDays = $attendances->where('status', 'absent')->count();
 
-            // Check if leaves were approved paid leaves
-            $approvedLeaveDays = LeaveRequest::where('employee_id', $employee->id)
+            // Check if leaves were approved paid leaves (only count days within this month)
+            $approvedLeaves = LeaveRequest::where('employee_id', $employee->id)
                 ->where('status', 'approved')
                 ->where(function ($q) use ($startDate, $endDate) {
                     $q->whereBetween('start_date', [$startDate, $endDate])
-                        ->orWhereBetween('end_date', [$startDate, $endDate]);
+                        ->orWhereBetween('end_date', [$startDate, $endDate])
+                        ->orWhere(function ($q2) use ($startDate, $endDate) {
+                            $q2->where('start_date', '<=', $startDate)
+                                ->where('end_date', '>=', $endDate);
+                        });
                 })
-                ->sum('total_days');
+                ->get();
 
-            $paidLeaves = max($leaveDays, (float) $approvedLeaveDays);
+            // Calculate only the days that fall within this payroll month
+            $approvedLeaveDays = 0;
+            foreach ($approvedLeaves as $leaveReq) {
+                $leaveStart = Carbon::parse($leaveReq->start_date);
+                $leaveEnd = Carbon::parse($leaveReq->end_date);
+                $overlapStart = $leaveStart->greaterThan($startDate) ? $leaveStart : $startDate->copy();
+                $overlapEnd = $leaveEnd->lessThan($endDate) ? $leaveEnd : $endDate->copy();
+                $approvedLeaveDays += max(0, $overlapStart->diffInDays($overlapEnd) + 1);
+            }
 
-            // Unpaid absences (explicit absent + half day penalty)
-            $unpaidDays = $absentDays + ($halfDays * 0.5);
+            // Paid leaves = only approved leaves up to quota, not unapproved absences
+            $paidLeaves = min($leaveDays, $approvedLeaveDays);
+
+            // Unpaid absences = explicit absent + half day penalty + unapproved leaves
+            $unapprovedLeaves = max(0, $leaveDays - $paidLeaves);
+            $unpaidDays = $absentDays + ($halfDays * 0.5) + $unapprovedLeaves;
             $payableDays = max(0, $workingDays - $unpaidDays);
 
             $perDayRate = round($basicSalary / $workingDays, 2);
@@ -193,10 +209,10 @@ class PayrollController extends Controller
             $payslip->basic_salary = (float) $validated['basic_salary'];
         }
 
-        $payslip->bonus_amount = $validated['bonus_amount'] ?? 0;
-        $payslip->allowances_amount = $validated['allowances_amount'] ?? 0;
-        $payslip->deductions_amount = $validated['deductions_amount'] ?? 0;
-        $payslip->tax_deduction = $validated['tax_deduction'] ?? 0;
+        $payslip->bonus_amount = $validated['bonus_amount'] ?? $payslip->bonus_amount;
+        $payslip->allowances_amount = $validated['allowances_amount'] ?? $payslip->allowances_amount;
+        $payslip->deductions_amount = $validated['deductions_amount'] ?? $payslip->deductions_amount;
+        $payslip->tax_deduction = $validated['tax_deduction'] ?? $payslip->tax_deduction;
         $payslip->payment_status = $validated['payment_status'];
         $payslip->payment_mode = $validated['payment_mode'] ?? $payslip->payment_mode;
         $payslip->payment_reference = $validated['payment_reference'] ?? $payslip->payment_reference;

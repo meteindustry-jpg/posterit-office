@@ -189,7 +189,7 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'employee_code' => ['required', 'string', 'max:50', 'unique:employees,employee_code,'.$employee->id],
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:employees,email,'.$employee->id],
+            'email' => ['required', 'email', 'max:255', 'unique:employees,email,'.$employee->id, 'unique:users,email,'.($employee->user?->id ?? 'NULL')],
             'mobile_number' => ['nullable', 'string', 'max:30'],
             'designation' => ['required', 'string', 'max:255'],
             'department_id' => ['required', 'exists:departments,id'],

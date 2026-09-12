@@ -112,6 +112,16 @@ class TodoController extends Controller
             foreach ($lines as $line) {
                 $subtasksData[] = ['title' => $line, 'completed' => false];
             }
+        } elseif (! empty($validated['subtasks']) && is_array($validated['subtasks'])) {
+            foreach ($validated['subtasks'] as $item) {
+                $itemTitle = is_array($item) ? trim($item['title'] ?? '') : trim((string) $item);
+                if ($itemTitle !== '') {
+                    $subtasksData[] = [
+                        'title' => $itemTitle,
+                        'completed' => is_array($item) ? (bool) ($item['completed'] ?? false) : false,
+                    ];
+                }
+            }
         }
 
         $status = $validated['status'] ?? 'todo';
@@ -343,7 +353,7 @@ class TodoController extends Controller
             'work_category_id' => $validated['work_category_id'],
             'date' => $validated['date'],
             'quantity' => $validated['quantity'],
-            'remarks' => $validated['remarks'] ?: $todo->title,
+            'remarks' => ($validated['remarks'] ?? null) ?: $todo->title,
             'created_by_user_id' => Auth::id(),
         ]);
 
