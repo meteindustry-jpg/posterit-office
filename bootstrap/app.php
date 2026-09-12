@@ -1,5 +1,7 @@
 <?php
 
+use App\Console\Commands\FixTodayAttendanceCommand;
+use App\Console\Commands\RestoreWebsiteDataCommand;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use Illuminate\Foundation\Application;
@@ -13,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        RestoreWebsiteDataCommand::class,
+        FixTodayAttendanceCommand::class,
+    ])
+
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
         $middleware->web(append: [
