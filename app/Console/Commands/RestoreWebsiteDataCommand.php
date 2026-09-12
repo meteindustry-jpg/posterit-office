@@ -955,14 +955,14 @@ class RestoreWebsiteDataCommand extends Command
                 'subtasks' => null,
             ],
 
-            // Active Today (12th Sep) Tasks
+            // Active 11th Sep Tasks (As shown in live system on 11th Sep)
             [
                 'creator_email' => 'metex.biswajit@gmail.com',
                 'title' => 'Durga Prajainstion',
                 'category' => 'Design',
                 'priority' => 'high',
                 'status' => 'in_progress',
-                'due_date' => '2026-09-12',
+                'due_date' => '2026-09-11',
                 'due_time' => '18:00:00',
                 'is_completed' => false,
                 'subtasks' => null,
@@ -973,7 +973,7 @@ class RestoreWebsiteDataCommand extends Command
                 'category' => 'Social Media',
                 'priority' => 'high',
                 'status' => 'in_progress',
-                'due_date' => '2026-09-12',
+                'due_date' => '2026-09-11',
                 'due_time' => '18:00:00',
                 'is_completed' => false,
                 'subtasks' => null,
@@ -984,7 +984,7 @@ class RestoreWebsiteDataCommand extends Command
                 'category' => 'Design',
                 'priority' => 'high',
                 'status' => 'todo',
-                'due_date' => '2026-09-12',
+                'due_date' => '2026-09-11',
                 'due_time' => '18:00:00',
                 'is_completed' => false,
                 'subtasks' => null,
@@ -995,7 +995,7 @@ class RestoreWebsiteDataCommand extends Command
                 'category' => 'General',
                 'priority' => 'medium',
                 'status' => 'todo',
-                'due_date' => '2026-09-12',
+                'due_date' => '2026-09-11',
                 'due_time' => '18:00:00',
                 'is_completed' => false,
                 'subtasks' => [
@@ -1008,7 +1008,7 @@ class RestoreWebsiteDataCommand extends Command
                 'category' => 'Design',
                 'priority' => 'high',
                 'status' => 'in_progress',
-                'due_date' => '2026-09-12',
+                'due_date' => '2026-09-11',
                 'due_time' => '18:00:00',
                 'is_completed' => false,
                 'subtasks' => null,
