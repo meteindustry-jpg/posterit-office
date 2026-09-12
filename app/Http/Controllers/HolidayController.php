@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanySetting;
 use App\Models\Holiday;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ class HolidayController extends Controller
         $allHolidays = Holiday::orderBy('date', 'asc')->get();
         $holidays = $allHolidays->filter(fn ($h) => (int) $h->date->format('Y') === $year)->values();
 
-        $todayStr = now()->format('Y-m-d');
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $todayStr = now()->setTimezone($tz)->format('Y-m-d');
         $upcomingCount = Holiday::whereDate('date', '>=', $todayStr)->whereYear('date', $year)->count();
         $nextHoliday = Holiday::whereDate('date', '>=', $todayStr)->orderBy('date', 'asc')->first();
         $nationalCount = $holidays->where('type', 'national')->count();

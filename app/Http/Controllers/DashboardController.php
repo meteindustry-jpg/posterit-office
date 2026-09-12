@@ -66,6 +66,15 @@ class DashboardController extends Controller
                     ->whereDate('date', $today)
                     ->first();
 
+                // Check for open shift from yesterday if not found today
+                if (! $adminTodayAttendance) {
+                    $yesterdayStr = $now->copy()->subDay()->format('Y-m-d');
+                    $adminTodayAttendance = DailyAttendance::where('employee_id', $adminEmployee->id)
+                        ->whereDate('date', $yesterdayStr)
+                        ->whereNull('check_out')
+                        ->first();
+                }
+
                 if ($adminTodayAttendance && $adminTodayAttendance->check_in) {
                     $attDateStr = $adminTodayAttendance->date ? $adminTodayAttendance->date->format('Y-m-d') : $today;
                     $inTime = Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_in, $tz);
@@ -76,6 +85,9 @@ class DashboardController extends Controller
                     }
 
                     $outTime = $adminTodayAttendance->check_out ? Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_out, $tz) : $now;
+                    if ($adminTodayAttendance->check_out && Carbon::parse($attDateStr.' '.$adminTodayAttendance->check_out, $tz)->lessThan($inTime)) {
+                        $outTime->addDay();
+                    }
                     $diffMins = $outTime->greaterThanOrEqualTo($inTime) ? $inTime->diffInMinutes($outTime) : 0;
 
                     $adminWorkedHours = floor($diffMins / 60);
@@ -243,6 +255,15 @@ class DashboardController extends Controller
             ->whereDate('date', $today)
             ->first();
 
+        // Check for open shift from yesterday if not found today
+        if (! $myTodayAttendance) {
+            $yesterdayStr = $now->copy()->subDay()->format('Y-m-d');
+            $myTodayAttendance = DailyAttendance::where('employee_id', $employee->id)
+                ->whereDate('date', $yesterdayStr)
+                ->whereNull('check_out')
+                ->first();
+        }
+
         $myMonthlyWorks = (int) DailyWorkEntry::where('employee_id', $employee->id)
             ->whereYear('date', $currentYear)
             ->whereMonth('date', $currentMonth)
@@ -293,12 +314,11 @@ class DashboardController extends Controller
             }
 
             $outTime = $myTodayAttendance->check_out ? Carbon::parse($attDateStr.' '.$myTodayAttendance->check_out, $tz) : $now;
-
-            if ($outTime->greaterThanOrEqualTo($inTime)) {
-                $diffMins = $inTime->diffInMinutes($outTime);
-            } else {
-                $diffMins = 0;
+            if ($myTodayAttendance->check_out && Carbon::parse($attDateStr.' '.$myTodayAttendance->check_out, $tz)->lessThan($inTime)) {
+                $outTime->addDay();
             }
+
+            $diffMins = $outTime->greaterThanOrEqualTo($inTime) ? $inTime->diffInMinutes($outTime) : 0;
 
             $todayWorkedHours = floor($diffMins / 60);
             $todayWorkedMinutes = $diffMins % 60;

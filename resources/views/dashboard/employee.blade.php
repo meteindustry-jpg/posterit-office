@@ -133,7 +133,7 @@
                         <span class="font-mono text-sm font-bold text-emerald-800" x-text="elapsedStr">{{ $todayWorkedHours }}h {{ $todayWorkedMinutes }}m</span>
                     </div>
 
-                    <form method="POST" action="{{ route('attendance.clockOut') }}" @submit="$refs.clientClockOutTime.value = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })">
+                    <form method="POST" action="{{ route('attendance.clockOut') }}" @submit="$refs.clientClockOutTime.value = new Date().toLocaleTimeString('en-GB', { timeZone: timeZone, hour: '2-digit', minute: '2-digit', hour12: false })">
                         @csrf
                         <input type="hidden" name="client_time" x-ref="clientClockOutTime" value="">
                         <button type="submit" class="px-5 py-2.5 bg-[#FF3B30] hover:bg-[#E0342B] text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5">
@@ -170,7 +170,7 @@
                         <span class="text-[10px] text-slate-400 block" x-text="dateStr"></span>
                     </div>
 
-                    <form method="POST" action="{{ route('attendance.clockIn') }}" @submit="$refs.clientClockInTime.value = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })">
+                    <form method="POST" action="{{ route('attendance.clockIn') }}" @submit="$refs.clientClockInTime.value = new Date().toLocaleTimeString('en-GB', { timeZone: timeZone, hour: '2-digit', minute: '2-digit', hour12: false })">
                         @csrf
                         <input type="hidden" name="client_time" x-ref="clientClockInTime" value="">
                         <button type="submit" class="px-5 py-2.5 bg-[#0071E3] hover:bg-[#0062C4] text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-2">

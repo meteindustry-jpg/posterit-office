@@ -16,7 +16,8 @@ class AttendanceController extends Controller
 {
     public function index(Request $request)
     {
-        $date = $request->get('date', now()->format('Y-m-d'));
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $date = $request->get('date', now()->setTimezone($tz)->format('Y-m-d'));
         $departmentId = $request->get('department_id');
         $user = Auth::user();
 

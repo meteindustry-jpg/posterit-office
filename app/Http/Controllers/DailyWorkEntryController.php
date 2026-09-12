@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanySetting;
 use App\Models\DailyWorkEntry;
 use App\Models\Department;
 use App\Models\Employee;
@@ -88,7 +89,8 @@ class DailyWorkEntryController extends Controller
 
     public function batchCreate(Request $request)
     {
-        $date = $request->get('date', now()->format('Y-m-d'));
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $date = $request->get('date', now()->setTimezone($tz)->format('Y-m-d'));
         $employees = Employee::where('employment_status', 'active')
             ->with('department')
             ->orderBy('name')

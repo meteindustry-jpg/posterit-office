@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanySetting;
 use App\Models\DailyAttendance;
 use App\Models\DailyWorkEntry;
 use App\Models\Department;
@@ -62,10 +63,12 @@ class ReportController extends Controller
 
     public function export(Request $request, ?string $format = null)
     {
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $now = now()->setTimezone($tz);
         $format = $format ?: $request->get('format', 'csv');
         $reportType = $request->get('type', 'daily_work');
-        $startDate = $request->get('start_date', now()->startOfMonth()->format('Y-m-d'));
-        $endDate = $request->get('end_date', now()->endOfMonth()->format('Y-m-d'));
+        $startDate = $request->get('start_date', $now->copy()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', $now->copy()->endOfMonth()->format('Y-m-d'));
         $employeeId = $request->get('employee_id');
         $departmentId = $request->get('department_id');
         $categoryId = $request->get('category_id');
@@ -97,7 +100,8 @@ class ReportController extends Controller
 
     protected function resolvePeriodDates(string $period): array
     {
-        $now = now();
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $now = now()->setTimezone($tz);
 
         return match ($period) {
             'daily' => ['start' => $now->format('Y-m-d'), 'end' => $now->format('Y-m-d')],
@@ -168,16 +172,26 @@ class ReportController extends Controller
             $empQuery->where('department_id', $departmentId);
         }
         $employees = $empQuery->get();
+        $employeeIds = $employees->pluck('id')->toArray();
+
+        // Bulk load work quantities grouped by employee_id
+        $workCounts = DailyWorkEntry::whereIn('employee_id', $employeeIds)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->groupBy('employee_id')
+            ->select('employee_id', DB::raw('SUM(quantity) as total_qty'))
+            ->pluck('total_qty', 'employee_id')
+            ->toArray();
+
+        // Bulk load attendances grouped by employee_id
+        $allAttendances = DailyAttendance::whereIn('employee_id', $employeeIds)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get()
+            ->groupBy('employee_id');
 
         $summaries = [];
         foreach ($employees as $emp) {
-            $workCount = (int) DailyWorkEntry::where('employee_id', $emp->id)
-                ->whereBetween('date', [$startDate, $endDate])
-                ->sum('quantity');
-
-            $attendances = DailyAttendance::where('employee_id', $emp->id)
-                ->whereBetween('date', [$startDate, $endDate])
-                ->get();
+            $workCount = (int) ($workCounts[$emp->id] ?? 0);
+            $attendances = $allAttendances->get($emp->id, collect());
 
             $totalAtt = $attendances->count();
             $presentUnits = $attendances->whereIn('status', ['present', 'wfh'])->count() + ($attendances->where('status', 'half_day')->count() * 0.5);

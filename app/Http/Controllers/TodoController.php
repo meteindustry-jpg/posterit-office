@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanySetting;
 use App\Models\DailyWorkEntry;
 use App\Models\Employee;
 use App\Models\Todo;
@@ -32,7 +33,8 @@ class TodoController extends Controller
         }
 
         // Tab Filtering
-        $todayStr = now()->format('Y-m-d');
+        $tz = CompanySetting::get('timezone', config('app.timezone', 'Asia/Kolkata')) ?: 'Asia/Kolkata';
+        $todayStr = now()->setTimezone($tz)->format('Y-m-d');
         if ($tab === 'today') {
             $query->whereDate('due_date', $todayStr)->where('is_completed', false);
         } elseif ($tab === 'upcoming') {
