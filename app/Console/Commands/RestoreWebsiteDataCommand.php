@@ -221,8 +221,18 @@ class RestoreWebsiteDataCommand extends Command
                 ]
             );
 
-            if ($tm['role'] === 'super_admin' && ! $superAdminUser) {
-                $superAdminUser = $user;
+            if ($tm['role'] === 'super_admin') {
+                if (! $superAdminUser) {
+                    $superAdminUser = $user;
+                }
+                // Super Admin is system owner/founder, NOT an employee
+                Employee::where('email', $tm['email'])
+                    ->orWhere('user_id', $user->id)
+                    ->delete();
+                $user->update(['employee_id' => null]);
+                $users[$tm['email']] = $user;
+
+                continue;
             }
 
             $dept = $departments[$tm['department']] ?? Department::first();
@@ -270,8 +280,6 @@ class RestoreWebsiteDataCommand extends Command
         $this->info('5. Restoring Real Employee Attendance Records...');
         $attendanceRecords = [
             // Sep 4 Real Attendance Logs
-            ['date' => '2026-09-04', 'email' => 'samir@posterit.com', 'in' => '09:10', 'out' => '18:35', 'status' => 'present', 'remarks' => 'Regular Studio Shift'],
-            ['date' => '2026-09-04', 'email' => 'sam@posterit.com', 'in' => '09:15', 'out' => '18:30', 'status' => 'present', 'remarks' => 'Regular Studio Shift'],
             ['date' => '2026-09-04', 'email' => 'metex.riya@gmail.com', 'in' => '10:26', 'out' => '18:40', 'status' => 'present', 'remarks' => 'Illustration Shift'],
             ['date' => '2026-09-04', 'email' => 'metex.biswajit@gmail.com', 'in' => '10:26', 'out' => '18:45', 'status' => 'present', 'remarks' => 'Video & PSD Shift'],
             ['date' => '2026-09-04', 'email' => 'sukantaoffice25@gmail.com', 'in' => '10:31', 'out' => '18:30', 'status' => 'present', 'remarks' => 'Illustration Shift'],
