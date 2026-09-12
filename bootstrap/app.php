@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\BackupDatabaseCommand;
 use App\Console\Commands\FixTodayAttendanceCommand;
 use App\Console\Commands\RestoreWebsiteDataCommand;
 use App\Http\Middleware\RoleMiddleware;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withCommands([
+        BackupDatabaseCommand::class,
         RestoreWebsiteDataCommand::class,
         FixTodayAttendanceCommand::class,
     ])
