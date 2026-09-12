@@ -174,6 +174,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
      - Host: `213.218.240.121`
      - SSH user: `bhaissh`
      - Path: `/home/bhai/htdocs/srv1070026.hstgr.cloud`
+     - Rsync exclusion: Always use `--exclude='database/*.sqlite*'` and `--exclude='.git'` to safeguard live production data from being overwritten.
   3. Execute `php artisan migrate --force` and `php artisan optimize:clear` on the live server.
   4. Always verify live production state before concluding.
 
