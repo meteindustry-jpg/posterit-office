@@ -129,8 +129,9 @@ class DashboardController extends Controller
                 }
             }
         }
-        $todayWorkedHours = floor($todayTotalMinutes / 60);
-        $todayWorkedMinutes = $todayTotalMinutes % 60;
+        $todayTotalMinutes = (int) round($todayTotalMinutes);
+        $todayWorkedHours = (int) floor($todayTotalMinutes / 60);
+        $todayWorkedMinutes = (int) ($todayTotalMinutes % 60);
         $todayWorkingHoursDecimal = round($todayTotalMinutes / 60, 1);
 
         $monthAttendances = DailyAttendance::whereYear('date', $currentYear)
@@ -160,8 +161,9 @@ class DashboardController extends Controller
                 $monthTotalMinutes += ($mAtt->status === 'half_day' ? 240 : 510);
             }
         }
-        $monthWorkedHours = floor($monthTotalMinutes / 60);
-        $monthWorkedMinutes = $monthTotalMinutes % 60;
+        $monthTotalMinutes = (int) round($monthTotalMinutes);
+        $monthWorkedHours = (int) floor($monthTotalMinutes / 60);
+        $monthWorkedMinutes = (int) ($monthTotalMinutes % 60);
         $monthWorkingHoursDecimal = round($monthTotalMinutes / 60, 1);
 
         // Works
