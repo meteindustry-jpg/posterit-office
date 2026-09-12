@@ -410,7 +410,7 @@
                         }
                     @endphp
 
-                    @if($headerEmp)
+                    @if($headerEmp && !auth()->user()->isSuperAdmin())
                         @if($headerAtt && $headerAtt->check_in && !$headerAtt->check_out)
                             <!-- On Duty Pill -->
                             <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 shadow-2xs">

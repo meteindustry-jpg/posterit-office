@@ -32,8 +32,8 @@ class DashboardController extends Controller
             return $this->employeeDashboard($user);
         }
 
-        // Executive / Admin / Manager Self Attendance Console & Clock-In
-        $adminEmployee = $user->employee ?: Employee::where('user_id', $user->id)->orWhere('email', $user->email)->first();
+        // Executive / Admin / Manager Self Attendance Console & Clock-In (Excluded for Super Admin)
+        $adminEmployee = (! $user->isSuperAdmin()) ? ($user->employee ?: Employee::where('user_id', $user->id)->orWhere('email', $user->email)->first()) : null;
         $adminTodayAttendance = null;
         $adminCheckInFormatted = null;
         $adminCheckOutFormatted = null;
@@ -43,7 +43,7 @@ class DashboardController extends Controller
         $officeTimingStart = CompanySetting::get('office_timing_start', '09:30');
         $officeTimingEnd = CompanySetting::get('office_timing_end', '18:30');
 
-        if (! $adminEmployee && ($user->isAdmin() || $user->isSuperAdmin() || $user->isManager())) {
+        if (! $adminEmployee && ! $user->isSuperAdmin() && ($user->isAdmin() || $user->isManager())) {
             $dept = Department::first();
             $adminEmployee = Employee::create([
                 'user_id' => $user->id,
@@ -51,7 +51,7 @@ class DashboardController extends Controller
                 'email' => $user->email,
                 'employee_code' => Employee::generateUniqueCode(),
                 'department_id' => $dept?->id,
-                'designation' => $user->isSuperAdmin() ? 'Director' : ($user->isAdmin() ? 'Office Administrator' : 'Studio Manager'),
+                'designation' => $user->isAdmin() ? 'Office Administrator' : 'Studio Manager',
                 'employment_status' => 'active',
                 'joining_date' => $today,
                 'leave_quota' => 18,
@@ -59,7 +59,7 @@ class DashboardController extends Controller
             $user->update(['employee_id' => $adminEmployee->id]);
         }
 
-        if ($adminEmployee) {
+        if ($adminEmployee && ! $user->isSuperAdmin()) {
             $adminTodayAttendance = DailyAttendance::where('employee_id', $adminEmployee->id)
                 ->whereDate('date', $today)
                 ->first();

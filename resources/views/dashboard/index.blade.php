@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    @if($adminEmployee)
+    @if($adminEmployee && !auth()->user()->isSuperAdmin())
     <!-- Executive Admin Self Attendance Console -->
     <div class="p-4 md:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all"
          x-data="{
