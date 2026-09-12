@@ -64,6 +64,29 @@ class AttendanceController extends Controller
             $stats['pending'] = max(0, $stats['total_active'] - $allDateAttendances->count());
         }
 
+        // Calculate total team worked hours on this date
+        $nowInTz = now()->setTimezone($tz);
+        $totalWorkedMinutes = 0;
+        foreach ($allDateAttendances as $att) {
+            if (in_array($att->status, ['present', 'wfh', 'half_day']) && $att->check_in) {
+                $inTime = Carbon::parse($date.' '.$att->check_in, $tz);
+                if ($att->check_out) {
+                    $outTime = Carbon::parse($date.' '.$att->check_out, $tz);
+                    if ($outTime->lessThan($inTime)) {
+                        $outTime->addDay();
+                    }
+                    $totalWorkedMinutes += $inTime->diffInMinutes($outTime);
+                } elseif ($date === $nowInTz->format('Y-m-d') && $nowInTz->greaterThanOrEqualTo($inTime)) {
+                    $totalWorkedMinutes += $inTime->diffInMinutes($nowInTz);
+                } else {
+                    $totalWorkedMinutes += ($att->status === 'half_day' ? 240 : 510);
+                }
+            }
+        }
+        $totalWorkedMinutes = (int) round($totalWorkedMinutes);
+        $stats['worked_hours'] = (int) floor($totalWorkedMinutes / 60);
+        $stats['worked_minutes'] = (int) ($totalWorkedMinutes % 60);
+
         $departments = Department::orderBy('name')->get();
 
         return view('attendance.index', compact(

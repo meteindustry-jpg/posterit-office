@@ -14,6 +14,8 @@
     $initialAbsent = $stats['absent'];
     $initialPending = $stats['pending'];
     $totalEmployees = count($employees);
+    $totalWorkedHours = $stats['worked_hours'] ?? 0;
+    $totalWorkedMins = $stats['worked_minutes'] ?? 0;
 @endphp
 
 <div class="space-y-6" 
@@ -28,6 +30,29 @@
              absent: {{ $initialAbsent }},
              pending: {{ $initialPending }},
              total: {{ $totalEmployees }}
+         },
+         calcRowDuration(inVal, outVal, statusVal) {
+             if (statusVal === 'absent' || statusVal === 'leave' || statusVal === 'pending' || !inVal) {
+                 return { text: '--', state: 'empty' };
+             }
+             const inParts = inVal.split(':');
+             if (inParts.length < 2) return { text: '--', state: 'empty' };
+             const inMinutes = parseInt(inParts[0]) * 60 + parseInt(inParts[1]);
+
+             if (outVal && outVal.trim() !== '') {
+                 const outParts = outVal.split(':');
+                 if (outParts.length >= 2) {
+                     let outMinutes = parseInt(outParts[0]) * 60 + parseInt(outParts[1]);
+                     if (outMinutes < inMinutes) {
+                         outMinutes += 24 * 60;
+                     }
+                     const diff = outMinutes - inMinutes;
+                     const h = Math.floor(diff / 60);
+                     const m = diff % 60;
+                     return { text: `${h}h ${m < 10 ? '0' : ''}${m}m`, state: 'completed' };
+                 }
+             }
+             return { text: 'In Progress', state: 'active' };
          },
          updateLiveStats() {
              let p = 0, w = 0, l = 0, hd = 0, ab = 0;
@@ -76,8 +101,14 @@
                   if (row.style.display !== 'none') {
                       const inInput = row.querySelector('input[name*=\'[check_in]\']');
                       const outInput = row.querySelector('input[name*=\'[check_out]\']');
-                      if (inInput && (!inInput.value || inInput.value === '00:00')) inInput.value = officeStart;
-                      if (outInput && (!outInput.value || outInput.value === '00:00')) outInput.value = officeEnd;
+                      if (inInput && (!inInput.value || inInput.value === '00:00')) {
+                          inInput.value = officeStart;
+                          inInput.dispatchEvent(new Event('input'));
+                      }
+                      if (outInput && (!outInput.value || outInput.value === '00:00')) {
+                          outInput.value = officeEnd;
+                          outInput.dispatchEvent(new Event('input'));
+                      }
                   }
               });
           },
@@ -137,7 +168,7 @@
     </div>
 
     <!-- Live Reactive KPI Metric Cards (Dribbble/Apple Arcade Style) -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         
         <!-- Present Today (Emerald / Mint) -->
         <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#059669] via-[#10b981] to-[#34d399] text-white shadow-[0_8px_22px_rgba(16,185,129,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
@@ -155,6 +186,26 @@
                 </div>
                 <div class="text-[11px] text-white/85 font-medium mt-1">
                     <span x-text="liveStats.present">{{ $initialPresent }}</span> Office • <span x-text="liveStats.wfh">{{ $initialWfh }}</span> WFH
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Working Hours (Indigo / Purple) -->
+        <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#4338ca] via-[#6366f1] to-[#818cf8] text-white shadow-[0_8px_22px_rgba(99,102,241,0.28)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
+            <svg class="absolute -right-3 -bottom-3 w-28 h-28 text-white/15 pointer-events-none transition-transform group-hover:scale-110 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+
+            <div class="relative z-10">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-white/90">Total Shift Hours</span>
+                <div class="w-6 h-0.5 bg-white/30 rounded-full mt-1"></div>
+            </div>
+            <div class="mt-4 relative z-10">
+                <div class="text-3xl font-black text-white tracking-tight">
+                    {{ $totalWorkedHours }}<span class="text-xl font-bold">h</span> {{ $totalWorkedMins }}<span class="text-xl font-bold">m</span>
+                </div>
+                <div class="text-[11px] text-white/85 font-medium mt-1 truncate">
+                    Total team duration logged
                 </div>
             </div>
         </div>
@@ -200,7 +251,7 @@
         </div>
 
         <!-- Recorded Absent (Rose / Coral) -->
-        <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#e11d48] via-[#f43f5e] to-[#fb7185] text-white shadow-[0_8px_22px_rgba(244,63,94,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group">
+        <div class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-[#e11d48] via-[#f43f5e] to-[#fb7185] text-white shadow-[0_8px_22px_rgba(244,63,94,0.25)] hover:scale-[1.02] transition-all duration-200 flex flex-col justify-between group col-span-2 md:col-span-1">
             <svg class="absolute -right-3 -bottom-3 w-28 h-28 text-white/15 pointer-events-none transition-transform group-hover:scale-110 duration-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
             </svg>
@@ -290,12 +341,13 @@
                     <thead>
                         <tr class="border-b border-slate-200 bg-slate-100/90 text-slate-700 uppercase text-[11px] font-bold tracking-wider">
                             <th class="py-3.5 px-4 font-extrabold w-12">#</th>
-                            <th class="py-3.5 px-4 font-extrabold min-w-[220px]">Employee</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[200px]">Employee</th>
                             <th class="py-3.5 px-4 font-extrabold min-w-[120px]">Department</th>
-                            <th class="py-3.5 px-4 font-extrabold min-w-[160px]">Status</th>
-                            <th class="py-3.5 px-4 font-extrabold min-w-[110px]">Check In</th>
-                            <th class="py-3.5 px-4 font-extrabold min-w-[110px]">Check Out</th>
-                            <th class="py-3.5 px-4 font-extrabold min-w-[200px]">Remarks / Note</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[150px]">Status</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[105px]">Check In</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[105px]">Check Out</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[130px] text-center">Working Hours</th>
+                            <th class="py-3.5 px-4 font-extrabold min-w-[180px]">Remarks / Note</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -306,23 +358,42 @@
                             $checkIn = $att && $att->check_in ? date('H:i', strtotime($att->check_in)) : '';
                             $checkOut = $att && $att->check_out ? date('H:i', strtotime($att->check_out)) : '';
                             $remarks = $att ? $att->remarks : '';
+
+                            $initialWorkedText = '--';
+                            $initialWorkedState = 'empty';
+                            if ($att && $att->check_in && in_array($currentStatus, ['present', 'wfh', 'half_day'])) {
+                                if ($att->check_out) {
+                                    $inCarbon = \Carbon\Carbon::parse($date.' '.$att->check_in);
+                                    $outCarbon = \Carbon\Carbon::parse($date.' '.$att->check_out);
+                                    if ($outCarbon->lessThan($inCarbon)) {
+                                        $outCarbon->addDay();
+                                    }
+                                    $diffMins = $inCarbon->diffInMinutes($outCarbon);
+                                    $h = floor($diffMins / 60);
+                                    $m = $diffMins % 60;
+                                    $initialWorkedText = sprintf('%dh %02dm', $h, $m);
+                                    $initialWorkedState = 'completed';
+                                } else {
+                                    $initialWorkedText = 'In Progress';
+                                    $initialWorkedState = 'active';
+                                }
+                            }
                         @endphp
                         <tr class="attendance-row hover:bg-slate-50/80 transition" 
                             x-show="filterRow('{{ addslashes($emp->name) }}', '{{ addslashes($emp->employee_code) }}', '{{ $emp->department_id }}')"
                             x-data="{ 
                                 status: '{{ $currentStatus }}',
+                                checkIn: '{{ $checkIn }}',
+                                checkOut: '{{ $checkOut }}',
                                 onStatusChange(newVal) {
                                     this.status = newVal;
-                                    const row = $el;
-                                    const inInput = row.querySelector('input[name*=\'[check_in]\']');
-                                    const outInput = row.querySelector('input[name*=\'[check_out]\']');
-                                    if ((newVal === 'present' || newVal === 'wfh') && inInput && !inInput.value) {
+                                    if ((newVal === 'present' || newVal === 'wfh') && !this.checkIn) {
                                         const now = new Date();
-                                        inInput.value = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                        this.checkIn = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
                                     }
-                                    if ((newVal === 'absent' || newVal === 'leave' || newVal === 'pending') && inInput) {
-                                        inInput.value = '';
-                                        if (outInput) outInput.value = '';
+                                    if (newVal === 'absent' || newVal === 'leave' || newVal === 'pending') {
+                                        this.checkIn = '';
+                                        this.checkOut = '';
                                     }
                                     $nextTick(() => { updateLiveStats(); });
                                 }
@@ -370,16 +441,37 @@
 
                             <!-- Check In -->
                             <td class="py-3 px-4">
-                                <input type="time" name="attendances[{{ $index }}][check_in]" value="{{ $checkIn }}"
+                                <input type="time" name="attendances[{{ $index }}][check_in]" 
+                                       x-model="checkIn"
                                        :disabled="status === 'absent' || status === 'leave' || status === 'pending'"
                                        class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0071e3] disabled:opacity-30 disabled:bg-slate-100">
                             </td>
 
                             <!-- Check Out -->
                             <td class="py-3 px-4">
-                                <input type="time" name="attendances[{{ $index }}][check_out]" value="{{ $checkOut }}"
+                                <input type="time" name="attendances[{{ $index }}][check_out]" 
+                                       x-model="checkOut"
                                        :disabled="status === 'absent' || status === 'leave' || status === 'pending'"
                                        class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#0071e3] disabled:opacity-30 disabled:bg-slate-100">
+                            </td>
+
+                            <!-- Working Hours (Calculated after Check Out / Logout) -->
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <template x-if="calcRowDuration(checkIn, checkOut, status).state === 'completed'">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs font-mono">
+                                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        <span x-text="calcRowDuration(checkIn, checkOut, status).text">{{ $initialWorkedText }}</span>
+                                    </span>
+                                </template>
+                                <template x-if="calcRowDuration(checkIn, checkOut, status).state === 'active'">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-[#0071e3] border border-blue-200 font-mono animate-pulse">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#0071e3]"></span>
+                                        <span>In Progress</span>
+                                    </span>
+                                </template>
+                                <template x-if="calcRowDuration(checkIn, checkOut, status).state === 'empty'">
+                                    <span class="text-xs text-slate-400 font-mono font-bold">--</span>
+                                </template>
                             </td>
 
                             <!-- Remarks -->
@@ -390,7 +482,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="py-8 text-center text-slate-600 font-medium">No active employees found.</td>
+                            <td colspan="8" class="py-8 text-center text-slate-600 font-medium">No active employees found.</td>
                         </tr>
                         @endforelse
                     </tbody>
